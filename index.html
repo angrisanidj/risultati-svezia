@@ -125,7 +125,9 @@ button.sm{padding:6px 10px;font-size:12px}
 #hemicycle{width:100%;height:auto;display:block;padding:6px 16px 0}
 .seat-legend{display:flex;gap:7px;flex-wrap:wrap;padding:6px 18px 2px}
 .seat-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;
-  padding:5px 9px;background:rgba(255,255,255,.04);font-size:11.5px;font-weight:700}
+  padding:5px 9px;background:rgba(255,255,255,.04);font-size:11.5px;font-weight:700;
+  color:var(--t1);font-family:var(--sans);cursor:pointer;transition:opacity .2s,border-color .2s,background .2s}
+.seat-chip:hover{background:rgba(255,255,255,.1)}
 .seat-chip i{width:8px;height:8px;border-radius:50%;display:block;flex:0 0 8px}
 .seat-chip strong{font-variant-numeric:tabular-nums}
 
@@ -156,10 +158,22 @@ button.sm{padding:6px 10px;font-size:12px}
 .scen .se.o{color:#ff9bad}.scen .se.t{color:#9cc9ec}.scen .se.n{color:var(--t3)}
 .scen-head{color:var(--t3);font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 
+/* ---------- evidenziazione ---------- */
+#hemicycle circle{transition:opacity .25s}
+#hemicycle.filtro circle.off{opacity:.11}
+#hemicycle.filtro circle.on{stroke:#fff;stroke-width:1.4}
+.seat-chip.att{border-color:var(--yellow);background:rgba(254,203,0,.12)}
+.seat-chip.spento{opacity:.4}
+.seat-chip.reset{border-color:var(--line-2);background:rgba(255,255,255,.09);font-weight:700}
+.bloc.att{border-color:var(--yellow)}
+.bloc.spento{opacity:.45}
+
 /* ---------- blocchi ---------- */
 .blocchi{display:grid;gap:9px;padding:12px 18px 4px}
 .bloc{border:1px solid var(--line);border-radius:13px;padding:11px 13px;background:rgba(255,255,255,.035);
-  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;
+  text-align:left;cursor:pointer;font-family:var(--sans);color:var(--t1);transition:opacity .2s,border-color .2s}
+.bloc:hover{background:rgba(255,255,255,.07)}
 .bloc.win{border-color:rgba(254,203,0,.45);background:rgba(254,203,0,.07)}
 .bloc .bn{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
 .bloc .bp{font-size:12px;color:var(--t2);margin-top:3px}
@@ -1479,12 +1493,25 @@ function seatPoints(){
   counts.forEach((n,ri)=>{const r=78+ri*17;for(let i=0;i<n;i++){const th=Math.PI-(i/(n-1))*Math.PI;pts.push({x:280+r*Math.cos(th),y:270-r*Math.sin(th),th,r});}});
   return pts.sort((a,b)=>b.th-a.th||a.r-b.r);
 }
+/* Evidenziazione: {tipo:'partito'|'blocco', id}. Non finisce in localStorage,
+   e' uno stato di lettura, non un dato. */
+let evidenza=null;
+function inEvidenza(id){
+  if(!evidenza||!id) return !evidenza;
+  return evidenza.tipo==='partito'?id===evidenza.id:BLOCCHI[evidenza.id].ids.includes(id);
+}
 function renderHemicycle(seatInfo){
   const svg=$('#hemicycle'); svg.innerHTML='';
-  const points=seatPoints(), colors=[];
-  for(const id of partyOrder()) for(let i=0;i<(seatInfo.seats[id]||0);i++) colors.push(PARTY_MAP[id]?.color||'#76889a');
-  while(colors.length<349) colors.push('#2b3f52');
-  points.forEach((p,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5.2');c.setAttribute('fill',colors[i]||'#2b3f52');c.setAttribute('stroke','#070f19');c.setAttribute('stroke-width','1');svg.appendChild(c);});
+  const points=seatPoints(), colors=[], sigle=[];
+  for(const id of partyOrder()) for(let i=0;i<(seatInfo.seats[id]||0);i++){
+    colors.push(PARTY_MAP[id]?.color||'#76889a'); sigle.push(id);
+  }
+  while(colors.length<349){ colors.push('#2b3f52'); sigle.push(null); }
+  svg.classList.toggle('filtro',!!evidenza);
+  points.forEach((p,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5.2');c.setAttribute('fill',colors[i]||'#2b3f52');c.setAttribute('stroke','#070f19');c.setAttribute('stroke-width','1');
+    if(sigle[i]) c.setAttribute('data-party',sigle[i]);
+    c.setAttribute('class',inEvidenza(sigle[i])?'on':'off');
+    svg.appendChild(c);});
   /* archi di blocco: il confine cade dove finiscono i seggi dell'opposizione */
   const NS='http://www.w3.org/2000/svg';
   const opp=BLOCCHI.opp.ids.reduce((n,i)=>n+(seatInfo.seats[i]||0),0);
@@ -1504,7 +1531,11 @@ function renderHemicycle(seatInfo){
   line.setAttribute('x1',mx0);line.setAttribute('y1',my0);line.setAttribute('x2',mx1);line.setAttribute('y2',my1);
   line.setAttribute('stroke','#fecb00');line.setAttribute('stroke-dasharray','4 5');
   line.setAttribute('stroke-width','1.6');line.setAttribute('opacity','.8');svg.appendChild(line);
-  $('#seatLegend').innerHTML=PARTIES.filter(p=>(seatInfo.seats[p.id]||0)>0).map(p=>`<span class="seat-chip"><i style="background:${p.color}"></i>${p.id} <strong>${seatInfo.seats[p.id]||0}</strong></span>`).join('');
+  const attivo=p=>evidenza&&evidenza.tipo==='partito'&&evidenza.id===p;
+  $('#seatLegend').innerHTML=
+    PARTIES.filter(p=>(seatInfo.seats[p.id]||0)>0).map(p=>
+      `<button class="seat-chip${attivo(p.id)?' att':''}${evidenza&&!inEvidenza(p.id)?' spento':''}" data-party="${p.id}" aria-pressed="${attivo(p.id)}" title="Evidenzia ${(PARTY_IT[p.id]||{}).it||p.name}"><i style="background:${p.color}"></i>${p.id} <strong>${seatInfo.seats[p.id]||0}</strong></button>`).join('')+
+    (evidenza?'<button class="seat-chip reset" data-reset="1">↺ Mostra tutti</button>':'');
   $('#seatMethod').textContent=seatInfo.method;
   renderBlocchi(seatInfo.seats);
 }
@@ -1604,18 +1635,37 @@ function renderScenari(){
     }).join('');
 }
 
+function cambiaEvidenza(nuova){
+  const uguale=evidenza&&nuova&&evidenza.tipo===nuova.tipo&&evidenza.id===nuova.id;
+  evidenza=uguale?null:nuova;                 /* riclic sullo stesso: torna tutto */
+  const si=currentSeats();
+  renderHemicycle(si); renderBlocchi(si.seats);
+}
+function bindEvidenza(){
+  $('#seatLegend').addEventListener('click',e=>{
+    const b=e.target.closest('[data-party],[data-reset]'); if(!b) return;
+    cambiaEvidenza(b.dataset.reset?null:{tipo:'partito',id:b.dataset.party});
+  });
+  $('#blocchi').addEventListener('click',e=>{
+    const b=e.target.closest('[data-bloc]'); if(!b) return;
+    cambiaEvidenza({tipo:'blocco',id:b.dataset.bloc});
+  });
+}
+
 function renderBlocchi(seats){
   const conta=b=>b.ids.reduce((n,i)=>n+(seats[i]||0),0);
-  const opp={...BLOCCHI.opp,tot:conta(BLOCCHI.opp)}, tido={...BLOCCHI.tido,tot:conta(BLOCCHI.tido)};
+  const opp={...BLOCCHI.opp,chiave:'opp',tot:conta(BLOCCHI.opp)},
+        tido={...BLOCCHI.tido,chiave:'tido',tot:conta(BLOCCHI.tido)};
   const vince=opp.tot>=175?opp:(tido.tot>=175?tido:null);
   const primo=opp.tot>=tido.tot?opp:tido;
   const riga=b=>{
     const d=b.tot-b.s22;
-    return `<div class="bloc${b.tot>=175?' win':''}">
+    const att=!!(evidenza&&evidenza.tipo==='blocco'&&evidenza.id===b.chiave);
+    return `<button class="bloc${b.tot>=175?' win':''}${att?' att':''}${evidenza&&!att?' spento':''}" data-bloc="${b.chiave}" aria-pressed="${att}">
       <div><div class="bn">${b.nome}</div><div class="bp">${b.ids.join(' · ')}</div></div>
       <div><div class="bv" style="color:${b.tot>=175?'var(--yellow)':b.col}">${b.tot}</div>
         <div class="bd">${d>0?'+':d<0?'−':'±'}${Math.abs(d)} sul 2022</div></div>
-    </div>`;
+    </button>`;
   };
   const gap=vince?vince.tot-175:175-primo.tot;
   $('#blocchi').innerHTML=riga(opp)+riga(tido)+
@@ -1921,6 +1971,7 @@ function bindMap(){
   $('#zReset').addEventListener('click',resetMap);
   $('#mapBack').addEventListener('click',resetMap);
   document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&evidenza&&!$('#tab-live').classList.contains('hidden')){ cambiaEvidenza(null); return; }
     if(e.key==='Escape'&&!$('#tab-live').classList.contains('hidden')&&
        (MAPV.sel||MAPV.cur.w<MAPV.base.w-0.5)) resetMap();
   });
@@ -2159,6 +2210,7 @@ function bind(){
   $('#tabbtn-card').addEventListener('click',()=>showTab('card'));
   /* la mappa lega i propri eventi in bindMap(), al primo disegno */
   $('#lanList').addEventListener('click',e=>{const row=e.target.closest('.lanrow');if(row) selectLan(row.dataset.lan);});
+  bindEvidenza();
 }
 /* src/cards.js — generatore card «edizione notturna», tema Svezia */
 const CARDGEN=(function(){
