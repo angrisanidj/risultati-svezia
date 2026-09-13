@@ -410,7 +410,7 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
     <article class="kpi"><span>Distretti della notte</span><strong id="districtKpi">—</strong><small id="districtMeta">totale letto dal feed ufficiale</small></article>
     <article class="kpi"><span>Voti ufficiali</span><strong id="votesKpi">—</strong><small>voti validi nel dataset corrente</small></article>
     <article class="kpi"><span>Fonte emiciclo</span><strong id="seatSourceKpi">Riksdag 2022</strong><small id="seatSourceMeta">baseline fino ai primi dati 2026</small></article>
-    <article class="kpi warn"><span>Conteggio successivo</span><strong id="collectionKpi">—</strong><small id="collectionMeta">uppsamlingsdistrikt: totale letto dal feed</small></article>
+    <article class="kpi warn"><span>Conteggio successivo</span><strong id="collectionKpi">—</strong><small id="collectionMeta">schede anticipate arrivate fuori tempo, contate mercoledì 16</small></article>
   </section>
 
   <section id="verdetto" class="verdetto"></section>
@@ -514,7 +514,7 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
       <div class="progress"><span id="progressBar"></span></div>
       <div class="progresslabels"><span id="progressText">In attesa della struttura distretti dal feed</span><span id="progressPct" class="mono">—</span></div>
       <div id="countCheck" class="countcheck">Intestazione feed: — · calcolato dai distretti: —</div>
-      <div class="countcheck" style="line-height:1.7">Orari della serata: <b>20:00</b> chiusura seggi, VALU e sondaggio TV4 · <b>21:10 circa</b> proiezione SVT, con oltre 300 distretti conteggiati · <b>22:30–23:00</b> primo conteggio preliminare presentato dalla Valmyndigheten · <b>mercoledì 16</b> uppsamlingsräkning.</div>
+      <div class="countcheck" style="line-height:1.7"><b>20:00</b> chiusura dei seggi, exit poll VALU e TV4 · <b>21:10 circa</b> proiezione SVT, calcolata su oltre 300 distretti già conteggiati · <b>22:30–23:00</b> primo conteggio preliminare presentato dalla Valmyndigheten · <b>mercoledì 16</b> conta delle schede anticipate rimaste · <b>da lunedì</b> le prefetture rifanno la conta da zero.</div>
       <div class="wednesday" id="progressNote"><strong>Importante:</strong> il conteggio della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.</div>
     </article>
   </section>
@@ -1667,7 +1667,10 @@ function renderVerdetto(){
   let dettaglio;
   if(e.vince){
     const suoi=e.vince==='opp'?e.opp:e.tido, altri=e.vince==='opp'?e.tido:e.opp;
-    dettaglio=`<b>${suoi}</b> seggi contro <b>${altri}</b>, ${suoi-MAGGIORANZA} oltre la soglia dei ${MAGGIORANZA}`;
+    const m=suoi-MAGGIORANZA;
+    dettaglio=`<b>${suoi}</b> seggi contro <b>${altri}</b>, `+
+      (m===0?`esattamente la soglia dei ${MAGGIORANZA}: la maggioranza si regge su un seggio solo`
+            :`${m} oltre la soglia dei ${MAGGIORANZA}`);
   }else{
     const guida=e.opp>=e.tido?'all\u2019opposizione':'al blocco di Tid\u00F6';
     dettaglio=`opposizione <b>${e.opp}</b>, blocco di Tid\u00F6 <b>${e.tido}</b>: ${guida} mancano ${MAGGIORANZA-Math.max(e.opp,e.tido)} seggi`;
@@ -1699,7 +1702,8 @@ function renderScenari(){
       const e=esitoBlocchi(r.seats), et=etichettaFonte(r.k);
       const cl=e.vince==='opp'?'o':(e.vince==='tido'?'t':'n');
       const txt=e.vince
-        ? (e.vince==='opp'?'opposizione +':'Tid\u00F6 +')+((e.vince==='opp'?e.opp:e.tido)-MAGGIORANZA)
+        ? (e.vince==='opp'?'opposizione':'Tid\u00F6')+(((e.vince==='opp'?e.opp:e.tido)-MAGGIORANZA)===0
+            ?', per un seggio':' +'+((e.vince==='opp'?e.opp:e.tido)-MAGGIORANZA))
         : 'nessuna maggioranza';
       return `<div class="scen${r.k===attiva?' att':''}">
         <span class="sf">${et.n} <i>\u00B7 ${et.s}</i></span>
@@ -1743,8 +1747,10 @@ function renderBlocchi(seats){
   };
   const gap=vince?vince.tot-175:175-primo.tot;
   $('#blocchi').innerHTML=riga(opp)+riga(tido)+
-    `<div class="blocgap"><b class="${vince?'':'no'}">${vince?'+':'−'}${gap}</b><span>${
-      vince ? `i seggi con cui ${vince===opp?'l’opposizione':'il blocco di Tidö'} supera la soglia dei 175`
+    `<div class="blocgap"><b class="${vince?'':'no'}">${vince?(gap===0?'175':'+'+gap):'−'+gap}</b><span>${
+      vince ? (gap===0
+          ? `${vince===opp?'l’opposizione arriva':'il blocco di Tidö arriva'} esattamente a 175: maggioranza di un seggio`
+          : `i seggi con cui ${vince===opp?'l’opposizione':'il blocco di Tidö'} supera la soglia dei 175`)
             : `i seggi che mancano a ${primo===opp?'l’opposizione':'il blocco di Tidö'} per la maggioranza: nessun blocco arriva a 175`
     }</span></div>`;
 }
@@ -2079,15 +2085,16 @@ function renderStatus(){
   const collectionTotal=Number.isFinite(Number(d.collectionTotal))&&Number(d.collectionTotal)>0?Number(d.collectionTotal):null;
   $('#districtKpi').textContent=total?`${fmt(reported)} / ${fmt(total)}`:'—';
   $('#collectionKpi').textContent=collectionTotal?`${fmt(collectionReported)} / ${fmt(collectionTotal)}`:'—';
-  $('#collectionMeta').textContent=collectionTotal?'uppsamlingsdistrikt: conteggio successivo alla notte':'totale letto dal feed ufficiale quando disponibile';
+  $('#collectionMeta').textContent=collectionTotal?'schede anticipate arrivate fuori tempo, contate mercoledì 16':'schede anticipate arrivate fuori tempo: totale non ancora esposto dal feed';
   $('#votesKpi').textContent=sum(state.official?.votes)>0?fmt(sum(state.official.votes)):'—';
   const fraction=total?Math.max(0,Math.min(1,reported/total)):0;
   $('#progressBar').style.width=`${fraction*100}%`;
   $('#progressText').textContent=total?`${fmt(reported)} dei ${fmt(total)} distretti ordinari`:'In attesa della struttura distretti dal feed';
   $('#progressPct').textContent=total?`${(fraction*100).toFixed(1).replace('.',',')}%`:'—';
+  const spiega='In Svezia si può votare in anticipo in qualsiasi comune del paese e nelle ambasciate, ma la scheda deve poi arrivare al distretto di residenza. Quelle che non ce la fanno vengono contate <strong>mercoledì 16</strong>, nei cosiddetti <em>uppsamlingsdistrikt</em>, i distretti di raccolta. Poi da lunedì le prefetture rifanno la conta da zero: è quella, la <em>slutlig rösträkning</em>, a fissare il risultato legale e la distribuzione dei seggi.';
   $('#progressNote').innerHTML=collectionTotal
-    ? `<strong>Importante:</strong> il completamento dei ${fmt(total)} distretti ordinari non equivale al risultato definitivo. Il feed elenca separatamente ${fmt(collectionTotal)} <em>uppsamlingsdistrikt</em>; ricevuti finora: ${fmt(collectionReported)}.`
-    : '<strong>Importante:</strong> il conteggio della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.';
+    ? `<strong>Arrivare a ${fmt(total)} su ${fmt(total)} non vuol dire che il conteggio è finito.</strong> ${spiega} I distretti di raccolta sono ${fmt(collectionTotal)}; ne sono arrivati ${fmt(collectionReported)}.`
+    : `<strong>Il completamento dei distretti della notte non è il risultato definitivo.</strong> ${spiega}`;
   const si=currentSeats(); $('#seatSourceKpi').textContent=si.label; $('#seatSourceMeta').textContent=si.short||si.method; renderHemicycle(si);
   const diag=buildFeedDiagnostics(state.official);
   $('#testFileBadge').classList.toggle('hidden',!diag.isTest);
@@ -2284,11 +2291,24 @@ function statoFeed(){
     et.textContent=`collegato · SVT non ha ancora pubblicato la proiezione · controllo delle ${ora}`;
   }
 }
+/* Il feed espone timestamp ISO con la Z: sono ora di Greenwich, e prendere le
+   cifre cosi' come sono mostrava le 20:22 invece delle 22:22. Un ISO senza fuso
+   e' invece gia' ora locale svedese e non va toccato. */
+function oraProiezione(v){
+  const t=String(v||'');
+  if(/^\d{4}-\d{2}-\d{2}T/.test(t)&&/(Z|[+-]\d{2}:?\d{2})$/.test(t)){
+    const d=new Date(t);
+    if(!isNaN(d)) return new Intl.DateTimeFormat('it-IT',
+      {hour:'2-digit',minute:'2-digit',timeZone:'Europe/Stockholm'}).format(d);
+  }
+  const m=t.match(/(\d{1,2}):(\d{2})/);
+  return m?String(m[1]).padStart(2,'0')+':'+m[2]:'';
+}
 function suFeed(S){
   const P=S.proiezione;
   state.progAuto=(P&&P.pubblicata&&Object.keys(P.quote).length)
     ? {quote:P.quote,seggi:P.seggi,aree:P.aree,scrutinati:P.scrutinati,totali:P.totali,
-       ora:(P.aggiornata||'').replace(/^.*?(\d{2}:\d{2}):\d{2}.*$/,'$1')}
+       ora:oraProiezione(P.aggiornata)}
     : null;
   saveState(); render(); statoFeed(); aggiornaColonnaProiezione();
 }
@@ -2613,11 +2633,13 @@ function card3(x,S,N){
 
   panel(x,px,534,pw,104,{});
   const gap=vince?(vince.tot-MAGG):(MAGG-primo.tot);
-  const big=(vince?'+':'\u2212')+gap;
+  const big=vince?(gap===0?String(MAGG):'+'+gap):'\u2212'+gap;
   T(x,big,px+30,534+66,{font:F(700,52,'serif'),color:vince?C.accent:C.red});
   const gw=W(x,big,F(700,52,'serif'));
   const txt=vince
-    ? ['i seggi con cui '+(vince===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'supererebbe la soglia dei '+MAGG+', cio\u00E8 la maggioranza']
+    ? (gap===0
+        ? [(vince===opp?'l\u2019opposizione arriva':'il blocco di Tid\u00F6 arriva')+' esattamente a '+MAGG+':','la maggioranza si regge su un seggio solo']
+        : ['i seggi con cui '+(vince===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'supererebbe la soglia dei '+MAGG+', cio\u00E8 la maggioranza'])
     : ['i seggi che mancano a '+(primo===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'per arrivare a '+MAGG+': nessun blocco ha la maggioranza'];
   T(x,txt[0],px+30+gw+22,534+52,{font:F(400,22),color:C.t1});
   T(x,txt[1],px+30+gw+22,534+82,{font:F(400,22),color:C.t2});
@@ -2838,8 +2860,10 @@ function autoPost(S){
   const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
   P.c3 = S.srcKind==='none'?'':taglia('Il Riksdag '+q+': opposizione (S, V, C, MP) a '+sx+' seggi, '+
     'partiti di Tid\u00F6 (M, KD, L, SD) a '+dx+'. '+
-    (sx>=MAGG?'La maggioranza passa all\u2019opposizione, che supera i 175 di '+(sx-MAGG)+'.':
-     dx>=MAGG?'Il blocco Kristersson tiene, con '+(dx-MAGG)+' seggi oltre i 175.':
+    (sx>=MAGG?(sx-MAGG===0?'L\u2019opposizione arriva esattamente a 175: maggioranza di un seggio solo.'
+                           :'La maggioranza passa all\u2019opposizione, che supera i 175 di '+(sx-MAGG)+'.'):
+     dx>=MAGG?(dx-MAGG===0?'Il blocco Kristersson arriva esattamente a 175: maggioranza di un seggio solo.'
+                          :'Il blocco Kristersson tiene, con '+(dx-MAGG)+' seggi oltre i 175.'):
      dx===sx?'Parit\u00E0 esatta: nessuno arriva a 175.':'Nessun blocco raggiunge quota 175.'));
   const fuori=R.filter(r=>r.v<4), bilico=R.filter(r=>Math.abs(r.v-4)<=1);
   P.c5 = R.length?taglia('La soglia del 4 per cento decide il Riksdag. '+
