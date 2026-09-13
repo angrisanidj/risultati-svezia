@@ -246,6 +246,13 @@ td .pname{color:var(--t2);font-weight:400}
 td .partylabel{gap:9px}
 .delta.plus{color:var(--green)}.delta.minus{color:var(--red)}
 
+.mapfonte{display:flex;gap:3px;background:rgba(255,255,255,.045);border:1px solid var(--line);
+  border-radius:999px;padding:3px}
+.mapfonte button{border:0;background:transparent;color:var(--t2);border-radius:999px;
+  padding:5px 11px;font:700 11px/1 var(--sans);cursor:pointer;white-space:nowrap}
+.mapfonte button[aria-pressed="true"]{background:var(--yellow);color:#131a24}
+.mapfonte button[disabled]{opacity:.35;cursor:default}
+
 /* ---------- map ---------- */
 .maparea{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:20px;
   align-items:start;padding:10px 18px 0}
@@ -486,7 +493,13 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
   <section class="card" style="margin-bottom:14px">
     <div class="cardhead">
       <div><span class="kicker">Territorio</span><h2>La mappa dei län</h2></div>
-      <span class="pill neutral" id="mapPill">in attesa</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <div class="mapfonte" id="mapFonte">
+          <button data-mapfonte="voti">Voti conteggiati</button>
+          <button data-mapfonte="prognos">Proiezione</button>
+        </div>
+        <span class="pill neutral" id="mapPill">in attesa</span>
+      </div>
     </div>
     <p class="subcopy">Partito in testa nei 21 län, ricostruito dalle prime due cifre del codice valdistrikt. I län non coincidono con le 29 circoscrizioni del Riksdag: Stoccolma, Scania e Västra Götaland sono divise in più valkretsar.</p>
     <div class="maparea">
@@ -1451,7 +1464,7 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,mapFonte:'voti',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 /* L'italiano nel CLDR non raggruppa i numeri di quattro cifre: toLocaleString
    restituisce 6312, non 6.312. Sul cruscotto vogliamo il punto sempre, altrimenti
@@ -1485,8 +1498,11 @@ function prognosLabel(){
 /* Ordine delle fonti. La proiezione SVT stima il risultato finale a partire dai voti
    gia' conteggiati, quindi vale piu' di uno spoglio ancora parziale: i primi distretti
    che chiudono sono i piu' piccoli e rurali, e danno un quadro distorto. Superata la
-   soglia del 95 per cento dei distretti ordinari, il voto reale torna a prevalere. */
-const SCRUT_SORPASSO=0.95;
+   soglia qui sotto, il voto reale torna a prevalere. Gli ultimi distretti a
+   chiudere sono i piu' grandi e urbani, quindi anche a soglia alta il conteggio
+   conserva una distorsione: alzare il valore fa fidare piu' a lungo del modello,
+   abbassarlo fa passare prima ai voti veri. */
+const SCRUT_SORPASSO=0.90;
 /* Un'unica funzione decide la fonte per barre, tabella, verdetto ed emiciclo:
    currentSeats() segue lo stesso ordine, altrimenti la pagina dichiara una fonte
    e ne mostra un'altra. Le etichette sono le stesse nei due posti. */
@@ -1530,7 +1546,7 @@ function currentSeats(){
     short:'ripartizione indicativa sui voti inseriti',
     method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4% sui voti inseriti a mano. Non applica la procedura legale completa 310+39 per circoscrizione.'};
 
-  /* Stesso ordine di bestSource(): sotto il 95 per cento dei distretti ordinari
+  /* Stesso ordine di bestSource(): sotto la soglia di sorpasso
      la proiezione batte lo spoglio, altrimenti l'emiciclo mostrerebbe una fonte
      diversa da quella dichiarata da barre, tabella e verdetto. */
   if(off&&scrutFrac()>=SCRUT_SORPASSO){
@@ -1819,7 +1835,18 @@ function renderBars(){
 }
 
 /* ---------------- mappa dei län ---------------- */
-function mapFonteProg(){ return progAutoOk()&&bestSource().kind==='prognos'&&state.progAuto.aree?.length; }
+/* La mappa ha una fonte propria, scelta dall'utente: di norma i voti davvero
+   conteggiati, con la proiezione a un clic di distanza per confrontare. Se la
+   fonte scelta non e' disponibile si ripiega sull'altra invece di svuotarsi. */
+function mapHaProg(){ return !!(progAutoOk()&&state.progAuto.aree&&state.progAuto.aree.length); }
+function mapHaVoti(){
+  const by=state.official?.byLan||{};
+  return Object.keys(by).some(k=>sum(by[k].votes)>0);
+}
+function mapFonteProg(){
+  if(state.mapFonte==='prognos') return mapHaProg();
+  return !mapHaVoti()&&mapHaProg();
+}
 function lanResults(){
   if(mapFonteProg()){
     const per=Object.fromEntries(state.progAuto.aree.map(x=>[x.id,x]));
@@ -1885,7 +1912,10 @@ function tinta(hex,t){
   /* Il vertice della scala e' il colore pieno del partito, mai oltre: schiarire
      ancora lo slava in rosa, e un tono slavato si legge come "debole" anche se
      sta in cima. Il fondo e' una sua ombra scura. */
-  const lMax=Math.max(46,Math.min(58,c.l)), lMin=19;
+  /* Il fondo non scende sotto il 27%: piu' giu' il tono si confonde con lo
+     sfondo e con il grigio dei län non ancora scrutinati, e "debole" finisce
+     per sembrare "nessun dato". */
+  const lMax=Math.max(46,Math.min(58,c.l)), lMin=27;
   return `hsl(${c.h.toFixed(0)} ${Math.max(52,Math.min(92,c.s)).toFixed(0)}% ${(lMin+(lMax-lMin)*k).toFixed(1)}%)`;
 }
 function mix(hex,amount){ /* schiarisce/scurisce verso il fondo notturno */
@@ -1991,6 +2021,12 @@ function renderMap(){
   }
   $('#mapEmpty').classList.toggle('hidden',any);
   $('#mapPill').textContent=any?`${res.filter(r=>r.tot>0).length} / 21 län`:'in attesa';
+  const prog=mapFonteProg();
+  document.querySelectorAll('#mapFonte button').forEach(b=>{
+    const q=b.dataset.mapfonte;
+    b.setAttribute('aria-pressed',String(prog?q==='prognos':q==='voti'));
+    b.disabled=q==='prognos'?!mapHaProg():!mapHaVoti();
+  });
 
   const list=res.slice().sort((a,b)=>{
     if(!a.tot&&!b.tot) return a.n.localeCompare(b.n);
@@ -2006,8 +2042,8 @@ function renderMap(){
       <span class="lc">${r.total?Math.round(r.reported/r.total*100):0}%</span>
     </div>`;
   }).join('');
-  $('#mapNote').textContent=mapFonteProg()
-    ? 'Mappa colorata sulla proiezione di Vera Policy per SVT, non sui voti finora conteggiati: con lo spoglio parziale i primi distretti a chiudere sono i più piccoli e danno un quadro distorto. La percentuale nell’elenco resta la quota di distretti già scrutinati.'
+  $('#mapNote').textContent=prog
+    ? `Mappa colorata sulla proiezione di Vera Policy per SVT, non sui voti finora conteggiati. L’intensità è relativa: il tono più tenue è il län dove il partito in testa va peggio (${scala.lo.toFixed(1).replace('.',',')}%), il più acceso quello dove va meglio (${scala.hi.toFixed(1).replace('.',',')}%).`
     : any
     ? `L’intensità è relativa: il tono più tenue è il län dove il partito in testa va peggio (${scala.lo.toFixed(1).replace('.',',')}%), il più acceso quello dove va meglio (${scala.hi.toFixed(1).replace('.',',')}%). La percentuale nell’elenco è la quota di distretti già scrutinati. Rotella o pizzico per lo zoom, trascina per spostarti.`
     : 'Intensità del colore proporzionale alla quota del partito in testa.';
@@ -2385,6 +2421,10 @@ function bind(){
   $('#tabbtn-card').addEventListener('click',()=>showTab('card'));
   /* la mappa lega i propri eventi in bindMap(), al primo disegno */
   $('#lanList').addEventListener('click',e=>{const row=e.target.closest('.lanrow');if(row) selectLan(row.dataset.lan);});
+  $('#mapFonte').addEventListener('click',e=>{
+    const b=e.target.closest('[data-mapfonte]'); if(!b||b.disabled) return;
+    state.mapFonte=b.dataset.mapfonte; saveState(); renderMap();
+  });
   bindEvidenza();
 }
 /* src/cards.js — generatore card «edizione notturna», tema Svezia */
