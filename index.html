@@ -295,6 +295,8 @@ function allocateElectionSeats({nationalVotes, constituencies, totalSeats=349, f
 
 /* src/feed.js */
 const CANONICAL_PRELIMINARY_RD='p/rd/Val_2026_preliminar_00_RD.zip';
+const DEFAULT_FEED_PROXY='https://svezia-2026-feed-proxy.vercel.app/api/feed';
+
 const KNOWN_PARTIES=new Set(['M','C','L','KD','S','V','MP','SD']);
 
 function parseIndexMd5(text){
@@ -447,6 +449,12 @@ function normalizeOfficialZipFiles(jsonFiles){
 
 function buildResultFileUrl(path, base='https://resultat.val.se/resultatfiler/val2026/'){
   return new URL(String(path).replace(/^\.\//,''),base).href;
+}
+function buildProxyFeedUrl(path, base=DEFAULT_FEED_PROXY){
+  const clean=String(path).replace(/^\.\//,'').replace(/^\/+/, '');
+  const url=new URL(base);
+  url.searchParams.set('path',clean);
+  return url.href;
 }
 
 
@@ -612,7 +620,7 @@ function buildFeedDiagnostics(official){
 
 
 
-const INDEX_URL='https://resultat.val.se/resultatfiler/val2026/index.md5';
+const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
 const state={valu:{},tv4:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
@@ -737,7 +745,7 @@ async function pollFeed(force=false){
     if(!rd){setFeed('CORS OK · feed in attesa dei primi risultati','ok');return;}
     if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file','ok');return;}
     setFeed('Nuovo file Riksdag: download…','loading');
-    const zr=await fetchWithNoStore(buildResultFileUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
+    const zr=await fetchWithNoStore(buildProxyFeedUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
     const files=await extractElectionJsonFromZip(await zr.arrayBuffer());
     const result=normalizeOfficialZipFiles(files);
     state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();setFeed('Feed live Valmyndigheten','ok');
