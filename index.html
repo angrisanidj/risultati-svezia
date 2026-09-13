@@ -1190,7 +1190,7 @@ const S={
   hashShard:{},     /* chiave di shard -> path dell'oggetto shard */
   voci:{},          /* percorso API -> voce {status, chunks[]} */
   cache:new Map(),  /* path oggetto -> testo (immutabile) */
-  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0, daCache:false
+  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0, daCache:false, inCorso:false
 };
 
 /* BASE puo' essere una directory (assets.valprognos.se/.../) oppure un proxy che
@@ -1206,11 +1206,21 @@ function componi(path,antiCache){
   const u=BASE+path;
   return antiCache?u+(u.includes('?')?'&':'?')+'t='+Date.now():u;
 }
+/* Senza timeout una richiesta appesa blocca il giro per sempre, e l'intervallo
+   ne accavalla altri sopra. Con AbortController fallisce in 15 secondi e il ciclo
+   successivo riprova. */
+const TIMEOUT_MS=15000;
 async function prendi(url,cache){
   S.richieste++;
-  const r=await fetch(url,{cache:cache||'default',mode:'cors'});
-  if(!r.ok) throw new Error('HTTP '+r.status+' su '+url);
-  return r;
+  const ac=new AbortController();
+  const t=setTimeout(()=>ac.abort(),TIMEOUT_MS);
+  try{
+    const r=await fetch(url,{cache:cache||'default',mode:'cors',signal:ac.signal});
+    if(!r.ok) throw new Error('HTTP '+r.status+' su '+url);
+    return r;
+  }catch(e){
+    throw (e&&e.name==='AbortError')?new Error('nessuna risposta entro '+(TIMEOUT_MS/1000)+'s'):e;
+  }finally{ clearTimeout(t); }
 }
 async function manifesto(){
   /* il manifesto cambia di continuo: mai dalla cache */
@@ -1372,6 +1382,8 @@ async function corpo(nome){
 }
 
 async function giro(){
+  if(S.inCorso) return;            /* un giro alla volta: niente accavallamenti */
+  S.inCorso=true;
   try{
     const m=await manifesto();
     if(!S.avviato){ await bootstrap(m); S.avviato=true; }
@@ -1400,7 +1412,7 @@ async function giro(){
     S.errore=null; S.ultimoGiro=new Date();
   }catch(e){
     S.errore=String(e&&e.message||e); S.ultimoGiro=new Date();
-  }
+  }finally{ S.inCorso=false; }
   if(typeof onAggiornato==='function') onAggiornato(S);
 }
 
@@ -2228,7 +2240,14 @@ function statoFeed(){
   bt.textContent='Ferma';
   if(S.errore){ box.className='feedprog err'; et.textContent='errore: '+S.errore+' · l’inserimento a mano resta valido'; return; }
   if(S.note&&S.note.length){ box.className='feedprog err'; et.textContent='formato non riconosciuto — '+S.note.join(' · '); return; }
-  const ora=S.ultimoGiro?S.ultimoGiro.toLocaleTimeString('it-IT'):'—';
+  if(!S.ultimoGiro){
+    box.className='feedprog';
+    et.textContent=S.inCorso
+      ? `primo collegamento in corso · ${S.richieste} richieste · scoperta degli shard, può richiedere un minuto`
+      : 'primo collegamento…';
+    return;
+  }
+  const ora=S.ultimoGiro.toLocaleTimeString('it-IT');
   if(progAutoOk()){
     box.className='feedprog on';
     et.textContent=`proiezione ricevuta · ${fmt(state.progAuto.scrutinati)} di ${fmt(state.progAuto.totali)} distretti · controllo delle ${ora}`;
