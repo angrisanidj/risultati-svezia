@@ -2046,7 +2046,7 @@ function showTab(which){
    un valore corretto a mano non viene sovrascritto a ogni giro. */
 const STIME_URL='stime.json';
 const STIME_MS=30000;
-let stimeNota='in attesa del file';
+let stimeInfo={stato:'attesa',presenti:[],aggiornato:'',scartati:[],errore:null};
 
 function numeriDi(blocco){
   const out={};
@@ -2084,24 +2084,33 @@ function applicaStime(dati){
 async function leggiStime(){
   try{
     const r=await fetch(STIME_URL+'?t='+Date.now(),{cache:'no-store'});
-    if(r.status===404){ stimeNota='non ancora pubblicato'; statoStime(); return; }
+    if(r.status===404){ stimeInfo={stato:'assente',presenti:[],aggiornato:'',scartati:[],errore:null}; statoStime(); return; }
     if(!r.ok) throw new Error('HTTP '+r.status);
     const dati=await r.json();
     const esito=applicaStime(dati);
-    const presenti=['valu','tv4','proiezione'].filter(k=>Object.keys(numeriDi(dati?.[k])).length);
-    stimeNota=(presenti.length?presenti.join(', '):'nessun blocco compilato')+
-      (dati?.aggiornato?' · aggiornato '+dati.aggiornato:'')+
-      (esito.scartati.length?' · SCARTATI: '+esito.scartati.join('; '):'');
+    stimeInfo={stato:'letto',
+      presenti:['valu','tv4','proiezione'].filter(k=>Object.keys(numeriDi(dati?.[k])).length),
+      aggiornato:dati?.aggiornato||'', scartati:esito.scartati, errore:null};
     if(esito.cambiato){ saveState(); renderInputs(); render(); }
     statoStime();
-  }catch(e){ stimeNota='errore: '+String(e.message||e); statoStime(); }
+  }catch(e){ stimeInfo={stato:'errore',presenti:[],aggiornato:'',scartati:[],errore:String(e.message||e)}; statoStime(); }
 }
 function statoStime(){
   const box=$('#boxStime'), et=$('#statoStime');
   if(!box) return;
-  const problema=/errore|SCARTATI/.test(stimeNota);
-  box.className='feedprog'+(problema?' err':(/valu|tv4|proiezione/.test(stimeNota)?' on':''));
-  et.textContent=stimeNota;
+  const i=stimeInfo;
+  if(i.stato==='errore'){ box.className='feedprog err'; et.textContent='errore: '+i.errore; return; }
+  if(i.stato==='assente'){ box.className='feedprog'; et.textContent='non ancora pubblicato'; return; }
+  if(i.stato!=='letto'){ box.className='feedprog'; et.textContent='controllo in corso…'; return; }
+  const pezzi=[i.presenti.length?i.presenti.join(', '):'nessun blocco compilato'];
+  if(i.aggiornato) pezzi.push('aggiornato '+i.aggiornato);
+  /* la proiezione del file c'e', ma il feed Valprognos ha la precedenza: senza
+     dirlo sembrerebbe che il file non sia stato letto */
+  const scavalcata=i.presenti.includes('proiezione')&&progAutoOk();
+  if(scavalcata) pezzi.push('la proiezione del file è ignorata: ha la precedenza il feed Valprognos');
+  if(i.scartati.length) pezzi.push('SCARTATI: '+i.scartati.join('; '));
+  box.className='feedprog'+(i.scartati.length?' err':(scavalcata?'':(i.presenti.length?' on':'')));
+  et.textContent=pezzi.join(' · ');
 }
 
 function statoFeed(){
