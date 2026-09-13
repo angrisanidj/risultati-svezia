@@ -1164,7 +1164,7 @@ const S={
   hashShard:{},     /* chiave di shard -> path dell'oggetto shard */
   voci:{},          /* percorso API -> voce {status, chunks[]} */
   cache:new Map(),  /* path oggetto -> testo (immutabile) */
-  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0
+  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0, daCache:false
 };
 
 /* BASE puo' essere una directory (assets.valprognos.se/.../) oppure un proxy che
@@ -1209,21 +1209,45 @@ async function aLotti(elenco,fn){
   return out;
 }
 
-/* Primo giro: si leggono tutti gli shard una volta sola, per scoprire quale
-   contiene ciascun percorso che ci interessa. Circa 200 KB compressi. */
-async function bootstrap(m){
-  const chiavi=Object.keys(m.indexes);
-  const cercati=new Set(Object.values(PERCORSI));
+/* La chiave di shard deriva dal percorso, che non cambia mai: una volta scoperta
+   quale shard contiene cosa, la corrispondenza si puo' tenere in localStorage.
+   Cosi' il primo giro costa 258 richieste solo la prima volta in assoluto; ai
+   caricamenti successivi ne bastano quattro. Se la mappa salvata non regge piu'
+   (percorsi spostati, versione nuova dell'archivio) si riparte dalla scoperta. */
+const MAPPA_KEY='valprognos-shard-map-v1';
+function mappaSalvata(){
+  try{ const d=JSON.parse(localStorage.getItem(MAPPA_KEY)||'null');
+    return (d&&d.v===1&&d.shardDi&&Object.keys(d.shardDi).length)?d.shardDi:null; }catch{ return null; }
+}
+function salvaMappa(){
+  try{ localStorage.setItem(MAPPA_KEY,JSON.stringify({v:1,shardDi:S.shardDi})); }catch{}
+}
+async function leggiShard(m,chiavi,cercati){
   await aLotti(chiavi,async k=>{
-    const p=m.indexes[k].path;
-    let dati; try{ dati=JSON.parse(await oggetto(p)); }catch{ return; }
+    const voce=m.indexes[k]; if(!voce) return;
+    let dati; try{ dati=JSON.parse(await oggetto(voce.path)); }catch{ return; }
     for(const percorso of Object.keys(dati)){
       if(cercati.has(percorso)){ S.shardDi[percorso]=k; S.voci[percorso]=dati[percorso]; }
     }
-    S.hashShard[k]=p;
+    S.hashShard[k]=voce.path;
   });
+}
+async function bootstrap(m){
+  const cercati=new Set(Object.values(PERCORSI));
+  const salvata=mappaSalvata();
+  if(salvata){
+    const chiavi=[...new Set(Object.values(salvata))].filter(k=>m.indexes[k]);
+    if(chiavi.length){
+      await leggiShard(m,chiavi,cercati);
+      if(Object.keys(S.shardDi).length===cercati.size){ S.daCache=true; return cercati.size; }
+      S.shardDi={}; S.voci={}; S.hashShard={};        /* mappa non valida: si riparte */
+    }
+  }
+  S.daCache=false;
+  await leggiShard(m,Object.keys(m.indexes),cercati);
   const trovati=Object.keys(S.shardDi).length;
   if(!trovati) throw new Error('nessuno dei percorsi rd-2026 attesi compare nel manifesto');
+  if(trovati===cercati.size) salvaMappa();
   return trovati;
 }
 
@@ -1375,7 +1399,7 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 const fmt=n=>Number(n||0).toLocaleString('it-IT');
 const pct=v=>v==null||v===''?'—':`${Number(v).toFixed(1).replace('.',',')}%`;
