@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Svezia 2026 — Elezioni live</title>
+<meta name="description" content="Tracker live delle elezioni svedesi 2026: VALU, risultati ufficiali, seggi e avanzamento dello scrutinio.">
+<style>
+:root{--blue:#005293;--yellow:#fecb00;--bg:#07111b;--panel:#0d1b29;--panel2:#102234;--line:#20384e;--text:#f5f8fb;--muted:#93a8ba;--green:#4bd28b;--red:#ff6680;--shadow:0 18px 50px rgba(0,0,0,.26)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 85% 5%,rgba(0,82,147,.38),transparent 30%),radial-gradient(circle at 10% 24%,rgba(254,203,0,.08),transparent 24%),linear-gradient(180deg,#06101a,#081522 55%,#06101a);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}.flagbar{height:10px;display:grid;grid-template-columns:34% 66%;position:sticky;top:0;z-index:20}.flagbar span:first-child{background:var(--blue)}.flagbar span:last-child{background:var(--yellow)}.shell{max-width:1440px;margin:auto;padding:28px 20px 55px}.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:start;background:linear-gradient(135deg,rgba(16,34,52,.97),rgba(9,24,38,.97));border:1px solid var(--line);border-radius:26px;padding:28px 30px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"SE";position:absolute;right:22px;bottom:-52px;font-size:190px;font-weight:950;color:rgba(254,203,0,.035);letter-spacing:-.1em;pointer-events:none}.eyebrow,.kicker{color:var(--yellow);font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.flag{font-size:18px;margin-right:7px}h1{font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.055em;margin:10px 0 10px}.lead{color:#c1d0dd;max-width:820px;font-size:16px;margin:0}.statusbox{position:relative;z-index:1;min-width:300px;border:1px solid #294760;background:#0b1926;border-radius:16px;padding:15px}.statusline{display:flex;gap:9px;align-items:center;margin-bottom:5px}.dot{width:9px;height:9px;border-radius:50%;background:#8191a0;box-shadow:0 0 0 4px rgba(129,145,160,.12)}.dot.ok{background:var(--green);box-shadow:0 0 0 4px rgba(75,210,139,.12)}.dot.error{background:var(--red);box-shadow:0 0 0 4px rgba(255,102,128,.12)}.dot.loading{background:var(--yellow);box-shadow:0 0 0 4px rgba(254,203,0,.12)}.muted{color:var(--muted)}button,.uploadbtn{border:1px solid #31506a;background:#12283a;color:#eef6fb;border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer}.smallbtn{font-size:12px}.primary{background:var(--yellow);color:#102030;border-color:var(--yellow)}.statusbox button{margin-top:11px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}.kpi{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#0f1f2e,#0b1926);padding:17px 18px;box-shadow:var(--shadow)}.kpi span{display:block;color:#91a8bb;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.kpi strong{display:block;font-size:27px;line-height:1.05;margin:8px 0 6px}.kpi small{color:#8297a8}.kpi.warn{border-color:#55481e;background:linear-gradient(180deg,#211f17,#151a1f)}.alert{border:1px solid rgba(255,102,128,.45);background:rgba(255,102,128,.10);color:#ffd8df;border-radius:14px;padding:12px 14px;margin:0 0 16px}.hidden{display:none!important}.main-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(360px,.75fr);gap:16px;margin-bottom:16px}.lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.card{background:linear-gradient(180deg,rgba(13,27,41,.98),rgba(9,22,34,.98));border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);overflow:hidden}.cardhead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:19px 20px 0}.cardhead h2{margin:3px 0 0;font-size:22px;letter-spacing:-.025em}.pill{border:1px solid #5a4d19;background:#2b2715;color:#f9d94e;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:900}.pill.neutral{border-color:#2b4a63;background:#102437;color:#9fc4df}.pill.danger{border-color:#613140;background:#2c1820;color:#ff91a4}.subcopy{color:var(--muted);padding:0 20px;margin:9px 0 13px}.parliament-card{padding-bottom:15px}#hemicycle{width:100%;height:auto;display:block;padding:5px 18px 0}.seat-legend{display:flex;gap:8px;flex-wrap:wrap;padding:4px 18px 5px}.seat-chip{display:flex;align-items:center;gap:6px;border:1px solid #24425a;border-radius:999px;padding:6px 8px;background:#0a1926;font-size:11px;font-weight:800}.seat-chip i{width:9px;height:9px;border-radius:50%;display:block}.methodnote{color:#89a0b2;padding:2px 20px 0;font-size:11px}.exit-card{padding-bottom:17px}.exit-head,.exit-row{display:grid;grid-template-columns:1fr 88px 88px;gap:8px;align-items:center;padding:0 20px}.exit-head{color:#7890a3;font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:.08em;margin-bottom:5px}.exit-row{padding-top:5px;padding-bottom:5px}.partylabel{display:flex;align-items:center;gap:8px;font-weight:800}.partydot{width:9px;height:9px;border-radius:50%}.exit-row input,.manual-row input{width:100%;background:#071522;color:#fff;border:1px solid #29465e;border-radius:8px;padding:7px 8px;text-align:right}.exit-actions,.manual-actions{display:flex;gap:8px;padding:12px 20px 4px}.validation{padding:7px 20px 0;font-size:11px}.results-card{padding-bottom:12px}.actions{display:flex;gap:7px}.tablewrap{overflow:auto;padding:12px 18px 8px}table{width:100%;border-collapse:collapse;min-width:760px}th{font-size:9px;color:#7890a3;text-transform:uppercase;letter-spacing:.08em;text-align:right;padding:8px;border-bottom:1px solid #223c52}th:first-child{text-align:left}td{padding:10px 8px;border-bottom:1px solid rgba(34,60,82,.55);text-align:right;font-variant-numeric:tabular-nums}td:first-child{text-align:left}.delta.plus{color:#69dd9f}.delta.minus{color:#ff8498}.uploadbtn{display:inline-block;font-size:12px}.manual-card{margin-top:16px;padding-bottom:16px}.manual-grid{padding:12px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.manual-row{display:grid;grid-template-columns:1fr 90px 64px;gap:7px;align-items:center;border:1px solid #203b51;border-radius:11px;padding:8px;background:#0a1926}.manual-row .manual-name{font-weight:800}.manual-row label{font-size:9px;color:#71899b;text-transform:uppercase}.progress{height:12px;background:#071521;border:1px solid #203c52;border-radius:999px;overflow:hidden;margin:17px 20px 7px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .4s}.progresslabels{display:flex;justify-content:space-between;padding:0 20px;color:#90a7b9;font-size:11px}.wednesday{margin:16px 20px 20px;padding:12px;border:1px solid #554820;background:#211d12;color:#d8c98a;border-radius:12px;font-size:12px}.disabled-card{opacity:.85}.nowcast-card p{color:#91a7b8;padding:8px 20px 2px}.gate{margin:14px 20px 20px;border:1px solid #3f3040;background:#1b1720;border-radius:12px;padding:12px;display:flex;justify-content:space-between}.gate strong{color:#ff879a}footer{display:flex;justify-content:space-between;gap:14px;color:#61798c;font-size:10px;padding:25px 5px 0}
+.feedbadges{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.feedbadges .pill{display:inline-flex}.countcheck{margin:8px 20px 0;font-size:11px}.countcheck.mismatch{color:#ff9bad;font-weight:800}
+@media(max-width:980px){.hero,.main-grid,.lower-grid{grid-template-columns:1fr}.statusbox{min-width:0}.kpis{grid-template-columns:1fr 1fr}.manual-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.shell{padding:18px 10px 40px}.hero{padding:21px 18px}.kpis,.manual-grid{grid-template-columns:1fr}.main-grid{grid-template-columns:1fr}.cardhead{padding:16px 14px 0}.subcopy,.exit-head,.exit-row{padding-left:14px;padding-right:14px}.exit-head,.exit-row{grid-template-columns:1fr 76px 76px}.kpi strong{font-size:23px}.actions{flex-wrap:wrap;justify-content:flex-end}footer{flex-direction:column}}
+
+</style>
+</head>
+<body>
+<div class="flagbar"><span></span><span></span></div>
+<main class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><span class="flag">🇸🇪</span> RIKSDAGSVALET 2026 · LIVE</div>
+      <h1>Svezia 2026</h1>
+      <p class="lead">Exit poll, risultato ufficiale e distribuzione dei 349 seggi del Riksdag. I dati del voto reale restano separati da VALU e TV4.</p>
+    </div>
+    <div class="statusbox">
+      <div class="statusline"><span id="feedDot" class="dot loading"></span><strong id="feedStatus">Test collegamento Valmyndigheten…</strong></div>
+      <div id="lastUpdate" class="muted">Nessun risultato ricevuto</div>
+      <div class="feedbadges"><span id="testFileBadge" class="pill danger hidden">FILE DI PROVA</span></div>
+      <button id="refreshBtn" class="smallbtn">Aggiorna ora</button>
+    </div>
+  </header>
+
+  <section class="kpis">
+    <article class="kpi"><span>Dist. notte ricevuti</span><strong id="districtKpi">—</strong><small id="districtMeta">totale letto dal feed ufficiale</small></article>
+    <article class="kpi"><span>Voti ufficiali</span><strong id="votesKpi">—</strong><small>voti validi nel dataset corrente</small></article>
+    <article class="kpi"><span>Fonte emiciclo</span><strong id="seatSourceKpi">Riksdag 2022</strong><small id="seatSourceMeta">baseline fino ai primi dati 2026</small></article>
+    <article class="kpi warn"><span>Conta successiva</span><strong id="collectionKpi">—</strong><small id="collectionMeta">uppsamlingsdistrikt: totale letto dal feed ufficiale</small></article>
+  </section>
+
+  <div id="alert" class="alert hidden"></div>
+
+  <section class="main-grid">
+    <article class="card parliament-card">
+      <div class="cardhead">
+        <div><span class="kicker">Riksdag</span><h2>Proiezione dei seggi</h2></div>
+        <span class="pill">Maggioranza 175</span>
+      </div>
+      <svg id="hemicycle" viewBox="0 0 560 300" role="img" aria-label="Emiciclo del Riksdag"></svg>
+      <div id="seatLegend" class="seat-legend"></div>
+      <p class="methodnote" id="seatMethod">In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.</p>
+    </article>
+
+    <article class="card exit-card">
+      <div class="cardhead"><div><span class="kicker">Ore 20:00</span><h2>VALU / TV4</h2></div><span class="pill neutral">input rapido</span></div>
+      <p class="subcopy">Inserisci le percentuali appena pubblicate. Non vengono mai mescolate ai voti ufficiali.</p>
+      <div class="exit-head"><span>Partito</span><span>SVT VALU</span><span>TV4</span></div>
+      <div id="exitInputs" class="exit-inputs"></div>
+      <div class="exit-actions"><button id="saveExit" class="primary">Salva exit poll</button><button id="clearExit" class="smallbtn">Azzera</button></div>
+      <div id="exitValidation" class="validation muted">Totali: —</div>
+    </article>
+  </section>
+
+  <section class="card results-card">
+    <div class="cardhead">
+      <div><span class="kicker">Confronto</span><h2>Voto nazionale</h2></div>
+      <div class="actions"><label class="uploadbtn">Importa ZIP/JSON<input id="fileInput" type="file" accept=".zip,.json,application/zip,application/json" hidden></label><button id="manualToggle" class="smallbtn">Inserimento manuale</button></div>
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Partito</th><th>2022</th><th>VALU</th><th>TV4</th><th>Ufficiale 2026</th><th>Seggi</th><th>Δ 2022</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+  </section>
+
+  <section id="manualPanel" class="card manual-card hidden">
+    <div class="cardhead"><div><span class="kicker">Fallback</span><h2>Risultato manuale</h2></div><span class="pill neutral">sempre disponibile</span></div>
+    <p class="subcopy">Inserisci voti e, se disponibili, seggi. Se lasci vuoti i seggi, viene mostrata una distribuzione nazionale indicativa su 349 seggi: non è la procedura legale completa 310+39 per circoscrizione.</p>
+    <div id="manualInputs" class="manual-grid"></div>
+    <div class="manual-actions"><button id="applyManual" class="primary">Applica risultato</button><button id="clearManual" class="smallbtn">Rimuovi risultato manuale</button></div>
+  </section>
+
+  <section class="lower-grid">
+    <article class="card status-card">
+      <div class="cardhead"><div><span class="kicker">Scrutinio</span><h2>Stato della conta</h2></div></div>
+      <div class="progress"><span id="progressBar"></span></div>
+      <div class="progresslabels"><span id="progressText">In attesa della struttura distretti dal feed</span><span id="progressPct">—</span></div>
+      <div id="countCheck" class="countcheck muted">Intestazione feed: — · calcolato dai distretti: —</div>
+      <div class="wednesday" id="progressNote"><strong>Importante:</strong> la conta della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.</div>
+    </article>
+    <article class="card nowcast-card disabled-card">
+      <div class="cardhead"><div><span class="kicker">Modello</span><h2>Nowcast territoriale</h2></div><span class="pill danger">DISATTIVATO</span></div>
+      <p>Il nowcast non viene pubblicato finché non supera il backtest 2022 con lo scenario più severo: distretti ordinati dal più piccolo al più grande.</p>
+      <div class="gate"><span>Backtest 2022</span><strong>non validato</strong></div>
+    </article>
+  </section>
+
+  <footer><span>Fonte dati: Valmyndigheten</span><span>Tracker indipendente · aggiornamento automatico solo se CORS disponibile</span></footer>
+</main>
+<script>
+
+/* src/parties.js */
+const PARTIES = [
+  {id:'S',name:'Socialdemokraterna',color:'#e8112d',seats2022:107,share2022:30.33},
+  {id:'SD',name:'Sverigedemokraterna',color:'#dddd00',seats2022:73,share2022:20.54},
+  {id:'M',name:'Moderaterna',color:'#52bdec',seats2022:68,share2022:19.10},
+  {id:'V',name:'Vänsterpartiet',color:'#da291c',seats2022:24,share2022:6.75},
+  {id:'C',name:'Centerpartiet',color:'#009933',seats2022:24,share2022:6.71},
+  {id:'KD',name:'Kristdemokraterna',color:'#000077',seats2022:19,share2022:5.34},
+  {id:'MP',name:'Miljöpartiet',color:'#83cf39',seats2022:18,share2022:5.08},
+  {id:'L',name:'Liberalerna',color:'#006ab3',seats2022:16,share2022:4.61},
+  {id:'OVR',name:'Övriga',color:'#8b93a1',seats2022:0,share2022:1.55},
+];
+const PARTY_MAP = Object.fromEntries(PARTIES.map(p=>[p.id,p]));
+
+
+/* data/baseline-2022.js */
+const BASELINE_2022 = {
+  votes:{M:1237428,C:434945,L:298542,KD:345712,S:1964474,V:437050,MP:329242,SD:1330325,OVR:100252},
+  shares:{M:19.10,C:6.71,L:4.61,KD:5.34,S:30.33,V:6.75,MP:5.08,SD:20.54,OVR:1.55},
+  seats:{M:68,C:24,L:16,KD:19,S:107,V:24,MP:18,SD:73,OVR:0},
+  validVotes:6477970
+};
+
+
+/* src/model.js */
+function computeShares(votes){
+  const entries=Object.entries(votes).map(([p,v])=>[p,Number(v)||0]);
+  const total=entries.reduce((s,[,v])=>s+v,0);
+  if(total<=0) return Object.fromEntries(entries.map(([p])=>[p,0]));
+  return Object.fromEntries(entries.map(([p,v])=>[p, +(v*100/total).toFixed(4)]));
+}
+
+function normalizeManualResult(rows){
+  const votes={}, seats={};
+  for(const row of rows){
+    const party=String(row.party||'').trim();
+    if(!party) continue;
+    const v=Number(row.votes||0);
+    if(!Number.isFinite(v)) throw new Error(`Invalid vote count for ${party}`);
+    if(v<0) throw new Error(`Negative vote count for ${party}`);
+    votes[party]=v;
+    if(row.seats!==undefined && row.seats!==''){
+      const s=Number(row.seats);
+      if(!Number.isInteger(s)||s<0) throw new Error(`Invalid seats for ${party}`);
+      seats[party]=s;
+    }
+  }
+  return {votes,shares:computeShares(votes),seats};
+}
+
+function validateExitPoll(rows){
+  const values={};
+  let total=0;
+  for(const row of rows){
+    const party=String(row.party||'').trim();
+    if(!party) continue;
+    const p=Number(row.percent);
+    if(!Number.isFinite(p)||p<0||p>100) throw new Error(`Exit-poll percentage for ${party} must be between 0 and 100`);
+    values[party]=p;
+    total+=p;
+  }
+  if(total<95||total>105) throw new Error(`Exit-poll total ${total.toFixed(1)} is not close to 100`);
+  return {values,total:+total.toFixed(2)};
+}
+
+
+/* src/seats.js */
+function sumValues(obj) { return Object.values(obj).reduce((a,b)=>a+(Number(b)||0),0); }
+function allParties(votes) { return Object.keys(votes); }
+function firstDivisorForSeats(seats, firstDivisor=1.2) { return seats === 0 ? firstDivisor : (2 * seats + 1); }
+function plainOddDivisor(seats) { return seats === 0 ? 1 : (2 * seats + 1); }
+
+function allocateModifiedOddSeats(votes, seatCount, eligible = new Set(Object.keys(votes)), firstDivisor=1.2) {
+  const seats = Object.fromEntries(Object.keys(votes).map(p=>[p,0]));
+  const awards = [];
+  for (let i=0;i<seatCount;i++) {
+    let winner = null, best = -Infinity, divisor = null;
+    for (const [party, raw] of Object.entries(votes)) {
+      if (!eligible.has(party)) continue;
+      const d = firstDivisorForSeats(seats[party] || 0, firstDivisor);
+      const q = Number(raw || 0) / d;
+      if (q > best || (q === best && winner !== null && party < winner)) {
+        winner = party; best = q; divisor = d;
+      }
+    }
+    if (winner == null) break;
+    seats[winner] = (seats[winner] || 0) + 1;
+    awards.push({party:winner, quotient:best, divisor, seatNumber:seats[winner]});
+  }
+  return {seats, awards};
+}
+
+function allocateNationalSeats(votes, totalSeats=349, firstDivisor=1.2, threshold=0.04) {
+  const total = sumValues(votes);
+  const eligible = new Set(Object.entries(votes).filter(([,v]) => total > 0 && Number(v)/total >= threshold).map(([p])=>p));
+  const {seats} = allocateModifiedOddSeats(votes, totalSeats, eligible, firstDivisor);
+  for (const p of allParties(votes)) if (!eligible.has(p)) seats[p] = 0;
+  return seats;
+}
+
+function nextModifiedQuotient(votes, party, currentSeats, firstDivisor=1.2) {
+  return Number(votes[party] || 0) / firstDivisorForSeats(currentSeats, firstDivisor);
+}
+
+function nextPlainOddQuotient(votes, party, currentSeats) {
+  return Number(votes[party] || 0) / plainOddDivisor(currentSeats);
+}
+
+function allocateElectionSeats({nationalVotes, constituencies, totalSeats=349, fixedTotal=310, firstDivisor=1.2, nationalThreshold=0.04, localThreshold=0.12}) {
+  const nationalTotal = sumValues(nationalVotes);
+  const nationallyEligible = new Set(Object.entries(nationalVotes)
+    .filter(([,v]) => nationalTotal > 0 && Number(v)/nationalTotal >= nationalThreshold)
+    .map(([p])=>p));
+
+  const parties = new Set(Object.keys(nationalVotes));
+  for (const c of constituencies) for (const p of Object.keys(c.votes || {})) parties.add(p);
+
+  const byConstituency = {};
+  const fixedAwards = {};
+  const fixedSeatsByParty = Object.fromEntries([...parties].map(p=>[p,0]));
+
+  for (const c of constituencies) {
+    const localTotal = sumValues(c.votes || {});
+    const eligible = new Set([...parties].filter(p => nationallyEligible.has(p) || (localTotal > 0 && Number(c.votes?.[p] || 0)/localTotal >= localThreshold)));
+    const result = allocateModifiedOddSeats(c.votes || {}, c.fixedSeats || 0, eligible, firstDivisor);
+    byConstituency[c.id] = result.seats;
+    fixedAwards[c.id] = result.awards;
+    for (const [p,s] of Object.entries(result.seats)) fixedSeatsByParty[p] = (fixedSeatsByParty[p] || 0) + s;
+  }
+
+  // Parties below 4% may keep only fixed constituency seats won through the 12% exception.
+  const localOnlyFixed = [...parties].filter(p=>!nationallyEligible.has(p)).reduce((n,p)=>n+(fixedSeatsByParty[p]||0),0);
+  const proportionalPool = Math.max(0, totalSeats - localOnlyFixed);
+  const nationalAllocation = allocateModifiedOddSeats(nationalVotes, proportionalPool, nationallyEligible, firstDivisor).seats;
+  const totalDistribution = Object.fromEntries([...parties].map(p=>[p, nationallyEligible.has(p) ? (nationalAllocation[p]||0) : (fixedSeatsByParty[p]||0)]));
+
+  const returnedSeats = [];
+  // Return over-represented fixed seats, never from a constituency with fewer than 3 fixed seats.
+  while (true) {
+    const over = [...nationallyEligible].filter(p => (fixedSeatsByParty[p]||0) > (totalDistribution[p]||0));
+    if (!over.length) break;
+    let candidate = null;
+    for (const p of over) {
+      for (const c of constituencies) {
+        if ((c.fixedSeats||0) < 3 || (byConstituency[c.id]?.[p]||0) <= 0) continue;
+        const pAwards = (fixedAwards[c.id]||[]).filter(a=>a.party===p);
+        const last = pAwards[pAwards.length-1];
+        if (!last) continue;
+        if (!candidate || last.quotient < candidate.quotient) candidate = {party:p, constituency:c, quotient:last.quotient};
+      }
+    }
+    if (!candidate) break;
+    const {party:loser, constituency:c} = candidate;
+    byConstituency[c.id][loser] -= 1;
+    fixedSeatsByParty[loser] -= 1;
+    // Remove the last award for this party in this constituency.
+    const idx = fixedAwards[c.id].map(a=>a.party).lastIndexOf(loser);
+    if (idx >= 0) fixedAwards[c.id].splice(idx,1);
+
+    let winner = null, best = -Infinity;
+    for (const p of nationallyEligible) {
+      if ((fixedSeatsByParty[p]||0) >= (totalDistribution[p]||0)) continue;
+      const q = nextModifiedQuotient(c.votes || {}, p, byConstituency[c.id]?.[p] || 0, firstDivisor);
+      if (q > best || (q === best && winner !== null && p < winner)) { winner=p; best=q; }
+    }
+    if (winner == null) {
+      // Restore if no lawful recipient can be found.
+      byConstituency[c.id][loser] += 1;
+      fixedSeatsByParty[loser] += 1;
+      break;
+    }
+    byConstituency[c.id][winner] = (byConstituency[c.id][winner]||0)+1;
+    fixedSeatsByParty[winner] = (fixedSeatsByParty[winner]||0)+1;
+    fixedAwards[c.id].push({party:winner, quotient:best, divisor:firstDivisorForSeats(byConstituency[c.id][winner]-1,firstDivisor), seatNumber:byConstituency[c.id][winner]});
+    returnedSeats.push({from:loser,to:winner,constituency:c.id});
+  }
+
+  const adjustmentSeats = Object.fromEntries([...parties].map(p=>[p,0]));
+  for (const p of nationallyEligible) {
+    let need = Math.max(0, (totalDistribution[p]||0) - (fixedSeatsByParty[p]||0));
+    while (need-- > 0) {
+      let bestC = null, bestQ = -Infinity;
+      for (const c of constituencies) {
+        const current = (byConstituency[c.id]?.[p]||0);
+        const q = nextPlainOddQuotient(c.votes || {}, p, current);
+        if (q > bestQ || (q === bestQ && bestC !== null && c.id < bestC.id)) { bestC=c; bestQ=q; }
+      }
+      if (!bestC) break;
+      byConstituency[bestC.id][p] = (byConstituency[bestC.id][p]||0)+1;
+      adjustmentSeats[p] += 1;
+    }
+  }
+
+  const totalSeatResult = Object.fromEntries([...parties].map(p=>[p,(fixedSeatsByParty[p]||0)+(adjustmentSeats[p]||0)]));
+  return { nationallyEligible, byConstituency, fixedSeatsByParty, adjustmentSeats, totalDistribution, totalSeats:totalSeatResult, returnedSeats };
+}
+
+
+/* src/feed.js */
+const CANONICAL_PRELIMINARY_RD='p/rd/Val_2026_preliminar_00_RD.zip';
+const KNOWN_PARTIES=new Set(['M','C','L','KD','S','V','MP','SD']);
+
+function parseIndexMd5(text){
+  const out=[];
+  for(const raw of String(text||'').split(/\r?\n/)){
+    const line=raw.trim();
+    if(!line) continue;
+    const m=line.match(/^([a-fA-F0-9]{32})\s+\*?(.+)$/);
+    if(!m) continue;
+    const path=m[2].trim();
+    if(path==='-' || path==='') continue;
+    out.push({checksum:m[1].toLowerCase(),path});
+  }
+  return out;
+}
+
+function findPreliminaryRiksdagFile(entries){
+  return entries.find(e=>String(e.path).replace(/^\.\//,'').replace(/^\//,'')===CANONICAL_PRELIMINARY_RD) || null;
+}
+
+function text(v){return v==null?'':String(v).trim();}
+function nonNegativeInt(v,label){
+  if(v==null || v==='') return 0;
+  const n=typeof v==='number'?v:Number(String(v).trim());
+  if(!Number.isInteger(n) || n<0) throw new Error(`Valmyndigheten 2026: ${label} non è un intero non negativo`);
+  return n;
+}
+function partyCode(row){
+  const code=text(row?.partiforkortning).toUpperCase();
+  return KNOWN_PARTIES.has(code)?code:'OVR';
+}
+function emptyDistricts(){
+  return {reported:0,total:0,collectionReported:0,collectionTotal:0,allReported:0,allTotal:0};
+}
+function isCountedDistrict(d){
+  const valid=d?.rostfordelning?.rosterPaverkaMandat;
+  return Boolean(text(d?.rapporteringsTid))
+    && nonNegativeInt(d?.totaltAntalRoster,'totaltAntalRoster')>0
+    && nonNegativeInt(valid?.antalRoster,'rosterPaverkaMandat.antalRoster')>0;
+}
+function addVotes(target,source){for(const [p,n] of Object.entries(source)) target[p]=(target[p]||0)+n;}
+
+function parseDistrictVotes(d){
+  const code=text(d?.valdistriktskod)||'?';
+  const rf=d?.rostfordelning;
+  if(!rf || typeof rf!=='object' || Array.isArray(rf)) throw new Error(`Valmyndigheten 2026: ${code} saknar rostfordelning`);
+  const mandateVotes=rf.rosterPaverkaMandat;
+  if(!mandateVotes || typeof mandateVotes!=='object' || Array.isArray(mandateVotes)) throw new Error(`Valmyndigheten 2026: ${code} saknar rosterPaverkaMandat`);
+  if(!Array.isArray(mandateVotes.partiRoster)) throw new Error(`Valmyndigheten 2026: ${code} partiRoster non è una lista`);
+
+  const votes={};
+  for(const row of mandateVotes.partiRoster){
+    if(!row || typeof row!=='object' || Array.isArray(row)) throw new Error(`Valmyndigheten 2026: ${code} contiene una riga partito non valida`);
+    const n=nonNegativeInt(row.antalRoster,`${code} partiRoster.antalRoster`);
+    const p=partyCode(row);
+    votes[p]=(votes[p]||0)+n;
+  }
+  const other=mandateVotes.rosterOvrigaPartier;
+  if(other!=null && (typeof other!=='object' || Array.isArray(other))) throw new Error(`Valmyndigheten 2026: ${code} rosterOvrigaPartier ha forma errata`);
+  votes.OVR=(votes.OVR||0)+nonNegativeInt(other?.antalRoster,`${code} rosterOvrigaPartier.antalRoster`);
+  if(votes.OVR===0) delete votes.OVR;
+
+  const valid=nonNegativeInt(mandateVotes.antalRoster,`${code} rosterPaverkaMandat.antalRoster`);
+  const partySum=Object.values(votes).reduce((a,b)=>a+b,0);
+  if(partySum!==valid) throw new Error(`Valmyndigheten 2026: ${code} partiröster/party votes ${partySum} != giltiga ${valid}`);
+
+  const invalidBlock=rf.rosterEjPaverkaMandat;
+  if(invalidBlock!=null && (typeof invalidBlock!=='object' || Array.isArray(invalidBlock))) throw new Error(`Valmyndigheten 2026: ${code} rosterEjPaverkaMandat ha forma errata`);
+  const invalid=nonNegativeInt(invalidBlock?.antalRoster,`${code} rosterEjPaverkaMandat.antalRoster`);
+  const total=nonNegativeInt(d.totaltAntalRoster,`${code} totaltAntalRoster`);
+  if(valid+invalid!==total) throw new Error(`Valmyndigheten 2026: ${code} giltiga ${valid} + ogiltiga ${invalid} != totaltAntalRoster ${total}`);
+  return votes;
+}
+
+function normalizeVoteDistribution(payload){
+  if(text(payload?.valtyp).toUpperCase()!=='RD' || !Array.isArray(payload?.valdistrikt)){
+    throw new Error('Valmyndigheten 2026: atteso un file röstfördelning nazionale RD con valdistrikt[]');
+  }
+  const votes={};
+  let nightTotal=0,nightReported=0,collectionTotal=0,collectionReported=0;
+  for(const d of payload.valdistrikt){
+    if(!d || typeof d!=='object' || Array.isArray(d)) throw new Error('Valmyndigheten 2026: elemento valdistrikt non valido');
+    const isCollection=text(d.valdistriktstyp).toLowerCase()==='uppsamlingsdistrikt';
+    if(isCollection) collectionTotal++; else nightTotal++;
+    const counted=isCountedDistrict(d);
+    if(counted){
+      if(isCollection) collectionReported++; else nightReported++;
+      addVotes(votes,parseDistrictVotes(d));
+    }
+  }
+  const allReported=nightReported+collectionReported;
+  const allTotal=nightTotal+collectionTotal;
+  return {
+    votes,
+    seats:{},
+    districts:{reported:nightReported,total:nightTotal,collectionReported,collectionTotal,allReported,allTotal},
+    updatedAt:text(payload.senasteUppdateringstid)||null,
+    meta:{
+      test:payload.test===true,
+      countStage:text(payload.rakningstillfalle),
+      reportedFromHeader:nonNegativeInt(payload.antalValdistriktRaknade,'antalValdistriktRaknade'),
+      totalFromHeader:nonNegativeInt(payload.antalValdistriktSomSkaRaknas,'antalValdistriktSomSkaRaknas'),
+    },
+    raw:payload,
+  };
+}
+
+function normalizeMandateDistribution(payload){
+  if(text(payload?.valtyp).toUpperCase()!=='RD') throw new Error('Valmyndigheten 2026: atteso un file mandatfördelning RD');
+  const area=payload?.valomrade;
+  if(!area || typeof area!=='object' || Array.isArray(area)) throw new Error('Valmyndigheten 2026: valomrade manca o ha forma errata');
+  const allocation=area.mandatfordelning;
+  if(!allocation || typeof allocation!=='object' || Array.isArray(allocation)) throw new Error('Valmyndigheten 2026: mandatfordelning manca o ha forma errata');
+  const rows=allocation.partiLista;
+  if(rows==null) return {votes:{},seats:{},districts:emptyDistricts(),updatedAt:text(payload.senasteUppdateringstid)||null,raw:payload};
+  if(!Array.isArray(rows)) throw new Error('Valmyndigheten 2026: partiLista non è una lista');
+  const seats={};
+  for(const row of rows){
+    if(!row || typeof row!=='object' || Array.isArray(row)) continue;
+    const n=nonNegativeInt(row.antalMandat,'partiLista.antalMandat');
+    if(!n) continue;
+    const p=partyCode(row);
+    seats[p]=(seats[p]||0)+n;
+  }
+  return {votes:{},seats,districts:emptyDistricts(),updatedAt:text(payload.senasteUppdateringstid)||null,raw:payload};
+}
+
+function normalizeOfficialJson(payload){
+  if(!payload || typeof payload!=='object' || Array.isArray(payload)) throw new Error('Valmyndigheten 2026: il payload deve avere un oggetto JSON alla radice');
+  if(Array.isArray(payload.valdistrikt)) return normalizeVoteDistribution(payload);
+  if(payload.valomrade && Object.prototype.hasOwnProperty.call(payload.valomrade,'mandatfordelning')) return normalizeMandateDistribution(payload);
+  throw new Error('Valmyndigheten 2026: formato JSON non riconosciuto (né röstfördelning né mandatfördelning RD)');
+}
+
+function normalizeOfficialZipFiles(jsonFiles){
+  const entries=Object.entries(jsonFiles||{});
+  const voteEntry=entries.find(([name])=>/_rostfordelning_00_RD\.json$/i.test(name));
+  const mandateEntry=entries.find(([name])=>/_mandatfordelning_00_RD\.json$/i.test(name));
+  if(!voteEntry && !mandateEntry) throw new Error('ZIP Valmyndigheten 2026: mancano i file nazionali *_00_RD.json attesi');
+  const vote=voteEntry?normalizeVoteDistribution(voteEntry[1]):null;
+  const mandate=mandateEntry?normalizeMandateDistribution(mandateEntry[1]):null;
+  return {
+    votes:vote?.votes||{},
+    seats:mandate?.seats||{},
+    districts:vote?.districts||emptyDistricts(),
+    updatedAt:vote?.updatedAt||mandate?.updatedAt||null,
+    meta:vote?.meta||{},
+  };
+}
+
+function buildResultFileUrl(path, base='https://resultat.val.se/resultatfiler/val2026/'){
+  return new URL(String(path).replace(/^\.\//,''),base).href;
+}
+
+
+/* src/zip.js */
+const td = new TextDecoder('utf-8');
+
+async function inflateRaw(data){
+  if(typeof DecompressionStream === 'undefined') throw new Error('ZIP deflate decompression is not supported by this browser');
+  let stream;
+  try { stream = new DecompressionStream('deflate-raw'); }
+  catch { throw new Error('ZIP deflate-raw decompression is not supported by this browser'); }
+  const blob = new Blob([data]);
+  const out = await new Response(blob.stream().pipeThrough(stream)).arrayBuffer();
+  return new Uint8Array(out);
+}
+
+async function decodeEntry({name,method,flags,compressedSize,uncompressedSize,dataStart}, bytes){
+  if(flags & 0x01) throw new Error(`Encrypted ZIP entry is not supported: ${name}`);
+  const dataEnd=dataStart+compressedSize;
+  if(dataStart<0 || dataEnd>bytes.byteLength) throw new Error(`Truncated ZIP entry: ${name}`);
+  const compressed=bytes.slice(dataStart,dataEnd);
+  let data;
+  if(method===0) data=compressed;
+  else if(method===8) data=await inflateRaw(compressed);
+  else throw new Error(`Unsupported ZIP compression method ${method}`);
+  if(uncompressedSize!==0xffffffff && data.byteLength!==uncompressedSize) throw new Error(`ZIP size mismatch for ${name}`);
+  return {name,data};
+}
+
+function findEndOfCentralDirectory(view){
+  // EOCD is at least 22 bytes and can be followed by a comment of up to 65,535 bytes.
+  const min=Math.max(0,view.byteLength-22-0xffff);
+  for(let o=view.byteLength-22;o>=min;o--){
+    if(view.getUint32(o,true)===0x06054b50) return o;
+  }
+  return -1;
+}
+
+async function readFromCentralDirectory(view,bytes){
+  const eocd=findEndOfCentralDirectory(view);
+  if(eocd<0) return null;
+  const disk=view.getUint16(eocd+4,true);
+  const centralDisk=view.getUint16(eocd+6,true);
+  const entriesOnDisk=view.getUint16(eocd+8,true);
+  const totalEntries=view.getUint16(eocd+10,true);
+  const centralSize=view.getUint32(eocd+12,true);
+  const centralOffset=view.getUint32(eocd+16,true);
+  if(disk!==0 || centralDisk!==0 || entriesOnDisk!==totalEntries) throw new Error('Multi-disk ZIP archives are not supported');
+  if(totalEntries===0xffff || centralSize===0xffffffff || centralOffset===0xffffffff) throw new Error('ZIP64 archives are not supported');
+  if(centralOffset+centralSize>view.byteLength) throw new Error('Truncated ZIP central directory');
+
+  const entries=[];
+  let offset=centralOffset;
+  for(let i=0;i<totalEntries;i++){
+    if(offset+46>view.byteLength || view.getUint32(offset,true)!==0x02014b50) throw new Error('Invalid ZIP central directory');
+    const flags=view.getUint16(offset+8,true);
+    const method=view.getUint16(offset+10,true);
+    const compressedSize=view.getUint32(offset+20,true);
+    const uncompressedSize=view.getUint32(offset+24,true);
+    const nameLen=view.getUint16(offset+28,true);
+    const extraLen=view.getUint16(offset+30,true);
+    const commentLen=view.getUint16(offset+32,true);
+    const localOffset=view.getUint32(offset+42,true);
+    if(compressedSize===0xffffffff || uncompressedSize===0xffffffff || localOffset===0xffffffff) throw new Error('ZIP64 entries are not supported');
+    if(offset+46+nameLen+extraLen+commentLen>view.byteLength) throw new Error('Truncated ZIP central entry');
+    const name=td.decode(bytes.slice(offset+46,offset+46+nameLen));
+    if(localOffset+30>view.byteLength || view.getUint32(localOffset,true)!==0x04034b50) throw new Error(`Missing ZIP local header for ${name}`);
+    const localNameLen=view.getUint16(localOffset+26,true);
+    const localExtraLen=view.getUint16(localOffset+28,true);
+    const dataStart=localOffset+30+localNameLen+localExtraLen;
+    entries.push(await decodeEntry({name,method,flags,compressedSize,uncompressedSize,dataStart},bytes));
+    offset+=46+nameLen+extraLen+commentLen;
+  }
+  return entries;
+}
+
+async function readLocalHeaders(view,bytes){
+  const entries=[];
+  let offset=0;
+  while(offset+4<=view.byteLength){
+    const sig=view.getUint32(offset,true);
+    if(sig===0x04034b50){
+      if(offset+30>view.byteLength) throw new Error('Truncated ZIP local header');
+      const flags=view.getUint16(offset+6,true);
+      const method=view.getUint16(offset+8,true);
+      const compressedSize=view.getUint32(offset+18,true);
+      const uncompressedSize=view.getUint32(offset+22,true);
+      const nameLen=view.getUint16(offset+26,true);
+      const extraLen=view.getUint16(offset+28,true);
+      if(flags & 0x08) throw new Error('ZIP data descriptor requires a central directory');
+      const nameStart=offset+30, dataStart=nameStart+nameLen+extraLen;
+      const name=td.decode(bytes.slice(nameStart,nameStart+nameLen));
+      entries.push(await decodeEntry({name,method,flags,compressedSize,uncompressedSize,dataStart},bytes));
+      offset=dataStart+compressedSize;
+      continue;
+    }
+    if(sig===0x02014b50 || sig===0x06054b50) break;
+    if(offset===0) throw new Error('Not a ZIP file');
+    break;
+  }
+  return entries;
+}
+
+async function readZipEntries(arrayBuffer){
+  const view = new DataView(arrayBuffer);
+  const bytes = new Uint8Array(arrayBuffer);
+  if(view.byteLength<4 || view.getUint32(0,true)!==0x04034b50) throw new Error('Not a ZIP file');
+  const central=await readFromCentralDirectory(view,bytes);
+  const entries=central ?? await readLocalHeaders(view,bytes);
+  if(!entries.length) throw new Error('No files found in ZIP');
+  return entries;
+}
+
+async function extractElectionJsonFromZip(arrayBuffer){
+  const entries=await readZipEntries(arrayBuffer);
+  const out={};
+  for(const e of entries){
+    if(!/\.json$/i.test(e.name)) continue;
+    try { out[e.name]=JSON.parse(td.decode(e.data)); }
+    catch(err){ throw new Error(`Invalid JSON in ${e.name}: ${err.message}`); }
+  }
+  if(!Object.keys(out).length) throw new Error('No JSON result files found in ZIP');
+  return out;
+}
+
+
+/* src/status.js */
+function finiteNumber(value){
+  const n=Number(value);
+  return Number.isFinite(n)?n:null;
+}
+
+function buildFeedDiagnostics(official){
+  const meta=official?.meta||{};
+  const d=official?.districts||{};
+  const hasHeaderCounts=Object.prototype.hasOwnProperty.call(meta,'reportedFromHeader')
+    && Object.prototype.hasOwnProperty.call(meta,'totalFromHeader');
+  const header={
+    reported:hasHeaderCounts?finiteNumber(meta.reportedFromHeader):null,
+    total:hasHeaderCounts?finiteNumber(meta.totalFromHeader):null,
+  };
+  const calculated={
+    reported:finiteNumber(d.allReported) ?? ((finiteNumber(d.reported)||0)+(finiteNumber(d.collectionReported)||0)),
+    total:finiteNumber(d.allTotal) ?? ((finiteNumber(d.total)||0)+(finiteNumber(d.collectionTotal)||0)),
+  };
+  const comparable=hasHeaderCounts && header.reported!==null && header.total!==null;
+  return {
+    isTest:meta.test===true,
+    countStage:String(meta.countStage||'').trim(),
+    hasHeaderCounts:comparable,
+    header,
+    calculated,
+    countMismatch:comparable && (header.reported!==calculated.reported || header.total!==calculated.total),
+  };
+}
+
+
+/* src/app.js */
+
+
+
+
+
+
+
+const INDEX_URL='https://resultat.val.se/resultatfiler/val2026/index.md5';
+const POLL_MS=60000;
+const STORAGE='sweden-election-live-2026-v2';
+const state={valu:{},tv4:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const $=s=>document.querySelector(s);
+const fmt=n=>Number(n||0).toLocaleString('it-IT');
+const pct=v=>v==null||v===''?'—':`${Number(v).toFixed(1).replace('.',',')}%`;
+
+function loadState(){try{Object.assign(state,JSON.parse(localStorage.getItem(STORAGE)||'{}'));}catch{}}
+function saveState(){localStorage.setItem(STORAGE,JSON.stringify(state));}
+function partyOrder(){return ['V','S','MP','C','L','KD','M','SD','OVR'];}
+function resultShares(){return state.official?.votes?computeShares(state.official.votes):{};}
+function exitHas(obj){return Object.values(obj||{}).some(v=>Number(v)>0);}
+function syntheticVotes(shares){return Object.fromEntries(Object.entries(shares).map(([p,v])=>[p,Math.round(Number(v)*10000)]));}
+function sum(obj){return Object.values(obj||{}).reduce((a,b)=>a+(Number(b)||0),0);}
+
+function currentSeats(){
+  if(state.official){
+    if(sum(state.official.seats)===349){
+      const manual=state.officialSource==='manual';
+      return {seats:state.official.seats,label:manual?'Seggi manuali':'Ufficiale 2026',method:manual?'Seggi inseriti manualmente.':'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
+    }
+    if(sum(state.official.votes)>0) return {seats:allocateNationalSeats(state.official.votes),label:'Voto ufficiale',method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4%. Non applica la procedura legale completa 310+39 per circoscrizione; sarà sostituita dai mandati ufficiali appena disponibili.'};
+  }
+  if(exitHas(state.valu)) return {seats:allocateNationalSeats(syntheticVotes(state.valu)),label:'SVT VALU',method:'Traduzione nazionale indicativa di VALU su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
+  if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:'TV4',method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
+  return {seats:BASELINE_2022.seats,label:'Riksdag 2022',method:'In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.'};
+}
+
+function seatPoints(){
+  const counts=[20,23,26,29,32,35,38,41,48,57], pts=[];
+  counts.forEach((n,ri)=>{const r=78+ri*17;for(let i=0;i<n;i++){const th=Math.PI-(i/(n-1))*Math.PI;pts.push({x:280+r*Math.cos(th),y:270-r*Math.sin(th),th,r});}});
+  return pts.sort((a,b)=>b.th-a.th||a.r-b.r);
+}
+function renderHemicycle(seatInfo){
+  const svg=$('#hemicycle'); svg.innerHTML='';
+  const points=seatPoints(), colors=[];
+  for(const id of partyOrder()) for(let i=0;i<(seatInfo.seats[id]||0);i++) colors.push(PARTY_MAP[id]?.color||'#76889a');
+  while(colors.length<349) colors.push('#344b5d');
+  points.forEach((p,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5.2');c.setAttribute('fill',colors[i]||'#344b5d');c.setAttribute('stroke','#07111b');c.setAttribute('stroke-width','1');svg.appendChild(c);});
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1','280');line.setAttribute('y1','268');line.setAttribute('x2','280');line.setAttribute('y2','50');line.setAttribute('stroke','#fecb00');line.setAttribute('stroke-dasharray','4 5');line.setAttribute('opacity','.5');svg.appendChild(line);
+  $('#seatLegend').innerHTML=PARTIES.filter(p=>(seatInfo.seats[p.id]||0)>0).map(p=>`<span class="seat-chip"><i style="background:${p.color}"></i>${p.id} <strong>${seatInfo.seats[p.id]||0}</strong></span>`).join('');
+  $('#seatMethod').textContent=seatInfo.method;
+}
+
+function renderInputs(){
+  $('#exitInputs').innerHTML=PARTIES.filter(p=>p.id!=='OVR').map(p=>`<div class="exit-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><input data-exit="valu" data-party="${p.id}" inputmode="decimal" value="${state.valu[p.id]??''}" placeholder="—"><input data-exit="tv4" data-party="${p.id}" inputmode="decimal" value="${state.tv4[p.id]??''}" placeholder="—"></div>`).join('');
+  $('#manualInputs').innerHTML=PARTIES.map(p=>`<div class="manual-row"><span class="manual-name"><i class="partydot" style="display:inline-block;background:${p.color};margin-right:6px"></i>${p.id}</span><div><label>Voti</label><input data-manual-votes="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.votes?.[p.id]??''):''}"></div><div><label>Seggi</label><input data-manual-seats="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.seats?.[p.id]??''):''}"></div></div>`).join('');
+}
+function renderTable(){
+  const shares=resultShares(); const seats=currentSeats().seats;
+  $('#resultsBody').innerHTML=PARTIES.map(p=>{const d=(seats[p.id]??0)-p.seats2022;return `<tr><td><span class="partylabel"><i class="partydot" style="background:${p.color}"></i><strong>${p.id}</strong>&nbsp; ${p.name}</span></td><td>${pct(p.share2022)}</td><td>${pct(state.valu[p.id])}</td><td>${pct(state.tv4[p.id])}</td><td>${pct(shares[p.id])}</td><td><strong>${seats[p.id]??'—'}</strong></td><td class="delta ${d>0?'plus':d<0?'minus':''}">${d>0?'+':''}${d||'0'}</td></tr>`}).join('');
+}
+function renderStatus(){
+  const d=state.official?.districts||{};
+  const reported=Number.isFinite(Number(d.reported))?Number(d.reported):0;
+  const total=Number.isFinite(Number(d.total))&&Number(d.total)>0?Number(d.total):null;
+  const collectionReported=Number.isFinite(Number(d.collectionReported))?Number(d.collectionReported):0;
+  const collectionTotal=Number.isFinite(Number(d.collectionTotal))&&Number(d.collectionTotal)>0?Number(d.collectionTotal):null;
+  $('#districtKpi').textContent=total?`${fmt(reported)} / ${fmt(total)}`:'—';
+  $('#collectionKpi').textContent=collectionTotal?`${fmt(collectionReported)} / ${fmt(collectionTotal)}`:'—';
+  $('#collectionMeta').textContent=collectionTotal?'uppsamlingsdistrikt: conta successiva alla notte':'totale letto dal feed ufficiale quando disponibile';
+  $('#votesKpi').textContent=sum(state.official?.votes)>0?fmt(sum(state.official.votes)):'—';
+  const fraction=total?Math.max(0,Math.min(1,reported/total)):0;
+  $('#progressBar').style.width=`${fraction*100}%`;
+  $('#progressText').textContent=total?`${fmt(reported)} dei ${fmt(total)} distretti ordinari`:'In attesa della struttura distretti dal feed';
+  $('#progressPct').textContent=total?`${(fraction*100).toFixed(1).replace('.',',')}%`:'—';
+  $('#progressNote').innerHTML=collectionTotal
+    ? `<strong>Importante:</strong> il completamento dei ${fmt(total)} distretti ordinari non equivale al risultato definitivo. Il feed elenca separatamente ${fmt(collectionTotal)} <em>uppsamlingsdistrikt</em>; ricevuti finora: ${fmt(collectionReported)}.`
+    : '<strong>Importante:</strong> la conta della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.';
+  const si=currentSeats(); $('#seatSourceKpi').textContent=si.label; $('#seatSourceMeta').textContent=si.method; renderHemicycle(si);
+  const diag=buildFeedDiagnostics(state.official);
+  $('#testFileBadge').classList.toggle('hidden',!diag.isTest);
+  const stage=diag.countStage?` · Fase: ${diag.countStage}`:'';
+  $('#lastUpdate').textContent=state.official?.updatedAt?`Dati: ${new Date(state.official.updatedAt).toLocaleString('it-IT')}${stage}`:(state.officialSource?`Fonte: ${state.officialSource}${stage}`:'Nessun risultato ricevuto');
+  const check=$('#countCheck');
+  if(diag.hasHeaderCounts){
+    check.textContent=`Intestazione feed: ${fmt(diag.header.reported)} / ${fmt(diag.header.total)} · calcolato dai distretti: ${fmt(diag.calculated.reported)} / ${fmt(diag.calculated.total)}${diag.countMismatch?' · ATTENZIONE: valori divergenti':''}`;
+    check.classList.toggle('mismatch',diag.countMismatch);
+  }else{
+    check.textContent='Intestazione feed: — · calcolato dai distretti: —';
+    check.classList.remove('mismatch');
+  }
+}
+function renderValidation(){
+  const valu=sum(state.valu),tv4=sum(state.tv4); $('#exitValidation').textContent=`Totali — VALU: ${valu?valu.toFixed(1).replace('.',',')+'%':'—'} · TV4: ${tv4?tv4.toFixed(1).replace('.',',')+'%':'—'}`;
+}
+function render(){renderTable();renderStatus();renderValidation();}
+function alertMsg(msg){const a=$('#alert');a.textContent=msg;a.classList.remove('hidden');setTimeout(()=>a.classList.add('hidden'),8000);}
+function setFeed(status,kind='loading'){ $('#feedStatus').textContent=status; $('#feedDot').className=`dot ${kind}`; }
+
+function collectExit(kind){return PARTIES.filter(p=>p.id!=='OVR').map(p=>{const el=document.querySelector(`input[data-exit="${kind}"][data-party="${p.id}"]`);return {party:p.id,percent:el.value===''?0:Number(String(el.value).replace(',','.'))};});}
+function saveExit(){
+  try{const v=collectExit('valu'),t=collectExit('tv4');if(v.some(x=>x.percent>0)) validateExitPoll(v);if(t.some(x=>x.percent>0)) validateExitPoll(t);state.valu=Object.fromEntries(v.filter(x=>x.percent>0).map(x=>[x.party,x.percent]));state.tv4=Object.fromEntries(t.filter(x=>x.percent>0).map(x=>[x.party,x.percent]));saveState();render();}
+  catch(e){alertMsg(e.message);}
+}
+
+async function processFile(file){
+  try{
+    let result;
+    if(file.name.toLowerCase().endsWith('.zip')){
+      const files=await extractElectionJsonFromZip(await file.arrayBuffer());
+      result=normalizeOfficialZipFiles(files);
+    }else{
+      result=normalizeOfficialJson(JSON.parse(await file.text()));
+    }
+    state.official=result;state.officialSource=`file: ${file.name}`;saveState();render();setFeed('File ufficiale importato','ok');
+  }catch(e){alertMsg(`Import fallito: ${e.message}`);}
+}
+
+function manualApply(){
+  try{const rows=PARTIES.map(p=>({party:p.id,votes:document.querySelector(`[data-manual-votes="${p.id}"]`).value,seats:document.querySelector(`[data-manual-seats="${p.id}"]`).value}));const m=normalizeManualResult(rows);if(sum(m.votes)<=0) throw new Error('Inserisci almeno un voto');state.official={votes:m.votes,seats:m.seats,districts:{reported:0,total:0,collectionReported:0,collectionTotal:0,allReported:0,allTotal:0},updatedAt:new Date().toISOString()};state.officialSource='manual';saveState();render();setFeed('Risultato manuale attivo','ok');}
+  catch(e){alertMsg(e.message);}
+}
+
+async function fetchWithNoStore(url){const join=url.includes('?')?'&':'?';return fetch(`${url}${join}t=${Date.now()}`,{cache:'no-store',mode:'cors'});}
+async function pollFeed(force=false){
+  try{
+    if(force) setFeed('Test CORS Valmyndigheten…','loading');
+    const r=await fetchWithNoStore(INDEX_URL); if(r.status===429){setFeed('Valmyndigheten limita le richieste (429)','error');return;} if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const entries=parseIndexMd5(await r.text()); state.feedCors=true;
+    const rd=findPreliminaryRiksdagFile(entries);
+    if(!rd){setFeed('CORS OK · feed in attesa dei primi risultati','ok');return;}
+    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file','ok');return;}
+    setFeed('Nuovo file Riksdag: download…','loading');
+    const zr=await fetchWithNoStore(buildResultFileUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
+    const files=await extractElectionJsonFromZip(await zr.arrayBuffer());
+    const result=normalizeOfficialZipFiles(files);
+    state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();setFeed('Feed live Valmyndigheten','ok');
+  }catch(e){
+    state.feedCors=false;
+    const message=String(e?.message||e);
+    const network=e instanceof TypeError || /fetch|network|cors/i.test(message);
+    setFeed(network?'Errore rete/CORS · usa ZIP/JSON':'Feed ricevuto ma non interpretabile · usa ZIP/JSON','error');
+    if(force) alertMsg(`${network?'Collegamento automatico non disponibile':'Errore nel feed ufficiale'}: ${message}. Il fallback manuale resta operativo.`);
+  }
+}
+
+function bind(){
+  $('#saveExit').addEventListener('click',saveExit); $('#clearExit').addEventListener('click',()=>{state.valu={};state.tv4={};saveState();renderInputs();render();});
+  $('#manualToggle').addEventListener('click',()=>$('#manualPanel').classList.toggle('hidden')); $('#applyManual').addEventListener('click',manualApply);
+  $('#clearManual').addEventListener('click',()=>{if(state.officialSource==='manual'){state.official=null;state.officialSource=null;saveState();render();}renderInputs();});
+  $('#fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f) processFile(f);e.target.value='';}); $('#refreshBtn').addEventListener('click',()=>pollFeed(true));
+}
+
+loadState(); renderInputs(); bind(); render(); pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
+
+</script>
+</body>
+</html>
