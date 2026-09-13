@@ -25,7 +25,14 @@
   --r:16px;--shadow:0 20px 46px rgba(0,0,0,.34);
   --pad:clamp(14px,3.2vw,22px);
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+  scrollbar-width:thin;scrollbar-color:var(--yellow) rgba(255,255,255,.05)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,.05)}
+::-webkit-scrollbar-thumb{background:var(--yellow);border-radius:999px;
+  border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:#ffd83a;background-clip:padding-box;border:2px solid transparent}
+::-webkit-scrollbar-corner{background:transparent}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100vh;color:var(--t1);font:15px/1.5 var(--sans);
   background:
@@ -109,7 +116,6 @@ button.sm{padding:6px 10px;font-size:12px}
 .subcopy{color:var(--t2);padding:0 18px;margin:9px 0 14px;font-size:13.5px}
 .methodnote{color:var(--t3);padding:4px 18px 16px;font-size:11.5px;line-height:1.5;margin:0}
 .main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,.8fr);gap:14px;margin-bottom:14px}
-.lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .stack{display:grid;gap:14px}
 
 .alert{border:1px solid rgba(255,102,128,.42);background:rgba(255,102,128,.10);color:#ffd6de;
@@ -122,6 +128,33 @@ button.sm{padding:6px 10px;font-size:12px}
   padding:5px 9px;background:rgba(255,255,255,.04);font-size:11.5px;font-weight:700}
 .seat-chip i{width:8px;height:8px;border-radius:50%;display:block;flex:0 0 8px}
 .seat-chip strong{font-variant-numeric:tabular-nums}
+
+/* ---------- verdetto ---------- */
+.verdetto{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border-left:5px solid var(--t3)}
+.verdetto.win{border-left-color:var(--yellow);background:linear-gradient(180deg,rgba(254,203,0,.09),rgba(255,255,255,.02))}
+.verdetto.hung{border-left-color:var(--red);background:linear-gradient(180deg,rgba(255,102,128,.08),rgba(255,255,255,.02))}
+.verdetto .vw{color:var(--t3);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.verdetto h2{font-size:clamp(20px,3vw,27px);margin:8px 0 7px;line-height:1.15}
+.verdetto .vd{color:var(--t2);font-size:13.5px;line-height:1.55}
+.verdetto .vd b{color:var(--t1);font-variant-numeric:tabular-nums}
+.verdetto .vcav{display:inline-block;margin-top:9px;border:1px solid rgba(254,203,0,.32);
+  background:rgba(254,203,0,.09);color:#f2cf72;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:700}
+
+/* ---------- seggi per fonte ---------- */
+.scenari-testa{padding:14px 18px 0;color:var(--t3);font-size:10px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase}
+.scenari{padding:8px 18px 4px;display:grid;gap:5px}
+.scen{display:grid;grid-template-columns:minmax(0,1fr) 58px 58px minmax(0,124px);gap:9px;align-items:center;
+  padding:8px 10px;border-radius:10px;border:1px solid transparent;font-size:12.5px}
+.scen.att{background:rgba(255,255,255,.055);border-color:var(--line)}
+.scen .sf{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scen .sf i{color:var(--t3);font-style:normal;font-size:11px}
+.scen .sn{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.scen .se{text-align:right;font-size:11px;font-weight:700;white-space:nowrap}
+.scen .se.o{color:#ff9bad}.scen .se.t{color:#9cc9ec}.scen .se.n{color:var(--t3)}
+.scen-head{color:var(--t3);font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 
 /* ---------- blocchi ---------- */
 .blocchi{display:grid;gap:9px;padding:12px 18px 4px}
@@ -239,12 +272,7 @@ td .partylabel{gap:9px}
 .landetail .dr .nm{display:flex;align-items:center;gap:6px;font-weight:700}
 .landetail .dr .nm i{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
 .landetail .dr .vv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-.maplist{display:grid;gap:2px;max-height:clamp(460px,94vh,1250px);overflow:auto;padding-right:6px;
-  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
-.maplist::-webkit-scrollbar{width:7px}
-.maplist::-webkit-scrollbar-track{background:transparent}
-.maplist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:999px}
-.maplist::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.28)}
+.maplist{display:grid;gap:2px;max-height:clamp(460px,94vh,1250px);overflow:auto;padding-right:6px}
 .lanrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;align-items:center;
   padding:6px 9px;border-radius:9px;font-size:12.5px;cursor:pointer;border:1px solid transparent}
 .lanrow:hover,.lanrow.sel{background:rgba(255,255,255,.055);border-color:var(--line)}
@@ -265,9 +293,6 @@ td .partylabel{gap:9px}
 .countcheck.mismatch{color:#ff9bad;font-weight:700}
 .wednesday{margin:14px 18px 18px;padding:12px 13px;border:1px solid rgba(254,203,0,.22);
   background:rgba(254,203,0,.055);color:#e2cd93;border-radius:12px;font-size:12.5px;line-height:1.55}
-.gate{margin:14px 18px 18px;border:1px solid rgba(255,102,128,.26);background:rgba(255,102,128,.06);
-  border-radius:12px;padding:12px 13px;display:flex;justify-content:space-between;gap:10px;font-size:13px}
-.gate strong{color:#ff879a}
 .manual-grid{padding:12px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .manual-row{display:grid;grid-template-columns:1fr 92px 62px;gap:7px;align-items:center;
   border:1px solid var(--line);border-radius:11px;padding:9px;background:rgba(255,255,255,.028)}
@@ -304,7 +329,7 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
 
 /* ---------- responsive ---------- */
 @media(max-width:1080px){
-  .main-grid,.lower-grid,.card-grid{grid-template-columns:1fr}
+  .main-grid,.card-grid{grid-template-columns:1fr}
   .side{position:static}
   .maparea{grid-template-columns:minmax(0,1fr);gap:16px}
   .mapside{max-width:none;justify-self:stretch}
@@ -322,6 +347,8 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
   th:first-child,td:first-child{padding-left:14px}
   td .pname{display:none}
   .bar-row{grid-template-columns:58px minmax(0,1fr) 54px 48px;gap:8px}
+  .scen{grid-template-columns:minmax(0,1fr) 46px 46px;gap:7px}
+  .scen .se{grid-column:1/-1;text-align:left;margin-top:2px}
   .maplist{grid-template-columns:1fr}
   .maparea{padding-left:14px;padding-right:14px}
   #lanMap{height:min(66vh,580px)}
@@ -370,6 +397,8 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
     <article class="kpi warn"><span>Conteggio successivo</span><strong id="collectionKpi">—</strong><small id="collectionMeta">uppsamlingsdistrikt: totale letto dal feed</small></article>
   </section>
 
+  <section id="verdetto" class="verdetto"></section>
+
   <div id="alert" class="alert hidden"></div>
 
   <section class="card" style="margin-bottom:14px">
@@ -400,6 +429,8 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
       <svg id="hemicycle" viewBox="0 0 560 300" role="img" aria-label="Emiciclo del Riksdag"></svg>
       <div id="seatLegend" class="seat-legend"></div>
       <div id="blocchi" class="blocchi"></div>
+      <div class="scenari-testa">Gli stessi seggi secondo ogni fonte disponibile</div>
+      <div id="scenari" class="scenari"></div>
       <p class="methodnote" id="seatMethod">In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.</p>
     </article>
 
@@ -458,7 +489,7 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
     <p class="methodnote" id="mapNote">Intensità del colore proporzionale alla quota del partito in testa.</p>
   </section>
 
-  <section class="lower-grid">
+  <section>
     <article class="card">
       <div class="cardhead"><div><span class="kicker">Scrutinio</span><h2>Stato del conteggio</h2></div></div>
       <div class="progress"><span id="progressBar"></span></div>
@@ -466,11 +497,6 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
       <div id="countCheck" class="countcheck">Intestazione feed: — · calcolato dai distretti: —</div>
       <div class="countcheck" style="line-height:1.7">Orari della serata: <b>20:00</b> chiusura seggi, VALU e sondaggio TV4 · <b>21:10 circa</b> proiezione SVT, con oltre 300 distretti conteggiati · <b>22:30–23:00</b> primo conteggio preliminare presentato dalla Valmyndigheten · <b>mercoledì 16</b> uppsamlingsräkning.</div>
       <div class="wednesday" id="progressNote"><strong>Importante:</strong> il conteggio della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.</div>
-    </article>
-    <article class="card">
-      <div class="cardhead"><div><span class="kicker">Modello</span><h2>Nowcast territoriale</h2></div><span class="pill danger">DISATTIVATO</span></div>
-      <p class="subcopy">Il nowcast non viene pubblicato finché non supera il backtest 2022 con lo scenario più severo: distretti ordinati dal più piccolo al più grande.</p>
-      <div class="gate"><span>Backtest 2022</span><strong>non validato</strong></div>
     </article>
   </section>
 
@@ -1356,30 +1382,85 @@ function prognosLabel(){
    che chiudono sono i piu' piccoli e rurali, e danno un quadro distorto. Superata la
    soglia del 95 per cento dei distretti ordinari, il voto reale torna a prevalere. */
 const SCRUT_SORPASSO=0.95;
+/* Un'unica funzione decide la fonte per barre, tabella, verdetto ed emiciclo:
+   currentSeats() segue lo stesso ordine, altrimenti la pagina dichiara una fonte
+   e ne mostra un'altra. Le etichette sono le stesse nei due posti. */
+function etichettaUfficiale(){
+  if(state.officialSource==='manual') return 'Risultato manuale';
+  return scrutFrac()>=SCRUT_SORPASSO?'Risultato ufficiale':'Voto ufficiale parziale';
+}
+/* Il nome di ogni fonte si scrive qui e solo qui: bestSource, currentSeats,
+   verdetto, KPI e tabella per fonte pescano tutti da questa. */
+function etichettaDi(kind){
+  if(kind==='official') return etichettaUfficiale();
+  if(kind==='prognos') return prognosLabel();
+  if(kind==='valu') return 'Exit poll SVT VALU';
+  if(kind==='tv4') return 'Exit poll TV4';
+  return 'Riksdagsvalet 2022';
+}
 function bestSource(){
-  const off=hasOfficial(), ufficiale={shares:resultShares(),label:'Risultato ufficiale',short:'ufficiale',kind:'official'};
+  const off=hasOfficial(), manuale=state.officialSource==='manual';
+  const ufficiale={shares:resultShares(),label:etichettaUfficiale(),
+    short:manuale?'manuale':'ufficiale',kind:'official'};
+  /* il risultato inserito a mano e' una scelta esplicita: batte tutto */
+  if(off && manuale) return ufficiale;
   if(off && scrutFrac()>=SCRUT_SORPASSO) return ufficiale;
   if(progHas()) return {shares:{...progQuote()},label:prognosLabel(),short:'proiezione',kind:'prognos'};
   if(off) return ufficiale;
-  if(exitHas(state.valu)) return {shares:{...state.valu},label:'Exit poll SVT VALU',short:'VALU',kind:'valu'};
-  if(exitHas(state.tv4)) return {shares:{...state.tv4},label:'Exit poll TV4',short:'TV4',kind:'tv4'};
-  return {shares:{...BASELINE_2022.shares},label:'Riksdagsvalet 2022',short:'2022',kind:'none'};
+  if(exitHas(state.valu)) return {shares:{...state.valu},label:etichettaDi('valu'),short:'VALU',kind:'valu'};
+  if(exitHas(state.tv4)) return {shares:{...state.tv4},label:etichettaDi('tv4'),short:'TV4',kind:'tv4'};
+  return {shares:{...BASELINE_2022.shares},label:etichettaDi('none'),short:'2022',kind:'none'};
 }
 
 function currentSeats(){
-  if(state.official){
-    if(sum(state.official.seats)===349){
-      const manual=state.officialSource==='manual';
-      return {seats:state.official.seats,label:manual?'Seggi manuali':'Ufficiale 2026',short:manual?'inseriti a mano':'mandati dal dataset ufficiale',method:manual?'Seggi inseriti manualmente.':'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
-    }
-    if(sum(state.official.votes)>0 && scrutFrac()>=SCRUT_SORPASSO) return {seats:allocateNationalSeats(state.official.votes),label:'Voto ufficiale',short:'ripartizione indicativa sui voti reali',method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4%. Non applica la procedura legale completa 310+39 per circoscrizione; sarà sostituita dai mandati ufficiali appena disponibili.'};
+  const off=sum(state.official?.votes)>0;
+  const offSeats=!!(state.official&&sum(state.official.seats)===349);
+  const manuale=state.officialSource==='manual';
+
+  /* Il risultato inserito a mano e' una scelta esplicita: batte tutto il resto,
+     ed e' la rete di sicurezza se i feed cadono. */
+  if(manuale&&offSeats) return {seats:state.official.seats,label:etichettaDi('official'),
+    short:'inseriti a mano',method:'Seggi inseriti manualmente.'};
+  if(manuale&&off) return {seats:allocateNationalSeats(state.official.votes),label:etichettaDi('official'),
+    short:'ripartizione indicativa sui voti inseriti',
+    method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4% sui voti inseriti a mano. Non applica la procedura legale completa 310+39 per circoscrizione.'};
+
+  /* Stesso ordine di bestSource(): sotto il 95 per cento dei distretti ordinari
+     la proiezione batte lo spoglio, altrimenti l'emiciclo mostrerebbe una fonte
+     diversa da quella dichiarata da barre, tabella e verdetto. */
+  if(off&&scrutFrac()>=SCRUT_SORPASSO){
+    if(offSeats) return {seats:state.official.seats,label:etichettaDi('official'),
+      short:'mandati dal dataset ufficiale',
+      method:'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
+    return {seats:allocateNationalSeats(state.official.votes),label:etichettaDi('official'),
+      short:'ripartizione indicativa sui voti reali',
+      method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4%. Non applica la procedura legale completa 310+39 per circoscrizione; sara\u0300 sostituita dai mandati ufficiali appena disponibili.'};
   }
-  if(progAutoOk()&&sum(state.progAuto.seggi)===349) return {seats:state.progAuto.seggi,label:prognosLabel(),short:'seggi dalla proiezione SVT',method:'Seggi della proiezione elaborata da Vera Policy e presentata da SVT, presi dal loro feed pubblico. Stimano il risultato finale sui distretti già conteggiati: non sono un risultato ufficiale.'};
-  if(progHas()) return {seats:allocateNationalSeats(syntheticVotes(progQuote())),label:prognosLabel(),short:'traduzione indicativa della proiezione',method:'Traduzione su 349 seggi della proiezione di Vera Policy per SVT, che stima il risultato finale sui distretti già conteggiati. Non è un risultato ufficiale e non applica la procedura legale 310+39.'};
-  if(sum(state.official?.votes)>0) return {seats:allocateNationalSeats(state.official.votes),label:'Voto ufficiale parziale',short:'ripartizione indicativa sui voti reali',method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4% sui voti finora conteggiati. Con lo spoglio parziale il quadro è distorto: i distretti piccoli chiudono per primi.'};
-  if(exitHas(state.valu)) return {seats:allocateNationalSeats(syntheticVotes(state.valu)),label:'SVT VALU',short:'traduzione indicativa dell\u2019exit poll',method:'Traduzione nazionale indicativa di VALU su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
-  if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:'TV4',short:'traduzione indicativa dell\u2019exit poll',method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
-  return {seats:BASELINE_2022.seats,label:'Riksdag 2022',short:'baseline fino ai primi dati 2026',method:'In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.'};
+
+  if(progAutoOk()&&sum(state.progAuto.seggi)===349) return {seats:state.progAuto.seggi,
+    label:prognosLabel(),short:'seggi dalla proiezione SVT',
+    method:'Seggi della proiezione elaborata da Vera Policy e presentata da SVT, presi dal loro feed pubblico. Stimano il risultato finale sui distretti gia\u0300 conteggiati: non sono un risultato ufficiale.'};
+  if(progHas()) return {seats:allocateNationalSeats(syntheticVotes(progQuote())),
+    label:prognosLabel(),short:'traduzione indicativa della proiezione',
+    method:'Traduzione su 349 seggi della proiezione di Vera Policy per SVT, che stima il risultato finale sui distretti gia\u0300 conteggiati. Non e\u0300 un risultato ufficiale e non applica la procedura legale 310+39.'};
+
+  if(off){
+    if(offSeats) return {seats:state.official.seats,label:etichettaDi('official'),
+      short:'mandati sullo spoglio parziale',
+      method:'Mandati presenti nel dataset ufficiale, calcolati su uno scrutinio ancora parziale: con i distretti piccoli che chiudono per primi il quadro e\u0300 distorto.'};
+    return {seats:allocateNationalSeats(state.official.votes),label:etichettaDi('official'),
+      short:'ripartizione indicativa sui voti reali',
+      method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4% sui voti finora conteggiati. Con lo spoglio parziale il quadro e\u0300 distorto: i distretti piccoli chiudono per primi.'};
+  }
+
+  if(exitHas(state.valu)) return {seats:allocateNationalSeats(syntheticVotes(state.valu)),label:etichettaDi('valu'),
+    short:'traduzione indicativa dell\u2019exit poll',
+    method:'Traduzione nazionale indicativa di VALU su 349 seggi. Non e\u0300 la distribuzione legale completa 310+39 e non e\u0300 un risultato ufficiale.'};
+  if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:etichettaDi('tv4'),
+    short:'traduzione indicativa dell\u2019exit poll',
+    method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non e\u0300 la distribuzione legale completa 310+39 e non e\u0300 un risultato ufficiale.'};
+  return {seats:BASELINE_2022.seats,label:etichettaDi('none'),short:'baseline fino ai primi dati 2026',
+    method:'In attesa dei dati 2026. L\u2019emiciclo mostra la composizione del 2022.'};
 }
 
 function seatPoints(){
@@ -1415,6 +1496,101 @@ function renderHemicycle(seatInfo){
   $('#seatLegend').innerHTML=PARTIES.filter(p=>(seatInfo.seats[p.id]||0)>0).map(p=>`<span class="seat-chip"><i style="background:${p.color}"></i>${p.id} <strong>${seatInfo.seats[p.id]||0}</strong></span>`).join('');
   $('#seatMethod').textContent=seatInfo.method;
   renderBlocchi(seatInfo.seats);
+}
+
+/* Seggi calcolati da ogni fonte disponibile, non solo da quella attiva.
+   Per la proiezione si usano i mandati del feed quando ci sono: sono il calcolo
+   di chi il modello lo ha costruito, non la nostra ripartizione nazionale. */
+function seggiDaFonte(kind){
+  if(kind==='official'){
+    if(state.official&&sum(state.official.seats)===349) return state.official.seats;
+    return sum(state.official?.votes)>0?allocateNationalSeats(state.official.votes):null;
+  }
+  if(kind==='prognos'){
+    if(progAutoOk()&&sum(state.progAuto.seggi)===349) return state.progAuto.seggi;
+    return progHas()?allocateNationalSeats(syntheticVotes(progQuote())):null;
+  }
+  const q=kind==='valu'?state.valu:state.tv4;
+  return exitHas(q)?allocateNationalSeats(syntheticVotes(q)):null;
+}
+function etichettaFonte(kind){
+  if(kind==='official'){
+    const d=state.official?.districts||{};
+    const mandati=!!(state.official&&sum(state.official.seats)===349);
+    if(state.officialSource==='manual')
+      return {n:etichettaDi('official'),s:mandati?'seggi inseriti a mano':'ripartizione sui voti inseriti a mano'};
+    return {n:etichettaDi('official'),s:mandati?'mandati dal dataset'
+      :(Number(d.total)>0?'scrutinio al '+(scrutFrac()*100).toFixed(1).replace('.',',')+'%':'ripartizione indicativa')};
+  }
+  if(kind==='2022') return {n:etichettaDi('none'),s:'risultato reale'};
+  if(kind==='prognos') return {n:etichettaDi('prognos'),
+    s:(progAutoOk()&&sum(state.progAuto.seggi)===349)?'mandati dal feed':'ripartizione indicativa'};
+  return {n:etichettaDi(kind),s:'ripartizione indicativa'};
+}
+function esitoBlocchi(seats){
+  const o=BLOCCHI.opp.ids.reduce((n,i)=>n+(seats[i]||0),0);
+  const t=BLOCCHI.tido.ids.reduce((n,i)=>n+(seats[i]||0),0);
+  return {opp:o,tido:t,vince:o>=MAGGIORANZA?'opp':(t>=MAGGIORANZA?'tido':null)};
+}
+
+function renderVerdetto(){
+  const box=$('#verdetto'), src=bestSource();
+  if(src.kind==='none'){
+    box.className='verdetto';
+    box.innerHTML='<div class="vw">Chi ha la maggioranza</div><h2>In attesa del primo dato</h2>'+
+      '<div class="vd">Alle 20:00 arrivano VALU e TV4, verso le 21:10 la proiezione. '+
+      'Nel frattempo l\u2019emiciclo mostra il Riksdag uscito dal 2022.</div>';
+    return;
+  }
+  const e=esitoBlocchi(currentSeats().seats);
+  box.className='verdetto '+(e.vince?'win':'hung');
+  const titolo=e.vince
+    ? (e.vince==='opp'?'L\u2019opposizione ha la maggioranza':'Il blocco di Tid\u00F6 tiene la maggioranza')
+    : (e.opp===e.tido?'I due blocchi sono in parit\u00E0: nessuna maggioranza'
+                     :'Nessun blocco arriva a '+MAGGIORANZA+' seggi');
+  let dettaglio;
+  if(e.vince){
+    const suoi=e.vince==='opp'?e.opp:e.tido, altri=e.vince==='opp'?e.tido:e.opp;
+    dettaglio=`<b>${suoi}</b> seggi contro <b>${altri}</b>, ${suoi-MAGGIORANZA} oltre la soglia dei ${MAGGIORANZA}`;
+  }else{
+    const guida=e.opp>=e.tido?'all\u2019opposizione':'al blocco di Tid\u00F6';
+    dettaglio=`opposizione <b>${e.opp}</b>, blocco di Tid\u00F6 <b>${e.tido}</b>: ${guida} mancano ${MAGGIORANZA-Math.max(e.opp,e.tido)} seggi`;
+  }
+  /* il risultato manuale non ha distretti: la percentuale di scrutinio sarebbe 0 */
+  let cautela='';
+  if(src.kind!=='official') cautela='Stima, non risultato: pu\u00F2 ancora cambiare';
+  else if(state.officialSource==='manual') cautela='Inserito a mano: controlla i numeri prima di pubblicare';
+  else if(scrutFrac()<0.999) cautela='Scrutinio al '+(scrutFrac()*100).toFixed(1).replace('.',',')+'%: pu\u00F2 ancora cambiare';
+  box.innerHTML=`<div class="vw">Chi ha la maggioranza \u00B7 secondo ${src.label.charAt(0).toLowerCase()+src.label.slice(1)}</div>
+    <h2>${titolo}</h2><div class="vd">${dettaglio}.</div>
+    ${cautela?'<span class="vcav">'+cautela+'</span>':''}`;
+}
+
+function renderScenari(){
+  const attiva=bestSource().kind;
+  const righe=['official','prognos','valu','tv4']
+    .map(k=>({k,seats:seggiDaFonte(k)})).filter(r=>r.seats);
+  const box=$('#scenari');
+  if(!righe.length){
+    box.innerHTML='<div class="scen"><span class="sf" style="color:var(--t3)">In attesa di exit poll, proiezione o voti ufficiali.</span></div>';
+    return;
+  }
+  righe.push({k:'2022',seats:BASELINE_2022.seats});
+  box.innerHTML='<div class="scen"><span class="scen-head">Fonte</span>'+
+    '<span class="scen-head sn">Opp.</span><span class="scen-head sn">Tid\u00F6</span>'+
+    '<span class="scen-head se">Esito</span></div>'+
+    righe.map(r=>{
+      const e=esitoBlocchi(r.seats), et=etichettaFonte(r.k);
+      const cl=e.vince==='opp'?'o':(e.vince==='tido'?'t':'n');
+      const txt=e.vince
+        ? (e.vince==='opp'?'opposizione +':'Tid\u00F6 +')+((e.vince==='opp'?e.opp:e.tido)-MAGGIORANZA)
+        : 'nessuna maggioranza';
+      return `<div class="scen${r.k===attiva?' att':''}">
+        <span class="sf">${et.n} <i>\u00B7 ${et.s}</i></span>
+        <span class="sn" style="color:${BLOCCHI.opp.col}">${e.opp}</span>
+        <span class="sn" style="color:${BLOCCHI.tido.col}">${e.tido}</span>
+        <span class="se ${cl}">${txt}</span></div>`;
+    }).join('');
 }
 
 function renderBlocchi(seats){
@@ -1774,7 +1950,7 @@ function renderValidation(){
   const f=v=>v?v.toFixed(1).replace('.',',')+'%':'—';
   $('#exitValidation').textContent=`Totali — VALU: ${f(sum(state.valu))} · TV4: ${f(sum(state.tv4))} · Proiezione: ${f(sum(progQuote()))}${progAutoOk()?' (dal feed)':''}`;
 }
-function render(){renderTable();renderStatus();renderValidation();renderBars();renderMap();statoFeed();if(typeof CARDGEN!=='undefined') CARDGEN.render(false);}
+function render(){renderTable();renderStatus();renderValidation();renderBars();renderMap();renderVerdetto();renderScenari();statoFeed();if(typeof CARDGEN!=='undefined') CARDGEN.render(false);}
 function alertMsg(msg){const a=$('#alert');a.textContent=msg;a.classList.remove('hidden');setTimeout(()=>a.classList.add('hidden'),8000);}
 function setFeed(status,kind='loading'){ $('#feedStatus').textContent=status; $('#feedDot').className=`dot ${kind}`; }
 
