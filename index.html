@@ -825,16 +825,28 @@ function parseIndexMd5(text){
   return out;
 }
 
+/* Il conteggio definitivo delle prefetture sta in zip separati, che compaiono
+   nell'indice da lunedi'. Il nome esatto non e' documentato: invece di cablarlo
+   si cerca nell'indice qualunque percorso "slutlig" a livello nazionale RD. */
+const CANONICAL_FINAL_RD='p/rd/Val_2026_slutlig_00_RD.zip';
+const MAX_ZIP=60*1024*1024;   /* oltre, il browser rischia di non farcela */
+function findFinalRiksdagFile(entries){
+  const norm=p=>String(p).replace(/^\.\//,'').replace(/^\/+/,'');
+  const esatto=entries.find(e=>norm(e.path)===CANONICAL_FINAL_RD);
+  if(esatto) return {...esatto,esatto:true,fase:'definitivo'};
+  const variante=entries.find(e=>/slutlig.*_00_RD\.zip$/i.test(norm(e.path)));
+  return variante?{...variante,esatto:false,fase:'definitivo'}:null;
+}
 function findPreliminaryRiksdagFile(entries){
   const norm=p=>String(p).replace(/^\.\//,'').replace(/^\/+/,'');
   const esatto=entries.find(e=>norm(e.path)===CANONICAL_PRELIMINARY_RD);
-  if(esatto) return {...esatto,esatto:true};
+  if(esatto) return {...esatto,esatto:true,fase:'preliminare'};
   /* Ripiego: qualunque percorso che finisca con preliminar_00_RD.zip. Nel codice
      Valmyndigheten _00_ e' il livello nazionale e RD il Riksdag, quindi regionali
      e comunali non possono essere agganciati per sbaglio. Serve a non restare
      fermi in silenzio se il percorso cambia rispetto a quello atteso. */
   const variante=entries.find(e=>/preliminar_00_RD\.zip$/i.test(norm(e.path)));
-  return variante?{...variante,esatto:false}:null;
+  return variante?{...variante,esatto:false,fase:'preliminare'}:null;
 }
 
 function text(v){return v==null?'':String(v).trim();}
@@ -993,7 +1005,7 @@ function normalizeOfficialJson(payload){
 
 function normalizeOfficialZipFiles(jsonFiles){
   const entries=Object.entries(jsonFiles||{});
-  const voteEntry=entries.find(([name])=>/_rostfordelning_00_RD\.json$/i.test(name));
+  const voteEntry=entries.filter(([n])=>n!=='__saltati').find(([name])=>/_rostfordelning_00_RD\.json$/i.test(name));
   const mandateEntry=entries.find(([name])=>/_mandatfordelning_00_RD\.json$/i.test(name));
   if(!voteEntry && !mandateEntry) throw new Error('ZIP Valmyndigheten 2026: mancano i file nazionali *_00_RD.json attesi');
   const vote=voteEntry?normalizeVoteDistribution(voteEntry[1]):null;
@@ -1136,15 +1148,25 @@ async function readZipEntries(arrayBuffer){
   return entries;
 }
 
-async function extractElectionJsonFromZip(arrayBuffer){
+/* Gli zip del conteggio definitivo contengono anche i voti di preferenza di
+   tutti i candidati, che pesano ordini di grandezza piu' dei due file che ci
+   servono. Si decodifica solo cio' che serve: il resto resta compresso e non
+   tocca mai la memoria come stringa. */
+const SERVONO_RD=/_(rostfordelning|mandatfordelning)_00_RD\.json$/i;
+async function extractElectionJsonFromZip(arrayBuffer, soloNecessari){
   const entries=await readZipEntries(arrayBuffer);
   const out={};
-  for(const e of entries){
-    if(!/\.json$/i.test(e.name)) continue;
+  let saltati=0;
+  const utili=entries.filter(e=>/\.json$/i.test(e.name));
+  const scelti=soloNecessari&&utili.some(e=>SERVONO_RD.test(e.name))
+    ? utili.filter(e=>SERVONO_RD.test(e.name)) : utili;
+  for(const e of utili) if(!scelti.includes(e)) saltati++;
+  for(const e of scelti){
     try { out[e.name]=JSON.parse(td.decode(e.data)); }
     catch(err){ throw new Error(`Invalid JSON in ${e.name}: ${err.message}`); }
   }
   if(!Object.keys(out).length) throw new Error('No JSON result files found in ZIP');
+  if(saltati) out.__saltati=saltati;
   return out;
 }
 
@@ -1464,7 +1486,7 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,mapFonte:'voti',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,mapFonte:'voti',fase:'preliminare',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 /* L'italiano nel CLDR non raggruppa i numeri di quattro cifre: toLocaleString
    restituisce 6312, non 6.312. Sul cruscotto vogliamo il punto sempre, altrimenti
@@ -1506,8 +1528,10 @@ const SCRUT_SORPASSO=0.90;
 /* Un'unica funzione decide la fonte per barre, tabella, verdetto ed emiciclo:
    currentSeats() segue lo stesso ordine, altrimenti la pagina dichiara una fonte
    e ne mostra un'altra. Le etichette sono le stesse nei due posti. */
+function definitivo(){ return state.fase==='definitivo'&&hasOfficial(); }
 function etichettaUfficiale(){
   if(state.officialSource==='manual') return 'Risultato manuale';
+  if(definitivo()) return 'Risultato definitivo';
   return scrutFrac()>=SCRUT_SORPASSO?'Risultato ufficiale':'Voto ufficiale parziale';
 }
 /* Il nome di ogni fonte si scrive qui e solo qui: bestSource, currentSeats,
@@ -1525,6 +1549,8 @@ function bestSource(){
     short:manuale?'manuale':'ufficiale',kind:'official'};
   /* il risultato inserito a mano e' una scelta esplicita: batte tutto */
   if(off && manuale) return ufficiale;
+  /* il conteggio delle prefetture e' il risultato legale: batte qualsiasi stima */
+  if(definitivo()) return ufficiale;
   if(off && scrutFrac()>=SCRUT_SORPASSO) return ufficiale;
   if(progHas()) return {shares:{...progQuote()},label:prognosLabel(),short:'proiezione',kind:'prognos'};
   if(off) return ufficiale;
@@ -1549,7 +1575,7 @@ function currentSeats(){
   /* Stesso ordine di bestSource(): sotto la soglia di sorpasso
      la proiezione batte lo spoglio, altrimenti l'emiciclo mostrerebbe una fonte
      diversa da quella dichiarata da barre, tabella e verdetto. */
-  if(off&&scrutFrac()>=SCRUT_SORPASSO){
+  if(off&&(definitivo()||scrutFrac()>=SCRUT_SORPASSO)){
     if(offSeats) return {seats:state.official.seats,label:etichettaDi('official'),
       short:'mandati dal dataset ufficiale',
       method:'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
@@ -2233,7 +2259,7 @@ async function processFile(file){
   try{
     let result;
     if(file.name.toLowerCase().endsWith('.zip')){
-      const files=await extractElectionJsonFromZip(await file.arrayBuffer());
+      const files=await extractElectionJsonFromZip(await file.arrayBuffer(),true);
       result=normalizeOfficialZipFiles(files);
     }else{
       result=normalizeOfficialJson(JSON.parse(await file.text()));
@@ -2253,16 +2279,36 @@ async function pollFeed(force=false){
     if(force) setFeed('Test CORS Valmyndigheten…','loading');
     const r=await fetchWithNoStore(INDEX_URL); if(r.status===429){setFeed('Valmyndigheten limita le richieste (429)','error');return;} if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const entries=parseIndexMd5(await r.text()); state.feedCors=true;
-    const rd=findPreliminaryRiksdagFile(entries);
+    /* Il file definitivo puo' comparire nell'indice prima di contenere dati:
+       si usa solo se produce davvero dei voti, altrimenti si resta sul preliminare. */
+    const pre=findPreliminaryRiksdagFile(entries), fin=findFinalRiksdagFile(entries);
+    let rd=fin||pre;
     if(!rd){setFeed(`CORS OK · feed in attesa dei primi risultati (${entries.length} file indicizzati)`,'ok');return;}
-    const variante=rd.esatto?'':' · percorso diverso dall’atteso: '+rd.path;
-    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file'+variante,'ok');return;}
+    /* l'etichetta va calcolata dopo l'eventuale ripiego, non prima */
+    const etichetta=f=>(f.esatto?'':' · percorso diverso dall’atteso: '+f.path)+
+      (f.fase==='definitivo'?' · conteggio definitivo delle prefetture':'');
+    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file'+etichetta(rd),'ok');return;}
     setFeed('Nuovo file Riksdag: download…','loading');
     const zr=await fetchWithNoStore(buildProxyFeedUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
-    const files=await extractElectionJsonFromZip(await zr.arrayBuffer());
-    const result=normalizeOfficialZipFiles(files);
+    /* Gli zip definitivi possono essere enormi: meglio rifiutarsi e dirlo che
+       piantare la pagina provando a scompattarli in memoria. */
+    const peso=Number(zr.headers.get('content-length')||0);
+    if(peso>MAX_ZIP){
+      setFeed(`File da ${(peso/1048576).toFixed(0)} MB, oltre il limite di ${(MAX_ZIP/1048576).toFixed(0)} MB: non scaricato · importalo a mano con ZIP/JSON`,'error');
+      return;
+    }
+    let files=await extractElectionJsonFromZip(await zr.arrayBuffer(),true);
+    let result=normalizeOfficialZipFiles(files);
+    if(rd.fase==='definitivo'&&sum(result.votes)===0&&pre){
+      rd=pre;                                     /* definitivo ancora vuoto */
+      const zr2=await fetchWithNoStore(buildProxyFeedUrl(pre.path));
+      if(!zr2.ok) throw new Error(`ZIP HTTP ${zr2.status}`);
+      files=await extractElectionJsonFromZip(await zr2.arrayBuffer(),true);
+      result=normalizeOfficialZipFiles(files);
+    }
+    state.fase=rd.fase;
     state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();
-    setFeed('Feed live Valmyndigheten'+variante,rd.esatto?'ok':'loading');
+    setFeed('Feed live Valmyndigheten'+etichetta(rd),rd.esatto?'ok':'loading');
   }catch(e){
     state.feedCors=false;
     const message=String(e?.message||e);
