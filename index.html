@@ -441,6 +441,9 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
         <div><b>Feed Valprognos — proiezione di Vera Policy per SVT</b><span id="fpStato">non attivo · la proiezione si inserisce a mano</span></div>
         <button id="fpToggle" class="sm">Attiva</button>
       </div>
+      <div class="feedprog" id="boxStime">
+        <div><b>File stime del repository</b><span id="statoStime">controllo in corso…</span></div>
+      </div>
       <div class="exit-head"><span>Partito</span><span>SVT VALU</span><span>TV4</span><span>Proiezione</span></div>
       <div id="exitInputs"></div>
       <div class="fld" style="padding:10px 18px 0;margin:0"><label>Ora della proiezione</label><input id="prognosOra" placeholder="21:10" inputmode="numeric" style="max-width:120px"></div>
@@ -788,7 +791,15 @@ function parseIndexMd5(text){
 }
 
 function findPreliminaryRiksdagFile(entries){
-  return entries.find(e=>String(e.path).replace(/^\.\//,'').replace(/^\//,'')===CANONICAL_PRELIMINARY_RD) || null;
+  const norm=p=>String(p).replace(/^\.\//,'').replace(/^\/+/,'');
+  const esatto=entries.find(e=>norm(e.path)===CANONICAL_PRELIMINARY_RD);
+  if(esatto) return {...esatto,esatto:true};
+  /* Ripiego: qualunque percorso che finisca con preliminar_00_RD.zip. Nel codice
+     Valmyndigheten _00_ e' il livello nazionale e RD il Riksdag, quindi regionali
+     e comunali non possono essere agganciati per sbaglio. Serve a non restare
+     fermi in silenzio se il percorso cambia rispetto a quello atteso. */
+  const variante=entries.find(e=>/preliminar_00_RD\.zip$/i.test(norm(e.path)));
+  return variante?{...variante,esatto:false}:null;
 }
 
 function text(v){return v==null?'':String(v).trim();}
@@ -1350,7 +1361,7 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 const fmt=n=>Number(n||0).toLocaleString('it-IT');
 const pct=v=>v==null||v===''?'—':`${Number(v).toFixed(1).replace('.',',')}%`;
@@ -1950,7 +1961,7 @@ function renderValidation(){
   const f=v=>v?v.toFixed(1).replace('.',',')+'%':'—';
   $('#exitValidation').textContent=`Totali — VALU: ${f(sum(state.valu))} · TV4: ${f(sum(state.tv4))} · Proiezione: ${f(sum(progQuote()))}${progAutoOk()?' (dal feed)':''}`;
 }
-function render(){renderTable();renderStatus();renderValidation();renderBars();renderMap();renderVerdetto();renderScenari();statoFeed();if(typeof CARDGEN!=='undefined') CARDGEN.render(false);}
+function render(){renderTable();renderStatus();renderValidation();renderBars();renderMap();renderVerdetto();renderScenari();statoFeed();statoStime();if(typeof CARDGEN!=='undefined') CARDGEN.render(false);}
 function alertMsg(msg){const a=$('#alert');a.textContent=msg;a.classList.remove('hidden');setTimeout(()=>a.classList.add('hidden'),8000);}
 function setFeed(status,kind='loading'){ $('#feedStatus').textContent=status; $('#feedDot').className=`dot ${kind}`; }
 
@@ -2001,13 +2012,15 @@ async function pollFeed(force=false){
     const r=await fetchWithNoStore(INDEX_URL); if(r.status===429){setFeed('Valmyndigheten limita le richieste (429)','error');return;} if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const entries=parseIndexMd5(await r.text()); state.feedCors=true;
     const rd=findPreliminaryRiksdagFile(entries);
-    if(!rd){setFeed('CORS OK · feed in attesa dei primi risultati','ok');return;}
-    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file','ok');return;}
+    if(!rd){setFeed(`CORS OK · feed in attesa dei primi risultati (${entries.length} file indicizzati)`,'ok');return;}
+    const variante=rd.esatto?'':' · percorso diverso dall’atteso: '+rd.path;
+    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file'+variante,'ok');return;}
     setFeed('Nuovo file Riksdag: download…','loading');
     const zr=await fetchWithNoStore(buildProxyFeedUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
     const files=await extractElectionJsonFromZip(await zr.arrayBuffer());
     const result=normalizeOfficialZipFiles(files);
-    state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();setFeed('Feed live Valmyndigheten','ok');
+    state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();
+    setFeed('Feed live Valmyndigheten'+variante,rd.esatto?'ok':'loading');
   }catch(e){
     state.feedCors=false;
     const message=String(e?.message||e);
@@ -2025,6 +2038,70 @@ function showTab(which){
   $('#tabbtn-card').setAttribute('aria-selected',String(!live));
   if(!live && typeof CARDGEN!=='undefined') CARDGEN.show();
   window.scrollTo({top:0,behavior:'instant'});
+}
+
+/* File di stime pubblicato accanto alla pagina: stessa origine, niente CORS.
+   Si committa su GitHub Pages e chi ha la pagina aperta lo vede entro 30 secondi.
+   Ogni blocco viene applicato solo quando il suo contenuto cambia davvero, cosi'
+   un valore corretto a mano non viene sovrascritto a ogni giro. */
+const STIME_URL='stime.json';
+const STIME_MS=30000;
+let stimeNota='in attesa del file';
+
+function numeriDi(blocco){
+  const out={};
+  if(!blocco||typeof blocco!=='object') return out;
+  for(const p of PARTIES){
+    if(p.id==='OVR') continue;
+    const v=blocco[p.id];
+    if(v===''||v==null) continue;
+    const n=Number(String(v).replace(',','.'));
+    if(Number.isFinite(n)&&n>0&&n<=100) out[p.id]=n;
+  }
+  return out;
+}
+function applicaStime(dati){
+  const mappa={valu:'valu',tv4:'tv4',proiezione:'prognos'};
+  const applicati=[], scartati=[];
+  let cambiato=false;
+  for(const [chiave,campo] of Object.entries(mappa)){
+    const blocco=dati?.[chiave];
+    const firma=JSON.stringify(blocco||null);
+    if(firma===state.firmeStime?.[campo]) continue;      /* gia' applicato */
+    const numeri=numeriDi(blocco);
+    const tot=sum(numeri);
+    if(!Object.keys(numeri).length){                      /* blocco vuoto: si ignora */
+      state.firmeStime[campo]=firma; continue;
+    }
+    if(tot<95||tot>105){ scartati.push(chiave+' somma '+tot.toFixed(1).replace('.',',')); continue; }
+    state[campo]=numeri;
+    if(campo==='prognos'&&blocco.ora) state.prognosOra=String(blocco.ora);
+    state.firmeStime[campo]=firma;
+    applicati.push(chiave); cambiato=true;
+  }
+  return {applicati,scartati,cambiato};
+}
+async function leggiStime(){
+  try{
+    const r=await fetch(STIME_URL+'?t='+Date.now(),{cache:'no-store'});
+    if(r.status===404){ stimeNota='non ancora pubblicato'; statoStime(); return; }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const dati=await r.json();
+    const esito=applicaStime(dati);
+    const presenti=['valu','tv4','proiezione'].filter(k=>Object.keys(numeriDi(dati?.[k])).length);
+    stimeNota=(presenti.length?presenti.join(', '):'nessun blocco compilato')+
+      (dati?.aggiornato?' · aggiornato '+dati.aggiornato:'')+
+      (esito.scartati.length?' · SCARTATI: '+esito.scartati.join('; '):'');
+    if(esito.cambiato){ saveState(); renderInputs(); render(); }
+    statoStime();
+  }catch(e){ stimeNota='errore: '+String(e.message||e); statoStime(); }
+}
+function statoStime(){
+  const box=$('#boxStime'), et=$('#statoStime');
+  if(!box) return;
+  const problema=/errore|SCARTATI/.test(stimeNota);
+  box.className='feedprog'+(problema?' err':(/valu|tv4|proiezione/.test(stimeNota)?' on':''));
+  et.textContent=stimeNota;
 }
 
 function statoFeed(){
@@ -2735,6 +2812,7 @@ loadState(); state.progAuto=null; renderInputs(); bind(); render();
 if(state.feedProg) avviaFeed(true);
 CARDGEN.init();
 pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
+leggiStime(); setInterval(leggiStime,STIME_MS);
 
 </script>
 </body>
