@@ -831,9 +831,14 @@ function partyCode(row){
    Excel e i JSON mal serializzati perdono lo zero iniziale, quindi si normalizza a 8 caratteri. */
 const LAN_CODES=new Set(['01','03','04','05','06','07','08','09','10','12','13','14','17','18','19','20','21','22','23','24','25']);
 function lanCode(d){
+  /* Il file espone lankod direttamente: si usa quello quando c'e'. */
+  const diretto=text(d?.lankod).replace(/\D/g,'').padStart(2,'0');
+  if(LAN_CODES.has(diretto)) return diretto;
+  /* Ripiego sul codice distretto, che e' a 6 cifre (kommunkod 4 + distretto 2):
+     le prime due sono la lanskod. Riempirlo a 8 le azzerava. */
   const raw=text(d?.valdistriktskod).replace(/\D/g,'');
   if(!raw) return null;
-  const code=raw.padStart(8,'0').slice(0,2);
+  const code=(raw.length>=6?raw:raw.padStart(6,'0')).slice(0,2);
   return LAN_CODES.has(code)?code:null;
 }
 function emptyDistricts(){
@@ -924,24 +929,38 @@ function normalizeVoteDistribution(payload){
   };
 }
 
-function normalizeMandateDistribution(payload){
-  if(text(payload?.valtyp).toUpperCase()!=='RD') throw new Error('Valmyndigheten 2026: atteso un file mandatfördelning RD');
-  const area=payload?.valomrade;
-  if(!area || typeof area!=='object' || Array.isArray(area)) throw new Error('Valmyndigheten 2026: valomrade manca o ha forma errata');
-  const allocation=area.mandatfordelning;
-  if(!allocation || typeof allocation!=='object' || Array.isArray(allocation)) throw new Error('Valmyndigheten 2026: mandatfordelning manca o ha forma errata');
-  const rows=allocation.partiLista;
-  if(rows==null) return {votes:{},seats:{},districts:emptyDistricts(),updatedAt:text(payload.senasteUppdateringstid)||null,raw:payload};
-  if(!Array.isArray(rows)) throw new Error('Valmyndigheten 2026: partiLista non è una lista');
+/* Raccoglie ogni partiLista presente nell'albero, ovunque sia annidata: la forma
+   esatta del file mandatfördelning cambia fra generalrepetition e voto reale. */
+function raccogliPartiLista(nodo,fuori,prof){
+  if(!nodo||typeof nodo!=='object'||prof>7) return;
+  if(Array.isArray(nodo)){ for(const x of nodo) raccogliPartiLista(x,fuori,prof+1); return; }
+  if(Array.isArray(nodo.partiLista)&&nodo.partiLista.some(r=>r&&r.antalMandat!=null)) fuori.push(nodo.partiLista);
+  for(const k of Object.keys(nodo)) raccogliPartiLista(nodo[k],fuori,prof+1);
+}
+function sommaMandati(rows){
   const seats={};
   for(const row of rows){
-    if(!row || typeof row!=='object' || Array.isArray(row)) continue;
-    const n=nonNegativeInt(row.antalMandat,'partiLista.antalMandat');
-    if(!n) continue;
+    if(!row||typeof row!=='object'||Array.isArray(row)) continue;
+    const n=Number(row.antalMandat);
+    if(!Number.isInteger(n)||n<=0) continue;
     const p=partyCode(row);
     seats[p]=(seats[p]||0)+n;
   }
-  return {votes:{},seats,districts:emptyDistricts(),updatedAt:text(payload.senasteUppdateringstid)||null,raw:payload};
+  return seats;
+}
+function normalizeMandateDistribution(payload){
+  if(text(payload?.valtyp).toUpperCase()!=='RD') throw new Error('Valmyndigheten 2026: atteso un file mandatfördelning RD');
+  const vuoto={votes:{},seats:{},districts:emptyDistricts(),updatedAt:text(payload?.senasteUppdateringstid)||null,raw:payload};
+  const liste=[]; raccogliPartiLista(payload,liste,0);
+  if(!liste.length) return vuoto;
+  const tot=s=>Object.values(s).reduce((a,b)=>a+b,0);
+  /* Una lista sola che fa 349 e' il totale nazionale; altrimenti si sommano
+     tutte le circoscrizioni. Se il totale sfora, si preferisce non dire nulla
+     piuttosto che pubblicare un numero gonfiato da un doppio conteggio. */
+  for(const l of liste){ const s=sommaMandati(l); if(tot(s)===349) return {...vuoto,seats:s}; }
+  const somma={};
+  for(const l of liste) for(const [p,n] of Object.entries(sommaMandati(l))) somma[p]=(somma[p]||0)+n;
+  return {...vuoto,seats:tot(somma)<=349?somma:{}};
 }
 
 function normalizeOfficialJson(payload){
@@ -957,10 +976,17 @@ function normalizeOfficialZipFiles(jsonFiles){
   const mandateEntry=entries.find(([name])=>/_mandatfordelning_00_RD\.json$/i.test(name));
   if(!voteEntry && !mandateEntry) throw new Error('ZIP Valmyndigheten 2026: mancano i file nazionali *_00_RD.json attesi');
   const vote=voteEntry?normalizeVoteDistribution(voteEntry[1]):null;
-  const mandate=mandateEntry?normalizeMandateDistribution(mandateEntry[1]):null;
+  /* I mandati sono un di piu': se il loro file non e' interpretabile i voti
+     devono passare lo stesso, e i seggi si ricavano dalla ripartizione. */
+  let mandate=null, notaMandati=null;
+  if(mandateEntry){
+    try{ mandate=normalizeMandateDistribution(mandateEntry[1]); }
+    catch(e){ notaMandati=String(e.message||e); }
+  }
   return {
     votes:vote?.votes||{},
     seats:mandate?.seats||{},
+    notaMandati,
     byLan:vote?.byLan||{},
     districts:vote?.districts||emptyDistricts(),
     updatedAt:vote?.updatedAt||mandate?.updatedAt||null,
