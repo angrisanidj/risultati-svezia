@@ -205,6 +205,8 @@ button.sm{padding:6px 10px;font-size:12px}
 .partylabel{display:flex;align-items:center;gap:8px;font-weight:700}
 .partydot{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
 input,select{font-family:var(--sans)}
+.exit-row input.dalfeed,.fld input.dalfeed{background:rgba(75,210,139,.10);border-color:rgba(75,210,139,.34);
+  color:#bfeed6;cursor:default}
 .exit-row input,.manual-row input{width:100%;background:rgba(0,0,0,.32);color:#fff;border:1px solid var(--line-2);
   border-radius:8px;padding:8px;text-align:right;font-size:15px;font-variant-numeric:tabular-nums}
 .exit-row input:focus,.manual-row input:focus,.fld input:focus{outline:2px solid rgba(79,154,218,.55);outline-offset:0}
@@ -1747,9 +1749,29 @@ function renderBlocchi(seats){
     }</span></div>`;
 }
 
+function campo(v){
+  if(v===''||v==null) return '';
+  const n=Number(v);
+  return Number.isFinite(n)?n.toFixed(1).replace('.',','):String(v);
+}
+/* La proiezione dal feed vive in state.progAuto, non nei campi: senza portarla
+   qui la colonna sembra vuota mentre il pannello dice "proiezione ricevuta".
+   I campi diventano di sola lettura finche' il feed comanda. */
+function aggiornaColonnaProiezione(){
+  const auto=progAutoOk();
+  document.querySelectorAll('[data-exit="prognos"]').forEach(el=>{
+    const id=el.dataset.party;
+    el.value=campo(auto?state.progAuto.quote[id]:state.prognos[id]);
+    el.readOnly=auto;
+    el.classList.toggle('dalfeed',auto);
+    el.title=auto?'Dal feed Valprognos · premi "Ferma" per inserirla a mano':'';
+  });
+  const ora=$('#prognosOra');
+  if(ora){ ora.value=auto?(state.progAuto.ora||''):(state.prognosOra||''); ora.readOnly=auto; ora.classList.toggle('dalfeed',auto); }
+}
 function renderInputs(){
-  $('#exitInputs').innerHTML=PARTIES.filter(p=>p.id!=='OVR').map(p=>`<div class="exit-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><input data-exit="valu" data-party="${p.id}" inputmode="decimal" value="${state.valu[p.id]??''}" placeholder="—" aria-label="VALU ${p.id}"><input data-exit="tv4" data-party="${p.id}" inputmode="decimal" value="${state.tv4[p.id]??''}" placeholder="—" aria-label="TV4 ${p.id}"><input data-exit="prognos" data-party="${p.id}" inputmode="decimal" value="${state.prognos[p.id]??''}" placeholder="—" aria-label="Proiezione ${p.id}"></div>`).join('');
-  $('#prognosOra').value=state.prognosOra||'';
+  $('#exitInputs').innerHTML=PARTIES.filter(p=>p.id!=='OVR').map(p=>`<div class="exit-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><input data-exit="valu" data-party="${p.id}" inputmode="decimal" value="${campo(state.valu[p.id])}" placeholder="—" aria-label="VALU ${p.id}"><input data-exit="tv4" data-party="${p.id}" inputmode="decimal" value="${campo(state.tv4[p.id])}" placeholder="—" aria-label="TV4 ${p.id}"><input data-exit="prognos" data-party="${p.id}" inputmode="decimal" placeholder="—" aria-label="Proiezione ${p.id}"></div>`).join('');
+  aggiornaColonnaProiezione();
   $('#manualInputs').innerHTML=PARTIES.map(p=>`<div class="manual-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><div><label>Voti</label><input data-manual-votes="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.votes?.[p.id]??''):''}"></div><div><label>Seggi</label><input data-manual-seats="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.seats?.[p.id]??''):''}"></div></div>`).join('');
 }
 
@@ -2268,12 +2290,12 @@ function suFeed(S){
     ? {quote:P.quote,seggi:P.seggi,aree:P.aree,scrutinati:P.scrutinati,totali:P.totali,
        ora:(P.aggiornata||'').replace(/^.*?(\d{2}:\d{2}):\d{2}.*$/,'$1')}
     : null;
-  saveState(); render(); statoFeed();
+  saveState(); render(); statoFeed(); aggiornaColonnaProiezione();
 }
 function avviaFeed(on){
   state.feedProg=on; saveState();
   if(on) PROGFEED.avvia(suFeed); else { PROGFEED.ferma(); state.progAuto=null; saveState(); render(); }
-  statoFeed();
+  statoFeed(); aggiornaColonnaProiezione();
 }
 
 function bind(){
