@@ -1425,9 +1425,13 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
-const fmt=n=>Number(n||0).toLocaleString('it-IT');
+/* L'italiano nel CLDR non raggruppa i numeri di quattro cifre: toLocaleString
+   restituisce 6312, non 6.312. Sul cruscotto vogliamo il punto sempre, altrimenti
+   "3 / 6312" convive con "1.436.458". Il raggruppamento si fa a mano. */
+function raggruppa(intero){ return String(intero).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+const fmt=n=>raggruppa(Math.round(Number(n||0)));
 const pct=v=>v==null||v===''?'—':`${Number(v).toFixed(1).replace('.',',')}%`;
 const THRESHOLD=4;
 
@@ -2276,7 +2280,12 @@ const DESTRA=BLOCCHI.tido.ids, SINISTRA=BLOCCHI.opp.ids;
 const MAGG=MAGGIORANZA;
 
 const g=id=>document.getElementById(id);
-const nf=(n,d)=>n===null||n===undefined||isNaN(n)?'–':Number(n).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+const nf=(n,d)=>{
+  if(n===null||n===undefined||isNaN(n)) return '\u2013';
+  const dec=d===undefined?1:d, v=Number(n);
+  const [i,f]=Math.abs(v).toFixed(dec).split('.');
+  return (v<0?'-':'')+raggruppa(i)+(f?','+f:'');
+};
 const pc1=v=>nf(v,1)+'%';
 const seg=d=>d>0.049?'+':(d<-0.049?'\u2212':'\u00B1');
 const dCol=d=>d>0.049?C.accent:(d<-0.049?C.red:C.steel);
@@ -2919,7 +2928,12 @@ return {init,render,show};
 })();
 
 /* src/boot.js */
-loadState(); state.progAuto=null; renderInputs(); bind(); render();
+loadState(); state.progAuto=null;
+/* loadState sovrascrive i valori predefiniti con quelli salvati: chi aveva gia'
+   usato la pagina si porterebbe dietro feedProg:false. La migrazione accende il
+   feed una volta sola, poi la scelta dell'utente torna a comandare. */
+if(state.feedVersione!==1){ state.feedProg=true; state.feedVersione=1; saveState(); }
+renderInputs(); bind(); render();
 if(state.feedProg) avviaFeed(true);
 CARDGEN.init();
 pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
