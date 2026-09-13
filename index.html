@@ -1849,10 +1849,40 @@ function lanResults(){
    reali stanno in una forbice di dieci punti. Lo span minimo evita di gonfiare
    differenze irrilevanti quando sono tutti allineati. */
 function scalaIntensita(quote){
-  const v=quote.filter(x=>Number.isFinite(x)&&x>0);
-  let lo=v.length?Math.min(...v):20, hi=v.length?Math.max(...v):40;
+  const v=quote.filter(x=>Number.isFinite(x)&&x>0).sort((a,b)=>a-b);
+  let lo=v.length?v[0]:20, hi=v.length?v[v.length-1]:40;
   if(hi-lo<7){ const c=(hi+lo)/2; lo=c-3.5; hi=c+3.5; }
-  return {lo,hi,f:x=>0.28+0.72*Math.max(0,Math.min(1,(x-lo)/(hi-lo)))};
+  /* Due o tre valori estremi tirerebbero il vertice lasciando il grosso dei län
+     addossato al fondo. Si media la posizione sul valore con quella nella
+     graduatoria, che distribuisce i toni anche quando i dati sono ammassati. */
+  const rango=x=>{
+    if(v.length<2) return 0.5;
+    let i=0; while(i<v.length&&v[i]<x) i++;
+    return i/(v.length-1);
+  };
+  const lineare=x=>Math.max(0,Math.min(1,(x-lo)/(hi-lo)));
+  return {lo,hi,f:x=>0.45*lineare(x)+0.55*rango(x)};
+}
+/* Sfumare verso il fondo scuro non e' percettivamente lineare: i valori bassi
+   collassano in un marrone indistinguibile. Qui si tiene la tinta e la
+   saturazione del partito e si fa variare solo la luminosita', che l'occhio
+   legge in modo molto piu' uniforme. */
+function hexHsl(hex){
+  const n=parseInt(hex.slice(1),16);
+  const r=(n>>16)/255, g=((n>>8)&255)/255, b=(n&255)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn, l=(mx+mn)/2;
+  let h=0, sat=0;
+  if(d){
+    sat=d/(1-Math.abs(2*l-1));
+    h=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4);
+    h*=60;
+  }
+  return {h,s:sat*100,l:l*100};
+}
+function tinta(hex,t){
+  const c=hexHsl(hex);
+  const k=Math.max(0,Math.min(1,t));
+  return `hsl(${c.h.toFixed(0)} ${Math.max(48,Math.min(92,c.s)).toFixed(0)}% ${(24+40*k).toFixed(1)}%)`;
 }
 function mix(hex,amount){ /* schiarisce/scurisce verso il fondo notturno */
   const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
@@ -1943,7 +1973,7 @@ function renderMap(){
     MAPV.cur={...MAPV.base};
   }
   const inner=res.map(r=>{
-    const col=r.lead?mix(PARTY_MAP[r.lead].color,scala.f(r.share)):'#22314e';
+    const col=r.lead?tinta(PARTY_MAP[r.lead].color,scala.f(r.share)):'#22314e';
     return `<path d="${r.d}" fill="${col}" data-lan="${r.c}" tabindex="0" role="button" aria-label="${r.n}"><title>${r.n}</title></path>`;
   }).join('');
   svg.setAttribute('viewBox',`${MAPV.base.x} ${MAPV.base.y} ${MAPV.base.w} ${MAPV.base.h}`);
@@ -2736,7 +2766,7 @@ function card6(x,S,N){
   x.save(); x.translate(ox,oy); x.scale(sc,sc);
   S.lan.forEach(l=>{
     const p=new Path2D(l.d);
-    x.fillStyle=l.lead?mixCol(PARTY_MAP[l.lead].color,scala.f(l.share)):'#16223A';
+    x.fillStyle=l.lead?tinta(PARTY_MAP[l.lead].color,scala.f(l.share)):'#16223A';
     x.fill(p);
     x.strokeStyle='rgba(10,16,32,.9)'; x.lineWidth=1/sc; x.stroke(p);
   });
