@@ -1190,7 +1190,7 @@ const S={
   hashShard:{},     /* chiave di shard -> path dell'oggetto shard */
   voci:{},          /* percorso API -> voce {status, chunks[]} */
   cache:new Map(),  /* path oggetto -> testo (immutabile) */
-  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0, daCache:false, inCorso:false
+  stato:null, grezzo:{}, proiezione:null, note:[], errore:null, ultimoGiro:null, richieste:0, daCache:false, inCorso:false, falliti:0
 };
 
 /* BASE puo' essere una directory (assets.valprognos.se/.../) oppure un proxy che
@@ -1261,7 +1261,8 @@ function salvaMappa(){
 async function leggiShard(m,chiavi,cercati){
   await aLotti(chiavi,async k=>{
     const voce=m.indexes[k]; if(!voce) return;
-    let dati; try{ dati=JSON.parse(await oggetto(voce.path)); }catch{ return; }
+    /* uno shard irraggiungibile non deve far cadere la scoperta degli altri */
+    let dati; try{ dati=JSON.parse(await oggetto(voce.path)); }catch(e){ S.falliti++; return; }
     for(const percorso of Object.keys(dati)){
       if(cercati.has(percorso)){ S.shardDi[percorso]=k; S.voci[percorso]=dati[percorso]; }
     }
@@ -1367,7 +1368,10 @@ async function corpo(nome){
   const percorso=PERCORSI[nome], voce=S.voci[percorso];
   if(!voce) return {stato:null,dati:null,nota:'percorso non presente nel manifesto'};
   if(voce.status!==200) return {stato:voce.status,dati:null,nota:'il feed risponde '+voce.status};
-  const parti=await aLotti(voce.chunks||[],c=>oggetto(c.path));
+  let parti;
+  try{ parti=await aLotti(voce.chunks||[],c=>oggetto(c.path)); }
+  catch(e){ return {stato:200,dati:null,chunk:(voce.chunks||[]).length,
+    nota:'corpo non scaricabile: '+String(e.message||e)}; }
   const testo=parti.join(''), chunk=parti.length;
   if(FORMATO[nome]==='csv'){
     const aree=parseGeografia(testo);
@@ -1386,6 +1390,7 @@ async function giro(){
   S.inCorso=true;
   try{
     const m=await manifesto();
+    S.falliti=0;
     if(!S.avviato){ await bootstrap(m); S.avviato=true; }
     else await aggiornaVoci(m);
 
@@ -1409,6 +1414,7 @@ async function giro(){
     } : null;
     S.note=Object.entries(c).filter(([,v])=>v&&v.nota&&v.stato===200)
       .map(([k,v])=>k+': '+v.nota);
+    if(S.falliti) S.note.push(S.falliti+' oggetti non scaricati');
     S.errore=null; S.ultimoGiro=new Date();
   }catch(e){
     S.errore=String(e&&e.message||e); S.ultimoGiro=new Date();
