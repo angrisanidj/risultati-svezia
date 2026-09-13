@@ -2,99 +2,506 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#060d16">
 <title>Svezia 2026 — Elezioni live</title>
-<meta name="description" content="Tracker live delle elezioni svedesi 2026: VALU, risultati ufficiali, seggi e avanzamento dello scrutinio.">
+<meta name="description" content="Tracker live delle elezioni svedesi 2026: VALU, risultati ufficiali, seggi, mappa dei län e avanzamento dello scrutinio.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Crect width='16' height='10' fill='%23006AA7'/%3E%3Crect x='5' width='2' height='10' fill='%23FECC00'/%3E%3Crect y='4' width='16' height='2' fill='%23FECC00'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Crect width='16' height='10' fill='%23006AA7'/%3E%3Crect x='5' width='2' height='10' fill='%23FECC00'/%3E%3Crect y='4' width='16' height='2' fill='%23FECC00'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--blue:#005293;--yellow:#fecb00;--bg:#07111b;--panel:#0d1b29;--panel2:#102234;--line:#20384e;--text:#f5f8fb;--muted:#93a8ba;--green:#4bd28b;--red:#ff6680;--shadow:0 18px 50px rgba(0,0,0,.26)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 85% 5%,rgba(0,82,147,.38),transparent 30%),radial-gradient(circle at 10% 24%,rgba(254,203,0,.08),transparent 24%),linear-gradient(180deg,#06101a,#081522 55%,#06101a);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}.flagbar{height:10px;display:grid;grid-template-columns:34% 66%;position:sticky;top:0;z-index:20}.flagbar span:first-child{background:var(--blue)}.flagbar span:last-child{background:var(--yellow)}.shell{max-width:1440px;margin:auto;padding:28px 20px 55px}.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:start;background:linear-gradient(135deg,rgba(16,34,52,.97),rgba(9,24,38,.97));border:1px solid var(--line);border-radius:26px;padding:28px 30px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"SE";position:absolute;right:22px;bottom:-52px;font-size:190px;font-weight:950;color:rgba(254,203,0,.035);letter-spacing:-.1em;pointer-events:none}.eyebrow,.kicker{color:var(--yellow);font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.flag{font-size:18px;margin-right:7px}h1{font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.055em;margin:10px 0 10px}.lead{color:#c1d0dd;max-width:820px;font-size:16px;margin:0}.statusbox{position:relative;z-index:1;min-width:300px;border:1px solid #294760;background:#0b1926;border-radius:16px;padding:15px}.statusline{display:flex;gap:9px;align-items:center;margin-bottom:5px}.dot{width:9px;height:9px;border-radius:50%;background:#8191a0;box-shadow:0 0 0 4px rgba(129,145,160,.12)}.dot.ok{background:var(--green);box-shadow:0 0 0 4px rgba(75,210,139,.12)}.dot.error{background:var(--red);box-shadow:0 0 0 4px rgba(255,102,128,.12)}.dot.loading{background:var(--yellow);box-shadow:0 0 0 4px rgba(254,203,0,.12)}.muted{color:var(--muted)}button,.uploadbtn{border:1px solid #31506a;background:#12283a;color:#eef6fb;border-radius:10px;padding:8px 11px;font-weight:800;cursor:pointer}.smallbtn{font-size:12px}.primary{background:var(--yellow);color:#102030;border-color:var(--yellow)}.statusbox button{margin-top:11px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0}.kpi{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#0f1f2e,#0b1926);padding:17px 18px;box-shadow:var(--shadow)}.kpi span{display:block;color:#91a8bb;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.kpi strong{display:block;font-size:27px;line-height:1.05;margin:8px 0 6px}.kpi small{color:#8297a8}.kpi.warn{border-color:#55481e;background:linear-gradient(180deg,#211f17,#151a1f)}.alert{border:1px solid rgba(255,102,128,.45);background:rgba(255,102,128,.10);color:#ffd8df;border-radius:14px;padding:12px 14px;margin:0 0 16px}.hidden{display:none!important}.main-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(360px,.75fr);gap:16px;margin-bottom:16px}.lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.card{background:linear-gradient(180deg,rgba(13,27,41,.98),rgba(9,22,34,.98));border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow);overflow:hidden}.cardhead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:19px 20px 0}.cardhead h2{margin:3px 0 0;font-size:22px;letter-spacing:-.025em}.pill{border:1px solid #5a4d19;background:#2b2715;color:#f9d94e;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:900}.pill.neutral{border-color:#2b4a63;background:#102437;color:#9fc4df}.pill.danger{border-color:#613140;background:#2c1820;color:#ff91a4}.subcopy{color:var(--muted);padding:0 20px;margin:9px 0 13px}.parliament-card{padding-bottom:15px}#hemicycle{width:100%;height:auto;display:block;padding:5px 18px 0}.seat-legend{display:flex;gap:8px;flex-wrap:wrap;padding:4px 18px 5px}.seat-chip{display:flex;align-items:center;gap:6px;border:1px solid #24425a;border-radius:999px;padding:6px 8px;background:#0a1926;font-size:11px;font-weight:800}.seat-chip i{width:9px;height:9px;border-radius:50%;display:block}.methodnote{color:#89a0b2;padding:2px 20px 0;font-size:11px}.exit-card{padding-bottom:17px}.exit-head,.exit-row{display:grid;grid-template-columns:1fr 88px 88px;gap:8px;align-items:center;padding:0 20px}.exit-head{color:#7890a3;font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:.08em;margin-bottom:5px}.exit-row{padding-top:5px;padding-bottom:5px}.partylabel{display:flex;align-items:center;gap:8px;font-weight:800}.partydot{width:9px;height:9px;border-radius:50%}.exit-row input,.manual-row input{width:100%;background:#071522;color:#fff;border:1px solid #29465e;border-radius:8px;padding:7px 8px;text-align:right}.exit-actions,.manual-actions{display:flex;gap:8px;padding:12px 20px 4px}.validation{padding:7px 20px 0;font-size:11px}.results-card{padding-bottom:12px}.actions{display:flex;gap:7px}.tablewrap{overflow:auto;padding:12px 18px 8px}table{width:100%;border-collapse:collapse;min-width:760px}th{font-size:9px;color:#7890a3;text-transform:uppercase;letter-spacing:.08em;text-align:right;padding:8px;border-bottom:1px solid #223c52}th:first-child{text-align:left}td{padding:10px 8px;border-bottom:1px solid rgba(34,60,82,.55);text-align:right;font-variant-numeric:tabular-nums}td:first-child{text-align:left}.delta.plus{color:#69dd9f}.delta.minus{color:#ff8498}.uploadbtn{display:inline-block;font-size:12px}.manual-card{margin-top:16px;padding-bottom:16px}.manual-grid{padding:12px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.manual-row{display:grid;grid-template-columns:1fr 90px 64px;gap:7px;align-items:center;border:1px solid #203b51;border-radius:11px;padding:8px;background:#0a1926}.manual-row .manual-name{font-weight:800}.manual-row label{font-size:9px;color:#71899b;text-transform:uppercase}.progress{height:12px;background:#071521;border:1px solid #203c52;border-radius:999px;overflow:hidden;margin:17px 20px 7px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .4s}.progresslabels{display:flex;justify-content:space-between;padding:0 20px;color:#90a7b9;font-size:11px}.wednesday{margin:16px 20px 20px;padding:12px;border:1px solid #554820;background:#211d12;color:#d8c98a;border-radius:12px;font-size:12px}.disabled-card{opacity:.85}.nowcast-card p{color:#91a7b8;padding:8px 20px 2px}.gate{margin:14px 20px 20px;border:1px solid #3f3040;background:#1b1720;border-radius:12px;padding:12px;display:flex;justify-content:space-between}.gate strong{color:#ff879a}footer{display:flex;justify-content:space-between;gap:14px;color:#61798c;font-size:10px;padding:25px 5px 0}
-.feedbadges{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.feedbadges .pill{display:inline-flex}.countcheck{margin:8px 20px 0;font-size:11px}.countcheck.mismatch{color:#ff9bad;font-weight:800}
-@media(max-width:980px){.hero,.main-grid,.lower-grid{grid-template-columns:1fr}.statusbox{min-width:0}.kpis{grid-template-columns:1fr 1fr}.manual-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.shell{padding:18px 10px 40px}.hero{padding:21px 18px}.kpis,.manual-grid{grid-template-columns:1fr}.main-grid{grid-template-columns:1fr}.cardhead{padding:16px 14px 0}.subcopy,.exit-head,.exit-row{padding-left:14px;padding-right:14px}.exit-head,.exit-row{grid-template-columns:1fr 76px 76px}.kpi strong{font-size:23px}.actions{flex-wrap:wrap;justify-content:flex-end}footer{flex-direction:column}}
+:root{
+  --blue:#005293;--blue-lit:#4f9ada;--yellow:#fecb00;--gold:#e3b04b;
+  --bg:#060d16;--panel:rgba(255,255,255,.035);--panel-2:rgba(255,255,255,.055);
+  --line:rgba(255,255,255,.10);--line-2:rgba(255,255,255,.16);
+  --t1:#f2f6fb;--t2:#96a8bd;--t3:#6c7d93;
+  --green:#4bd28b;--red:#ff6680;
+  /* tabular-nums non va mai applicato a Lora: spazia le parole in modo anomalo */
+  --serif:Lora,Georgia,"Times New Roman",serif;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:16px;--shadow:0 20px 46px rgba(0,0,0,.34);
+  --pad:clamp(14px,3.2vw,22px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;color:var(--t1);font:15px/1.5 var(--sans);
+  background:
+    radial-gradient(1100px 520px at 88% -8%,rgba(0,82,147,.30),transparent 62%),
+    radial-gradient(760px 420px at 4% 16%,rgba(254,203,0,.055),transparent 60%),
+    linear-gradient(180deg,#060d16,#08131f 52%,#060d16);
+  background-attachment:fixed}
+h1,h2,h3{font-family:var(--serif);font-weight:700;letter-spacing:-.01em;margin:0}
+.mono{font-variant-numeric:tabular-nums}
+.muted{color:var(--t2)}
+.hidden{display:none!important}
 
+/* ---------- topbar ---------- */
+.flagbar{height:5px;display:grid;grid-template-columns:38% 62%}
+.flagbar i:first-child{background:var(--blue-lit)}
+.flagbar i:last-child{background:var(--yellow)}
+.topbar{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+  background:rgba(6,13,22,.86);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1420px;margin:auto;padding:10px var(--pad);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font:700 15px/1 var(--serif);white-space:nowrap}
+.flagicon{width:23px;height:15px;flex:0 0 23px;border-radius:2px;border:1px solid rgba(255,255,255,.18);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Crect width='16' height='10' fill='%23006AA7'/%3E%3Crect x='5' width='2' height='10' fill='%23FECC00'/%3E%3Crect y='4' width='16' height='2' fill='%23FECC00'/%3E%3C/svg%3E") center/cover no-repeat}
+.brand em{font-style:normal;color:var(--t3);font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.045);border:1px solid var(--line);
+  border-radius:999px;padding:3px}
+.tabs button{border:0;background:transparent;color:var(--t2);border-radius:999px;
+  padding:7px 15px;font:700 12.5px/1 var(--sans);letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--yellow);color:#131a24}
+.livechip{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;max-width:100%}
+.livechip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px;background:#7d8c9c;box-shadow:0 0 0 4px rgba(125,140,156,.13)}
+.dot.ok{background:var(--green);box-shadow:0 0 0 4px rgba(75,210,139,.14)}
+.dot.error{background:var(--red);box-shadow:0 0 0 4px rgba(255,102,128,.14)}
+.dot.loading{background:var(--yellow);box-shadow:0 0 0 4px rgba(254,203,0,.14);animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.45}}
+
+.shell{max-width:1420px;margin:auto;padding:20px var(--pad) 60px}
+
+/* ---------- buttons ---------- */
+button,.uploadbtn{font-family:var(--sans);border:1px solid var(--line-2);background:rgba(255,255,255,.05);
+  color:var(--t1);border-radius:10px;padding:9px 13px;font-weight:600;font-size:13px;cursor:pointer;
+  transition:background .15s,border-color .15s}
+button:hover,.uploadbtn:hover{background:rgba(255,255,255,.10)}
+button.primary{background:var(--yellow);border-color:var(--yellow);color:#131a24;font-weight:700}
+button.primary:hover{background:#ffd83a}
+button.sm{padding:6px 10px;font-size:12px}
+.uploadbtn{display:inline-block}
+
+/* ---------- hero ---------- */
+.hero{border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3.6vw,32px);
+  background:linear-gradient(140deg,rgba(17,35,54,.92),rgba(8,20,33,.92));
+  box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:16px}
+.hero:after{content:"";position:absolute;right:-26px;bottom:-54px;width:360px;height:225px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Crect width='16' height='10' fill='%23006AA7'/%3E%3Crect x='5' width='2' height='10' fill='%23FECC00'/%3E%3Crect y='4' width='16' height='2' fill='%23FECC00'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.075;pointer-events:none}
+.eyebrow{color:var(--yellow);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.hero h1{font-size:clamp(34px,7.2vw,60px);line-height:.98;letter-spacing:-.045em;margin:10px 0 12px}
+.hero p{color:#b7c7d6;max-width:74ch;margin:0;font-size:clamp(14px,1.6vw,16.5px)}
+.hero .metaline{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:1}
+
+/* ---------- kpi ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+.kpi span{display:block;color:var(--t3);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.kpi strong{display:block;font:700 clamp(22px,3.4vw,28px)/1.05 var(--serif);margin:9px 0 5px}
+.kpi small{color:var(--t3);font-size:11.5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.kpi.warn{border-color:rgba(254,203,0,.26);background:linear-gradient(180deg,rgba(254,203,0,.07),rgba(255,255,255,.02))}
+
+/* ---------- cards ---------- */
+.card{border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));overflow:hidden}
+.cardhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:18px 18px 0}
+.cardhead h2{font-size:clamp(18px,2.4vw,22px)}
+.kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;display:block;margin-bottom:5px}
+.pill{border:1px solid rgba(254,203,0,.3);background:rgba(254,203,0,.10);color:#f6d360;border-radius:999px;
+  padding:5px 10px;font-size:10px;font-weight:800;letter-spacing:.05em;white-space:nowrap}
+.pill.neutral{border-color:rgba(79,154,218,.32);background:rgba(79,154,218,.10);color:#a4cdf0}
+.pill.danger{border-color:rgba(255,102,128,.34);background:rgba(255,102,128,.10);color:#ff96a8}
+.subcopy{color:var(--t2);padding:0 18px;margin:9px 0 14px;font-size:13.5px}
+.methodnote{color:var(--t3);padding:4px 18px 16px;font-size:11.5px;line-height:1.5;margin:0}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,.8fr);gap:14px;margin-bottom:14px}
+.lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.stack{display:grid;gap:14px}
+
+.alert{border:1px solid rgba(255,102,128,.42);background:rgba(255,102,128,.10);color:#ffd6de;
+  border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:13.5px}
+
+/* ---------- hemicycle ---------- */
+#hemicycle{width:100%;height:auto;display:block;padding:6px 16px 0}
+.seat-legend{display:flex;gap:7px;flex-wrap:wrap;padding:6px 18px 2px}
+.seat-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;
+  padding:5px 9px;background:rgba(255,255,255,.04);font-size:11.5px;font-weight:700}
+.seat-chip i{width:8px;height:8px;border-radius:50%;display:block;flex:0 0 8px}
+.seat-chip strong{font-variant-numeric:tabular-nums}
+
+/* ---------- blocchi ---------- */
+.blocchi{display:grid;gap:9px;padding:12px 18px 4px}
+.bloc{border:1px solid var(--line);border-radius:13px;padding:11px 13px;background:rgba(255,255,255,.035);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.bloc.win{border-color:rgba(254,203,0,.45);background:rgba(254,203,0,.07)}
+.bloc .bn{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.bloc .bp{font-size:12px;color:var(--t2);margin-top:3px}
+.bloc .bv{font:700 27px/1 var(--serif);text-align:right;white-space:nowrap}
+.bloc .bd{font-size:11px;color:var(--t3);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.blocgap{border:1px dashed var(--line-2);border-radius:12px;padding:10px 13px;font-size:12.5px;color:var(--t2);
+  display:flex;gap:10px;align-items:baseline}
+.blocgap b{font:700 22px/1 var(--serif);color:var(--yellow)}
+.blocgap b.no{color:var(--red)}
+
+/* ---------- bars ---------- */
+.bars{padding:6px 18px 16px;display:grid;gap:9px}
+.bar-row{display:grid;grid-template-columns:74px minmax(0,1fr) 62px 58px;gap:10px;align-items:center}
+.bar-row .nm{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px}
+.bar-row .nm i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+.track{height:20px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden;position:relative}
+.track b{display:block;height:100%;border-radius:6px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.track .thr{position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.34)}
+.bar-row .vv{text-align:right;font:700 15px/1 var(--serif)}
+.bar-row .dd{text-align:right;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--t3)}
+.bar-row.under .nm,.bar-row.under .vv{color:var(--t2)}
+.bar-row.under .track b{opacity:.5}
+.plus{color:var(--green)}.minus{color:var(--red)}
+
+/* ---------- exit inputs ---------- */
+.exit-head,.exit-row{display:grid;grid-template-columns:1fr 82px 82px;gap:8px;align-items:center;padding:0 18px}
+.exit-head{color:var(--t3);font-size:9.5px;text-transform:uppercase;font-weight:800;letter-spacing:.1em;margin-bottom:6px}
+.exit-row{padding-top:4px;padding-bottom:4px}
+.partylabel{display:flex;align-items:center;gap:8px;font-weight:700}
+.partydot{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+input,select{font-family:var(--sans)}
+.exit-row input,.manual-row input{width:100%;background:rgba(0,0,0,.32);color:#fff;border:1px solid var(--line-2);
+  border-radius:8px;padding:8px;text-align:right;font-size:15px;font-variant-numeric:tabular-nums}
+.exit-row input:focus,.manual-row input:focus,.fld input:focus{outline:2px solid rgba(79,154,218,.55);outline-offset:0}
+.exit-actions,.manual-actions{display:flex;gap:8px;padding:14px 18px 4px;flex-wrap:wrap}
+.validation{padding:8px 18px 16px;font-size:11.5px;color:var(--t3)}
+
+/* ---------- table ---------- */
+.tablewrap{overflow:auto;padding:10px 0 4px;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:800px}
+th{font-size:9.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;text-align:right;
+  padding:9px 10px;border-bottom:1px solid var(--line);font-weight:800;white-space:nowrap}
+th:first-child{text-align:left;padding-left:18px}
+td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.05);text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px}
+td:first-child{text-align:left;padding-left:18px}
+tbody tr:hover td{background:rgba(255,255,255,.026)}
+td .pname{color:var(--t2);font-weight:400}
+.role{border:1px solid;border-radius:999px;padding:2px 8px;font-size:9px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;line-height:1.5}
+.role.governo{color:#8fc4ea;border-color:rgba(91,155,213,.6)}
+.role.sostegno{color:#e8c069;border-color:rgba(227,176,75,.6)}
+.role.opposizione{color:#ff8a9c;border-color:rgba(255,92,110,.55)}
+td .partylabel{gap:9px}
+.delta.plus{color:var(--green)}.delta.minus{color:var(--red)}
+
+/* ---------- map ---------- */
+.maparea{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:20px;
+  align-items:start;padding:10px 18px 0}
+.mapside{min-width:0;width:100%}
+.mapside.l{justify-self:end;max-width:330px}
+.mapside.r{justify-self:start;max-width:350px;display:grid;gap:12px;align-content:start}
+.mapcol{display:grid;justify-items:center}
+.mapbar{position:absolute;left:0;right:0;top:0;z-index:2;display:flex;align-items:center;
+  justify-content:center;gap:10px;padding:11px 58px 0;pointer-events:none}
+.mapbar button{display:none;pointer-events:auto}
+.mapbar.on{justify-content:flex-start;padding-left:10px}
+.mapbar.on button{display:inline-block}
+.mapbar.on .maphint{display:none}
+.maphint{color:var(--t2);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:rgba(9,17,29,.78);padding:5px 11px;border-radius:999px;backdrop-filter:blur(6px)}
+.mapleg{border:1px solid var(--line);border-radius:13px;padding:13px 15px;background:rgba(255,255,255,.03)}
+.mapleg h4{margin:0 0 10px;font:800 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--t3)}
+.mapleg .lg{display:grid;gap:7px}
+.mapleg .lg div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12.5px}
+.mapleg .lg i{width:10px;height:10px;border-radius:3px}
+.mapleg .lg b{font-variant-numeric:tabular-nums;font-weight:800}
+.mapleg p{margin:11px 0 0;font-size:11.5px;line-height:1.5;color:var(--t3)}
+.mapstage{position:relative;width:max-content;max-width:100%;margin:0 auto;
+  border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.24);
+  overflow:hidden;touch-action:pan-y}
+.mapstage.zoomed{touch-action:none}
+#lanMap{display:block;height:clamp(460px,94vh,1250px);width:auto;max-width:100%;cursor:grab}
+#lanMap.drag{cursor:grabbing}
+#lanLayer{transform-origin:0 0;will-change:transform}
+#lanMap path{stroke:#0a1220;stroke-width:1;stroke-linejoin:round;cursor:pointer;
+  transition:fill .3s,opacity .3s;vector-effect:non-scaling-stroke;outline:none}
+#lanMap path:hover{stroke:#fff;stroke-width:1.6}
+#lanMap path.sel{stroke:#fff;stroke-width:2}
+#lanMap.hassel path:not(.sel){opacity:.42}
+.mapzoom{position:absolute;top:10px;right:10px;z-index:2;display:grid;gap:6px}
+.mapzoom button{width:38px;height:38px;padding:0;font:600 17px/1 var(--sans);
+  border-radius:11px;background:rgba(9,17,29,.94);backdrop-filter:blur(8px)}
+.mapzoom button[disabled]{opacity:.32;cursor:default}
+.landetail{border:1px solid var(--line-2);border-radius:13px;
+  padding:13px 15px;background:rgba(255,255,255,.05)}
+.landetail .dh{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.landetail h3{font-size:18px}
+.landetail .dm{color:var(--t3);font-size:11.5px;font-variant-numeric:tabular-nums}
+.landetail .dl{display:grid;gap:6px;margin-top:11px}
+.landetail .dr{display:grid;grid-template-columns:52px minmax(0,1fr) 54px;gap:9px;align-items:center;font-size:12.5px}
+.landetail .dr .nm{display:flex;align-items:center;gap:6px;font-weight:700}
+.landetail .dr .nm i{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+.landetail .dr .vv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.maplist{display:grid;gap:2px;max-height:clamp(460px,94vh,1250px);overflow:auto;padding-right:6px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.maplist::-webkit-scrollbar{width:7px}
+.maplist::-webkit-scrollbar-track{background:transparent}
+.maplist::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:999px}
+.maplist::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.28)}
+.lanrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;align-items:center;
+  padding:6px 9px;border-radius:9px;font-size:12.5px;cursor:pointer;border:1px solid transparent}
+.lanrow:hover,.lanrow.sel{background:rgba(255,255,255,.055);border-color:var(--line)}
+.lanrow.mute{opacity:.55}
+.lanrow .ln{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.lanrow .ln i{width:8px;height:8px;border-radius:2px;flex:0 0 8px}
+.lanrow .lp{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lanrow .lc{color:var(--t3);font-size:11px;font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
+.mapempty{padding:20px 18px 4px;color:var(--t3);font-size:13px;text-align:center}
+
+/* ---------- progress ---------- */
+.progress{height:11px;background:rgba(0,0,0,.34);border:1px solid var(--line);border-radius:999px;
+  overflow:hidden;margin:16px 18px 8px}
+.progress span{display:block;height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--blue-lit),var(--yellow));transition:width .5s}
+.progresslabels{display:flex;justify-content:space-between;gap:10px;padding:0 18px;color:var(--t2);font-size:12px}
+.countcheck{margin:9px 18px 0;font-size:11.5px;color:var(--t3)}
+.countcheck.mismatch{color:#ff9bad;font-weight:700}
+.wednesday{margin:14px 18px 18px;padding:12px 13px;border:1px solid rgba(254,203,0,.22);
+  background:rgba(254,203,0,.055);color:#e2cd93;border-radius:12px;font-size:12.5px;line-height:1.55}
+.gate{margin:14px 18px 18px;border:1px solid rgba(255,102,128,.26);background:rgba(255,102,128,.06);
+  border-radius:12px;padding:12px 13px;display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.gate strong{color:#ff879a}
+.manual-grid{padding:12px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.manual-row{display:grid;grid-template-columns:1fr 92px 62px;gap:7px;align-items:center;
+  border:1px solid var(--line);border-radius:11px;padding:9px;background:rgba(255,255,255,.028)}
+.manual-row label{font-size:9px;color:var(--t3);text-transform:uppercase;font-weight:800;letter-spacing:.08em}
+footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-size:11px;padding:26px 4px 0;flex-wrap:wrap}
+
+/* ---------- tab card ---------- */
+.fld{margin:0 0 11px}
+.fld label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);
+  margin:0 0 5px;font-weight:800}
+.fld input{width:100%;background:rgba(0,0,0,.32);border:1px solid var(--line-2);color:var(--t1);
+  border-radius:9px;padding:9px 11px;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gencard{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);margin:0 0 18px}
+.gencard canvas{display:block;width:100%;height:auto;background:#0a1020}
+.gencard .bar2{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 13px;border-top:1px solid var(--line);flex-wrap:wrap}
+.gencard .bar2 b{font-size:13px}
+.gencard .bar2 em{font-style:normal;color:var(--t3);font-size:11.5px}
+.gencard.off{opacity:.42}
+.gencard .post{border-top:1px solid var(--line);padding:11px 13px;background:rgba(0,0,0,.16)}
+.gencard .post textarea{width:100%;height:72px;resize:vertical;background:rgba(0,0,0,.3);
+  border:1px solid var(--line-2);color:var(--t1);border-radius:9px;padding:9px 10px;
+  font:14px/1.5 var(--sans)}
+.gencard .post .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:7px}
+.gencard .post .cnt{font-size:11.5px;color:var(--t3);font-variant-numeric:tabular-nums}
+.gencard .post .cnt.over{color:var(--red);font-weight:800}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+.toolbar .muted{font-size:12px}
+.card-grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:18px;align-items:start}
+.side{display:grid;gap:14px;position:sticky;top:74px}
+.side .card{padding-bottom:14px}
+.side .inner{padding:0 16px}
+
+/* ---------- responsive ---------- */
+@media(max-width:1080px){
+  .main-grid,.lower-grid,.card-grid{grid-template-columns:1fr}
+  .side{position:static}
+  .maparea{grid-template-columns:minmax(0,1fr);gap:16px}
+  .mapside{max-width:none;justify-self:stretch}
+  .mapside.l{order:3}
+  .maplist{grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:3px 12px;max-height:none;overflow:visible}
+}
+@media(max-width:760px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .manual-grid{grid-template-columns:1fr}
+  .topbar-in{gap:9px}
+  .brand em{display:none}
+  .livechip{order:3;margin-left:0;width:100%;font-size:11.5px}
+  table{min-width:620px}
+  th,td{padding-left:8px;padding-right:8px}
+  th:first-child,td:first-child{padding-left:14px}
+  td .pname{display:none}
+  .bar-row{grid-template-columns:58px minmax(0,1fr) 54px 48px;gap:8px}
+  .maplist{grid-template-columns:1fr}
+  .maparea{padding-left:14px;padding-right:14px}
+  #lanMap{height:min(66vh,580px)}
+  .exit-head,.exit-row{grid-template-columns:1fr 72px 72px}
+  .hero:after{display:none}
+}
+@media(max-width:420px){
+  .kpis{grid-template-columns:1fr}
+  .tabs button{padding:7px 12px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<div class="flagbar"><span></span><span></span></div>
+<div class="flagbar"><i></i><i></i></div>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="flagicon" role="img" aria-label="Svezia"></span>Svezia 2026 <em>Riksdagsvalet</em></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tabbtn-live" aria-selected="true" aria-controls="tab-live">Dashboard</button>
+    <button role="tab" id="tabbtn-card" aria-selected="false" aria-controls="tab-card">Card per X</button>
+  </div>
+  <div class="livechip"><span id="feedDot" class="dot loading"></span><span id="feedStatus">Test collegamento Valmyndigheten…</span></div>
+</div></div>
+
 <main class="shell">
+
+<!-- ============================ TAB 1 — DASHBOARD ============================ -->
+<section id="tab-live" role="tabpanel" aria-labelledby="tabbtn-live">
+
   <header class="hero">
-    <div>
-      <div class="eyebrow"><span class="flag">🇸🇪</span> RIKSDAGSVALET 2026 · LIVE</div>
-      <h1>Svezia 2026</h1>
-      <p class="lead">Exit poll, risultato ufficiale e distribuzione dei 349 seggi del Riksdag. I dati del voto reale restano separati da VALU e TV4.</p>
-    </div>
-    <div class="statusbox">
-      <div class="statusline"><span id="feedDot" class="dot loading"></span><strong id="feedStatus">Test collegamento Valmyndigheten…</strong></div>
-      <div id="lastUpdate" class="muted">Nessun risultato ricevuto</div>
-      <div class="feedbadges"><span id="testFileBadge" class="pill danger hidden">FILE DI PROVA</span></div>
-      <button id="refreshBtn" class="smallbtn">Aggiorna ora</button>
+    <div class="eyebrow">Riksdagsvalet 2026 · diretta</div>
+    <h1>Svezia 2026</h1>
+    <p>Exit poll, risultato ufficiale e distribuzione dei 349 seggi del Riksdag. I dati del voto reale restano sempre separati da VALU e TV4.</p>
+    <div class="metaline">
+      <span id="lastUpdate" class="pill neutral">Nessun risultato ricevuto</span>
+      <span id="testFileBadge" class="pill danger hidden">FILE DI PROVA</span>
+      <button id="refreshBtn" class="sm">Aggiorna ora</button>
     </div>
   </header>
 
   <section class="kpis">
-    <article class="kpi"><span>Dist. notte ricevuti</span><strong id="districtKpi">—</strong><small id="districtMeta">totale letto dal feed ufficiale</small></article>
+    <article class="kpi"><span>Distretti della notte</span><strong id="districtKpi">—</strong><small id="districtMeta">totale letto dal feed ufficiale</small></article>
     <article class="kpi"><span>Voti ufficiali</span><strong id="votesKpi">—</strong><small>voti validi nel dataset corrente</small></article>
     <article class="kpi"><span>Fonte emiciclo</span><strong id="seatSourceKpi">Riksdag 2022</strong><small id="seatSourceMeta">baseline fino ai primi dati 2026</small></article>
-    <article class="kpi warn"><span>Conta successiva</span><strong id="collectionKpi">—</strong><small id="collectionMeta">uppsamlingsdistrikt: totale letto dal feed ufficiale</small></article>
+    <article class="kpi warn"><span>Conta successiva</span><strong id="collectionKpi">—</strong><small id="collectionMeta">uppsamlingsdistrikt: totale letto dal feed</small></article>
   </section>
 
   <div id="alert" class="alert hidden"></div>
 
+  <section class="card" style="margin-bottom:14px">
+    <div class="cardhead">
+      <div><span class="kicker">Confronto</span><h2>Voto nazionale</h2></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+        <label class="uploadbtn">Importa ZIP/JSON<input id="fileInput" type="file" accept=".zip,.json,application/zip,application/json" hidden></label>
+        <button id="manualToggle" class="sm">Inserimento manuale</button>
+      </div>
+    </div>
+    <p class="subcopy">La pastiglia accanto alla sigla indica la collocazione rispetto al governo Kristersson: Moderati, Cristiano-democratici e Liberali sono in maggioranza, i Democratici svedesi la sostengono dall’esterno senza ministri.</p>
+    <div class="tablewrap"><table><thead><tr><th>Partito</th><th>Ufficiale 2026</th><th>VALU</th><th>TV4</th><th>Riksdagsvalet 2022</th><th>Seggi</th><th>Δ 2022</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+  </section>
+
+  <section id="manualPanel" class="card hidden" style="margin-bottom:14px">
+    <div class="cardhead"><div><span class="kicker">Fallback</span><h2>Risultato manuale</h2></div><span class="pill neutral">sempre disponibile</span></div>
+    <p class="subcopy">Inserisci voti e, se disponibili, seggi. Se lasci vuoti i seggi, viene mostrata una distribuzione nazionale indicativa su 349 seggi: non è la procedura legale completa 310+39 per circoscrizione.</p>
+    <div id="manualInputs" class="manual-grid"></div>
+    <div class="manual-actions"><button id="applyManual" class="primary">Applica risultato</button><button id="clearManual" class="sm">Rimuovi risultato manuale</button></div>
+  </section>
+
   <section class="main-grid">
-    <article class="card parliament-card">
+    <article class="card">
       <div class="cardhead">
         <div><span class="kicker">Riksdag</span><h2>Proiezione dei seggi</h2></div>
         <span class="pill">Maggioranza 175</span>
       </div>
       <svg id="hemicycle" viewBox="0 0 560 300" role="img" aria-label="Emiciclo del Riksdag"></svg>
       <div id="seatLegend" class="seat-legend"></div>
+      <div id="blocchi" class="blocchi"></div>
       <p class="methodnote" id="seatMethod">In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.</p>
     </article>
 
-    <article class="card exit-card">
+    <article class="card">
       <div class="cardhead"><div><span class="kicker">Ore 20:00</span><h2>VALU / TV4</h2></div><span class="pill neutral">input rapido</span></div>
       <p class="subcopy">Inserisci le percentuali appena pubblicate. Non vengono mai mescolate ai voti ufficiali.</p>
       <div class="exit-head"><span>Partito</span><span>SVT VALU</span><span>TV4</span></div>
-      <div id="exitInputs" class="exit-inputs"></div>
-      <div class="exit-actions"><button id="saveExit" class="primary">Salva exit poll</button><button id="clearExit" class="smallbtn">Azzera</button></div>
-      <div id="exitValidation" class="validation muted">Totali: —</div>
+      <div id="exitInputs"></div>
+      <div class="exit-actions"><button id="saveExit" class="primary">Salva exit poll</button><button id="clearExit" class="sm">Azzera</button></div>
+      <div id="exitValidation" class="validation">Totali: —</div>
     </article>
   </section>
 
-  <section class="card results-card">
+  <section class="card" style="margin-bottom:14px">
     <div class="cardhead">
-      <div><span class="kicker">Confronto</span><h2>Voto nazionale</h2></div>
-      <div class="actions"><label class="uploadbtn">Importa ZIP/JSON<input id="fileInput" type="file" accept=".zip,.json,application/zip,application/json" hidden></label><button id="manualToggle" class="smallbtn">Inserimento manuale</button></div>
+      <div><span class="kicker" id="barsKicker">In attesa</span><h2>Il voto, partito per partito</h2></div>
+      <span class="pill neutral">soglia 4%</span>
     </div>
-    <div class="tablewrap"><table><thead><tr><th>Partito</th><th>2022</th><th>VALU</th><th>TV4</th><th>Ufficiale 2026</th><th>Seggi</th><th>Δ 2022</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+    <div id="bars" class="bars"></div>
+    <p class="methodnote" id="barsNote">La barra mostra la fonte più solida disponibile: risultato ufficiale se presente, altrimenti exit poll.</p>
   </section>
 
-  <section id="manualPanel" class="card manual-card hidden">
-    <div class="cardhead"><div><span class="kicker">Fallback</span><h2>Risultato manuale</h2></div><span class="pill neutral">sempre disponibile</span></div>
-    <p class="subcopy">Inserisci voti e, se disponibili, seggi. Se lasci vuoti i seggi, viene mostrata una distribuzione nazionale indicativa su 349 seggi: non è la procedura legale completa 310+39 per circoscrizione.</p>
-    <div id="manualInputs" class="manual-grid"></div>
-    <div class="manual-actions"><button id="applyManual" class="primary">Applica risultato</button><button id="clearManual" class="smallbtn">Rimuovi risultato manuale</button></div>
+  <section class="card" style="margin-bottom:14px">
+    <div class="cardhead">
+      <div><span class="kicker">Territorio</span><h2>La mappa dei län</h2></div>
+      <span class="pill neutral" id="mapPill">in attesa</span>
+    </div>
+    <p class="subcopy">Partito in testa nei 21 län, ricostruito dalle prime due cifre del codice valdistrikt. I län non coincidono con le 29 circoscrizioni del Riksdag: Stoccolma, Scania e Västra Götaland sono divise in più valkretsar.</p>
+    <div class="maparea">
+      <div class="mapside l"><div id="lanList" class="maplist"></div></div>
+      <div class="mapcol">
+        <div class="mapstage">
+          <svg id="lanMap" role="img" aria-label="Mappa dei län svedesi"></svg>
+          <div class="mapbar" id="mapBar">
+            <button id="mapBack" class="sm">← Tutta la Svezia</button>
+            <span class="maphint" id="mapHint">Tocca un län per ingrandirlo</span>
+          </div>
+          <div class="mapzoom">
+            <button id="zIn" title="Ingrandisci" aria-label="Ingrandisci">+</button>
+            <button id="zOut" title="Riduci" aria-label="Riduci">−</button>
+            <button id="zReset" title="Vista intera" aria-label="Torna alla vista intera">⤢</button>
+          </div>
+        </div>
+      </div>
+      <div class="mapside r">
+        <div id="mapLegend" class="mapleg"></div>
+        <div id="lanDetail" class="landetail"></div>
+      </div>
+    </div>
+    <div id="mapEmpty" class="mapempty">Nessun distretto scrutinato: la mappa si colora appena il feed espone i primi valdistrikt.</div>
+    <p class="methodnote" id="mapNote">Intensità del colore proporzionale alla quota del partito in testa.</p>
   </section>
 
   <section class="lower-grid">
-    <article class="card status-card">
+    <article class="card">
       <div class="cardhead"><div><span class="kicker">Scrutinio</span><h2>Stato della conta</h2></div></div>
       <div class="progress"><span id="progressBar"></span></div>
-      <div class="progresslabels"><span id="progressText">In attesa della struttura distretti dal feed</span><span id="progressPct">—</span></div>
-      <div id="countCheck" class="countcheck muted">Intestazione feed: — · calcolato dai distretti: —</div>
+      <div class="progresslabels"><span id="progressText">In attesa della struttura distretti dal feed</span><span id="progressPct" class="mono">—</span></div>
+      <div id="countCheck" class="countcheck">Intestazione feed: — · calcolato dai distretti: —</div>
       <div class="wednesday" id="progressNote"><strong>Importante:</strong> la conta della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.</div>
     </article>
-    <article class="card nowcast-card disabled-card">
+    <article class="card">
       <div class="cardhead"><div><span class="kicker">Modello</span><h2>Nowcast territoriale</h2></div><span class="pill danger">DISATTIVATO</span></div>
-      <p>Il nowcast non viene pubblicato finché non supera il backtest 2022 con lo scenario più severo: distretti ordinati dal più piccolo al più grande.</p>
+      <p class="subcopy">Il nowcast non viene pubblicato finché non supera il backtest 2022 con lo scenario più severo: distretti ordinati dal più piccolo al più grande.</p>
       <div class="gate"><span>Backtest 2022</span><strong>non validato</strong></div>
     </article>
   </section>
 
   <footer><span>Fonte dati: Valmyndigheten</span><span>Tracker indipendente · aggiornamento automatico solo se CORS disponibile</span></footer>
+</section>
+
+<!-- ============================ TAB 2 — CARD ============================ -->
+<section id="tab-card" role="tabpanel" aria-labelledby="tabbtn-card" class="hidden">
+  <header class="hero" style="padding:22px clamp(18px,3.2vw,30px)">
+    <div class="eyebrow">Edizione notturna · 1600×900 · export PNG 3200×1800</div>
+    <h1 style="font-size:clamp(28px,5vw,44px);margin:9px 0 10px">Card per X</h1>
+    <p>Le card si compilano da sole con i dati della dashboard: risultato ufficiale, exit poll, seggi, blocchi, soglia del 4% e mappa. Nessun dato va reinserito.</p>
+  </header>
+
+  <div class="card-grid">
+    <aside class="side">
+      <div class="card">
+        <div class="cardhead"><div><span class="kicker">Testata</span><h2>Impostazioni</h2></div></div>
+        <div class="inner" style="padding-top:12px">
+          <div class="fld"><label>Ambito e data (occhiello)</label><input id="ambito" value="Svezia · 13 settembre 2026"></div>
+          <div class="fld"><label>Data fonte (footer)</label><input id="dataFonte" value="13 settembre 2026"></div>
+          <div class="fld"><label>Firma</label><input id="firma" value="@putino"></div>
+          <button id="reauto" style="width:100%">Rigenera titoli e testi</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="cardhead"><div><span class="kicker">Titoli</span><h2>Uno per card</h2></div></div>
+        <div class="inner" style="padding-top:12px" id="titleFields"></div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="toolbar">
+        <button class="primary" id="dlAll">Scarica le card pronte</button>
+        <button id="redraw">Aggiorna anteprima</button>
+        <button id="copyAll">Copia tutti i testi</button>
+        <span class="muted" id="genStatus"></span>
+      </div>
+      <div id="genCards"></div>
+      <p class="muted" style="font-size:12px;margin:0">Limite 240 caratteri, senza hashtag né emoji. Il conteggio è sul testo effettivo, anche dopo le tue modifiche.</p>
+    </div>
+  </div>
+</section>
+
 </main>
 <script>
-
 /* src/parties.js */
 const PARTIES = [
   {id:'S',name:'Socialdemokraterna',color:'#e8112d',seats2022:107,share2022:30.33},
@@ -108,6 +515,32 @@ const PARTIES = [
   {id:'OVR',name:'Övriga',color:'#8b93a1',seats2022:0,share2022:1.55},
 ];
 const PARTY_MAP = Object.fromEntries(PARTIES.map(p=>[p.id,p]));
+
+/* Nomi italiani e collocazione rispetto al governo Kristersson: M, KD e L sono
+   in maggioranza, SD la sostiene dall'esterno senza ministri, gli altri quattro
+   stanno all'opposizione. Serve alle card e al riquadro dei blocchi. */
+const PARTY_IT={
+  S:{it:'Socialdemocratici',ruolo:'opposizione'},
+  SD:{it:'Democratici svedesi',ruolo:'sostegno'},
+  M:{it:'Moderati',ruolo:'governo'},
+  V:{it:'Sinistra',ruolo:'opposizione'},
+  C:{it:'Partito di centro',ruolo:'opposizione'},
+  KD:{it:'Cristiano-democratici',ruolo:'governo'},
+  MP:{it:'Verdi',ruolo:'opposizione'},
+  L:{it:'Liberali',ruolo:'governo'},
+  OVR:{it:'Altre liste',ruolo:null}
+};
+const RUOLI={
+  governo:{t:'AL GOVERNO',c:'#5B9BD5'},
+  sostegno:{t:'SOSTEGNO ESTERNO',c:'#E3B04B'},
+  opposizione:{t:'OPPOSIZIONE',c:'#FF5C6E'}
+};
+/* I due blocchi del 2022: Tidö 176 seggi, opposizione 173. */
+const BLOCCHI={
+  tido:{ids:['M','KD','L','SD'],nome:'Partiti di Tidö',breve:'Blocco Kristersson',col:'#5EB3E4',s22:176},
+  opp:{ids:['S','V','C','MP'],nome:'Opposizione',breve:'Blocco Andersson',col:'#F05A6E',s22:173}
+};
+const MAGGIORANZA=175;
 
 
 /* data/baseline-2022.js */
@@ -328,6 +761,15 @@ function partyCode(row){
   const code=text(row?.partiforkortning).toUpperCase();
   return KNOWN_PARTIES.has(code)?code:'OVR';
 }
+/* Il codice valdistretto e' a 8 cifre: le prime due sono la lanskod (01 Stoccolma ... 25 Norrbotten).
+   Excel e i JSON mal serializzati perdono lo zero iniziale, quindi si normalizza a 8 caratteri. */
+const LAN_CODES=new Set(['01','03','04','05','06','07','08','09','10','12','13','14','17','18','19','20','21','22','23','24','25']);
+function lanCode(d){
+  const raw=text(d?.valdistriktskod).replace(/\D/g,'');
+  if(!raw) return null;
+  const code=raw.padStart(8,'0').slice(0,2);
+  return LAN_CODES.has(code)?code:null;
+}
 function emptyDistricts(){
   return {reported:0,total:0,collectionReported:0,collectionTotal:0,allReported:0,allTotal:0};
 }
@@ -376,15 +818,26 @@ function normalizeVoteDistribution(payload){
     throw new Error('Valmyndigheten 2026: atteso un file röstfördelning nazionale RD con valdistrikt[]');
   }
   const votes={};
+  const byLan={};
   let nightTotal=0,nightReported=0,collectionTotal=0,collectionReported=0;
   for(const d of payload.valdistrikt){
     if(!d || typeof d!=='object' || Array.isArray(d)) throw new Error('Valmyndigheten 2026: elemento valdistrikt non valido');
     const isCollection=text(d.valdistriktstyp).toLowerCase()==='uppsamlingsdistrikt';
     if(isCollection) collectionTotal++; else nightTotal++;
+    const lan=lanCode(d);
+    if(lan){
+      if(!byLan[lan]) byLan[lan]={votes:{},reported:0,total:0,collectionReported:0,collectionTotal:0};
+      if(isCollection) byLan[lan].collectionTotal++; else byLan[lan].total++;
+    }
     const counted=isCountedDistrict(d);
     if(counted){
       if(isCollection) collectionReported++; else nightReported++;
-      addVotes(votes,parseDistrictVotes(d));
+      const dv=parseDistrictVotes(d);
+      addVotes(votes,dv);
+      if(lan){
+        addVotes(byLan[lan].votes,dv);
+        if(isCollection) byLan[lan].collectionReported++; else byLan[lan].reported++;
+      }
     }
   }
   const allReported=nightReported+collectionReported;
@@ -392,6 +845,7 @@ function normalizeVoteDistribution(payload){
   return {
     votes,
     seats:{},
+    byLan,
     districts:{reported:nightReported,total:nightTotal,collectionReported,collectionTotal,allReported,allTotal},
     updatedAt:text(payload.senasteUppdateringstid)||null,
     meta:{
@@ -441,6 +895,7 @@ function normalizeOfficialZipFiles(jsonFiles){
   return {
     votes:vote?.votes||{},
     seats:mandate?.seats||{},
+    byLan:vote?.byLan||{},
     districts:vote?.districts||emptyDistricts(),
     updatedAt:vote?.updatedAt||mandate?.updatedAt||null,
     meta:vote?.meta||{},
@@ -612,13 +1067,7 @@ function buildFeedDiagnostics(official){
 }
 
 
-/* src/app.js */
-
-
-
-
-
-
+const LAN_GEO={vb:"0 0 338.1 760",f:[{c:"01",n:"Stockholm",cx:179.1,cy:528.5,d:"M167.8 559.1L168.9 556.1L172.3 555.1L172.0 561.4L176.7 562.1L179.6 553.8L188.6 547.4L185.7 542.6L187.9 540.1L194.5 540.0L194.3 536.3L191.0 533.0L191.0 537.8L186.7 536.3L183.0 539.0L179.6 535.1L182.2 532.5L185.7 533.7L196.3 523.5L198.7 518.2L201.8 516.3L205.3 516.7L206.6 514.3L200.8 512.6L202.4 509.8L206.1 510.9L206.2 507.4L201.9 504.6L199.8 497.8L195.4 493.4L192.8 494.9L190.4 499.2L188.6 508.2L182.5 512.0L180.8 515.4L178.7 515.4L172.8 518.7L170.0 517.7L167.6 520.1L168.0 525.0L166.1 532.0L164.1 535.7L161.4 539.1L160.0 544.5L162.6 557.2L167.8 559.1Z"},{c:"03",n:"Uppsala",cx:173.6,cy:503.7,d:"M192.8 494.9L189.4 490.9L188.9 487.2L189.6 482.3L185.7 482.2L181.0 475.8L177.6 472.8L176.4 468.3L173.7 469.1L169.1 473.0L167.5 465.7L162.3 467.0L160.8 474.6L158.2 480.3L158.4 484.4L162.2 487.7L162.6 490.4L160.1 498.3L158.0 499.3L157.3 508.0L153.9 510.6L148.9 508.0L147.3 513.6L150.0 520.0L151.7 527.6L156.4 527.9L158.9 529.4L164.1 535.7L166.1 532.0L168.0 525.0L167.6 520.1L170.0 517.7L172.8 518.7L178.7 515.4L180.8 515.4L182.5 512.0L188.6 508.2L190.4 499.2L192.8 494.9Z"},{c:"04",n:"Södermanland",cx:140.1,cy:553.5,d:"M151.7 527.6L134.1 531.9L133.9 536.3L126.8 537.2L124.1 543.7L120.8 546.2L121.6 550.3L119.2 551.9L117.4 555.1L119.5 558.0L122.8 556.6L128.7 561.3L134.4 566.9L138.4 574.2L143.0 574.4L146.9 577.4L150.6 577.9L155.0 576.0L156.8 572.0L159.7 572.1L164.5 568.7L168.8 561.7L167.8 559.1L162.6 557.2L160.0 544.5L161.4 539.1L164.1 535.7L158.9 529.4L156.4 527.9L151.7 527.6Z"},{c:"05",n:"Östergötland",cx:117.9,cy:591.5,d:"M146.9 577.4L143.0 574.4L138.4 574.2L134.4 566.9L122.8 556.6L117.0 559.0L114.8 564.1L111.9 565.7L108.0 565.7L105.2 567.8L101.1 573.8L95.9 576.8L86.0 600.2L87.5 604.1L90.4 606.4L96.5 607.4L100.6 604.0L103.3 612.1L101.4 617.4L104.8 627.1L105.9 628.0L112.3 628.7L117.2 621.2L120.6 620.5L124.9 622.7L127.8 620.3L128.7 614.0L127.7 608.2L131.2 608.6L134.5 605.7L138.1 605.7L142.1 608.3L144.5 613.2L148.0 601.1L145.6 597.7L146.9 594.6L145.3 588.4L149.1 585.8L147.0 580.8L143.2 577.8L137.3 579.5L132.7 575.5L146.9 577.4Z"},{c:"06",n:"Jönköping",cx:91.6,cy:638.3,d:"M115.1 656.4L113.6 651.4L114.5 643.7L117.1 642.5L117.9 639.9L116.8 636.7L118.0 634.7L112.3 628.7L105.9 628.0L104.8 627.1L101.4 617.4L103.3 612.1L100.6 604.0L96.5 607.4L90.4 606.4L87.5 604.1L86.0 600.2L81.0 612.6L80.4 617.3L76.1 620.2L68.4 620.8L68.8 624.8L67.8 628.2L66.7 636.8L63.0 644.0L59.7 648.4L57.2 650.6L52.0 659.4L51.3 662.0L52.6 665.9L55.2 662.7L59.2 661.5L64.3 664.4L64.7 667.0L67.0 669.1L69.2 666.2L71.6 667.9L73.6 666.0L76.6 665.4L79.0 667.4L80.9 672.7L83.6 674.1L85.1 670.6L84.1 666.9L84.8 660.2L93.5 655.9L95.8 655.5L99.5 659.7L105.3 657.2L106.8 655.1L111.6 655.1L115.1 656.4Z"},{c:"07",n:"Kronoberg",cx:85.2,cy:679.8,d:"M115.1 656.4L111.6 655.1L106.8 655.1L105.3 657.2L99.5 659.7L95.8 655.5L93.5 655.9L84.8 660.2L84.1 666.9L85.1 670.6L83.6 674.1L80.9 672.7L79.0 667.4L76.6 665.4L73.6 666.0L71.6 667.9L69.2 666.2L67.0 669.1L65.1 673.3L58.1 675.5L57.3 677.5L57.0 684.7L60.6 692.6L60.7 696.4L62.0 700.1L74.7 697.1L77.3 693.6L88.9 697.2L93.7 701.4L98.6 702.5L100.7 698.8L103.5 698.0L106.4 699.1L109.7 697.6L110.3 694.1L111.3 692.6L111.6 686.0L111.0 681.6L115.3 677.9L114.5 673.5L121.1 673.3L122.7 670.5L121.7 667.0L118.2 660.9L116.1 659.5L115.1 656.4Z"},{c:"08",n:"Kalmar",cx:126.9,cy:655.1,d:"M154.5 649.1L151.7 651.2L151.5 655.3L150.3 656.9L149.7 661.6L145.2 674.2L142.8 675.2L137.0 693.4L137.4 710.9L139.4 710.4L141.4 704.5L143.3 692.1L146.9 678.7L148.2 677.8L149.6 672.8L149.3 669.9L150.9 667.2L151.9 662.4L154.3 655.6L153.7 653.1L154.5 649.1ZM146.7 616.9L142.1 608.3L138.1 605.7L134.5 605.7L131.2 608.6L127.7 608.2L128.7 614.0L127.8 620.3L124.9 622.7L120.6 620.5L117.2 621.2L112.3 628.7L118.0 634.7L116.8 636.7L117.9 639.9L117.1 642.5L114.5 643.7L113.6 651.4L116.1 659.5L118.2 660.9L121.7 667.0L122.7 670.5L121.1 673.3L114.5 673.5L115.3 677.9L111.0 681.6L111.6 686.0L111.3 692.6L110.2 696.9L116.3 695.8L121.5 702.9L126.2 705.6L128.4 705.0L129.2 700.4L132.2 693.2L133.3 687.6L136.5 686.2L135.9 681.6L137.3 678.8L138.8 671.0L138.1 667.4L140.5 665.3L141.0 662.0L138.7 658.3L139.3 651.8L140.5 648.2L143.7 645.4L144.5 642.0L143.0 637.2L142.5 630.3L145.0 629.9L144.2 625.7L138.6 618.5L142.0 616.2L145.1 618.7L146.7 616.9Z"},{c:"09",n:"Gotland",cx:192.4,cy:644.7,d:"M198.8 621.5L197.7 617.2L195.5 618.1L193.9 622.0L190.5 623.6L186.9 630.8L182.7 636.1L181.4 639.8L183.1 647.1L181.1 653.8L182.6 655.4L184.4 660.7L183.8 672.9L187.8 668.7L187.4 663.6L189.6 659.6L193.8 656.0L197.0 654.7L195.7 651.7L198.4 647.9L202.6 645.7L202.0 643.8L198.9 643.2L198.2 640.0L199.5 634.4L198.3 633.4L199.5 628.8L202.9 627.7L203.3 624.6L206.6 622.3L204.3 617.5L201.7 618.3L198.8 621.5ZM210.1 613.2L206.6 614.4L205.3 617.9L207.8 620.8L210.1 613.2Z"},{c:"10",n:"Blekinge",cx:107.8,cy:710,d:"M128.4 705.0L126.2 705.6L121.5 702.9L116.3 695.8L107.2 697.7L106.4 699.1L103.5 698.0L100.7 698.8L98.6 702.5L93.7 701.4L88.9 697.2L85.6 704.4L86.5 709.0L88.9 710.4L90.1 715.1L89.2 720.7L90.7 723.0L93.4 723.5L94.8 722.0L92.7 715.5L93.7 714.4L99.6 714.1L102.1 715.1L113.6 713.9L115.6 712.2L119.7 714.9L122.8 718.9L124.9 714.0L127.7 709.5L128.4 705.0Z"},{c:"12",n:"Skåne",cx:63.4,cy:728.1,d:"M88.9 697.2L77.3 693.6L74.7 697.1L63.9 700.1L59.1 700.4L55.0 704.6L49.4 703.1L48.4 699.0L46.7 697.3L44.7 699.1L41.6 697.7L39.2 700.4L42.0 703.7L44.7 708.9L41.4 711.3L39.8 709.4L36.2 708.4L38.9 717.2L42.6 723.9L44.4 730.0L47.1 732.9L47.0 737.6L49.3 738.7L50.6 741.7L49.7 744.4L47.2 747.0L47.1 750.3L49.0 757.0L56.3 760.0L58.9 760.0L65.3 756.0L71.8 755.1L77.3 757.7L79.6 757.5L84.3 750.1L84.2 747.9L80.0 738.9L80.3 733.6L83.9 726.3L89.2 720.7L90.1 715.1L88.9 710.4L86.5 709.0L85.6 704.4L88.9 697.2Z"},{c:"13",n:"Halland",cx:49.3,cy:671.1,d:"M52.0 659.4L47.8 657.1L47.6 652.7L42.5 651.4L38.5 648.7L36.4 651.6L34.3 651.2L33.3 646.9L33.9 644.0L31.8 640.9L30.9 633.9L24.9 636.4L20.8 635.8L21.7 641.0L20.9 645.8L24.6 642.7L25.9 646.3L28.4 659.9L30.1 665.8L31.7 667.0L32.8 673.0L35.3 674.1L38.6 678.1L39.0 682.0L42.0 687.7L45.7 687.6L47.3 693.3L46.7 697.3L48.4 699.0L49.4 703.1L55.0 704.6L59.1 700.4L62.0 700.1L60.7 696.4L60.6 692.6L57.0 684.7L57.3 677.5L58.1 675.5L65.1 673.3L67.0 669.1L64.7 667.0L64.3 664.4L59.2 661.5L55.2 662.7L52.6 665.9L51.3 662.0L52.0 659.4Z"},{c:"14",n:"Västra Götaland",cx:52.9,cy:600.2,d:"M16.3 609.4L10.8 609.8L10.9 615.2L12.6 616.2L16.2 612.8L16.3 609.4ZM17.6 599.0L12.4 599.7L7.7 605.4L10.6 607.9L12.4 605.8L15.5 607.2L18.0 605.7L17.6 599.0ZM95.9 576.8L92.9 571.9L88.4 572.2L85.5 565.7L83.0 556.2L80.8 554.7L64.9 554.1L60.8 558.9L58.8 565.9L60.5 570.5L56.5 571.4L47.1 567.4L45.3 557.8L43.4 554.3L42.7 549.5L40.3 547.4L38.5 550.2L29.7 545.2L27.9 543.0L24.9 546.0L21.8 543.4L18.2 543.3L14.4 561.6L11.4 563.5L8.9 562.9L8.9 559.3L6.4 552.0L2.9 552.1L0.6 555.4L0.0 559.7L2.1 562.2L3.2 568.3L1.8 571.8L3.7 576.6L3.9 585.9L3.0 592.1L7.1 593.0L10.1 598.3L11.9 598.8L16.0 594.5L18.1 594.5L19.9 601.6L17.5 608.8L18.0 610.6L15.2 619.2L16.7 624.6L15.5 628.1L19.1 630.2L20.8 635.8L24.9 636.4L30.9 633.9L31.8 640.9L33.9 644.0L33.3 646.9L34.3 651.2L36.4 651.6L38.5 648.7L42.5 651.4L47.6 652.7L47.8 657.1L52.0 659.4L57.2 650.6L59.7 648.4L63.0 644.0L66.7 636.8L67.8 628.2L68.8 624.8L68.4 620.8L76.1 620.2L80.4 617.3L81.0 612.6L95.9 576.8Z"},{c:"17",n:"Värmland",cx:56.4,cy:507.2,d:"M86.6 499.6L81.6 495.7L79.0 488.9L70.9 487.1L66.3 479.0L62.7 476.8L55.8 463.7L54.1 462.0L51.5 456.3L42.7 446.1L41.5 442.9L36.3 443.4L30.4 445.3L29.7 447.1L31.2 451.6L32.9 459.8L35.6 465.1L38.5 473.0L38.5 479.7L35.7 485.2L36.6 490.6L36.3 495.1L34.7 498.8L30.6 503.9L26.8 507.3L21.6 507.1L19.2 508.7L20.6 514.4L20.3 518.0L18.7 520.5L15.2 522.6L14.7 526.1L17.5 537.1L18.2 543.3L21.8 543.4L24.9 546.0L27.9 543.0L29.7 545.2L38.5 550.2L40.3 547.4L42.7 549.5L43.4 554.3L45.3 557.8L47.1 567.4L56.5 571.4L60.5 570.5L58.8 565.9L60.8 558.9L64.9 554.1L80.8 554.7L83.0 556.2L83.4 540.4L87.0 529.5L87.4 524.7L86.4 519.0L85.7 505.7L84.0 503.9L86.7 501.5L86.6 499.6Z"},{c:"18",n:"Örebro",cx:100.9,cy:537.4,d:"M112.6 508.1L107.0 500.8L94.8 496.2L93.5 500.6L86.6 499.6L86.7 501.5L84.0 503.9L85.7 505.7L86.4 519.0L87.4 524.7L87.0 529.5L83.4 540.4L83.0 556.2L85.5 565.7L88.4 572.2L92.9 571.9L95.9 576.8L101.1 573.8L105.2 567.8L108.0 565.7L111.9 565.7L114.8 564.1L117.0 559.0L117.4 555.1L119.2 551.9L121.6 550.3L121.0 545.7L117.2 540.8L117.5 534.4L120.3 532.7L117.4 522.3L115.2 521.7L115.8 516.0L112.6 508.1Z"},{c:"19",n:"Västmanland",cx:131.6,cy:514.8,d:"M121.0 545.7L124.1 543.7L126.8 537.2L133.9 536.3L134.1 531.9L151.7 527.6L150.0 520.0L147.3 513.6L148.9 508.0L153.9 510.6L157.3 508.0L158.0 499.3L160.1 498.3L162.6 490.4L162.2 487.7L158.4 484.4L155.7 485.8L152.1 485.1L147.7 489.9L145.3 489.6L141.0 491.9L138.9 495.5L135.0 497.3L131.0 495.8L130.1 492.6L126.0 491.1L121.9 491.7L120.2 493.5L118.5 503.3L114.6 503.1L112.6 508.1L115.8 516.0L115.2 521.7L117.4 522.3L120.3 532.7L117.5 534.4L117.2 540.8L121.0 545.7Z"},{c:"20",n:"Dalarna",cx:81.1,cy:440.8,d:"M87.4 413.3L64.7 409.6L57.5 395.8L58.9 390.4L56.4 388.0L53.8 388.2L50.3 386.1L43.7 379.1L31.3 375.5L31.3 377.6L27.3 405.9L33.9 413.8L39.0 415.7L45.8 425.5L44.3 434.7L42.4 437.7L41.5 442.9L42.7 446.1L51.5 456.3L54.1 462.0L55.8 463.7L62.7 476.8L66.3 479.0L70.9 487.1L79.0 488.9L81.6 495.7L86.6 499.6L93.5 500.6L94.8 496.2L97.7 496.7L107.0 500.8L112.6 508.1L114.6 503.1L118.5 503.3L120.2 493.5L121.9 491.7L126.0 491.1L130.1 492.6L131.0 495.8L135.0 497.3L138.9 495.5L141.0 491.9L145.3 489.6L140.8 481.8L137.0 478.4L131.9 469.4L136.9 460.0L137.2 457.5L133.5 452.2L130.7 446.1L124.6 444.4L121.5 442.6L119.0 439.0L117.3 432.4L112.5 426.9L105.6 415.9L103.4 418.8L93.3 418.8L92.2 414.9L87.4 413.3Z"},{c:"21",n:"Gävleborg",cx:136.3,cy:430.7,d:"M162.3 467.0L158.7 462.9L159.9 458.3L159.0 451.8L156.7 449.0L157.2 438.6L158.1 433.0L155.7 429.0L157.8 426.8L155.3 423.9L157.2 419.1L154.7 414.4L155.1 410.8L162.0 406.7L164.1 411.0L166.1 407.1L162.9 406.0L161.4 400.1L161.5 394.8L164.7 387.1L165.5 382.4L158.0 380.7L152.9 380.6L139.3 376.7L132.1 376.1L117.0 370.9L114.5 371.2L110.1 374.9L112.6 381.7L111.6 384.1L104.0 390.6L104.0 398.9L96.6 399.5L92.6 397.9L90.5 401.0L87.4 413.3L92.2 414.9L93.3 418.8L103.4 418.8L105.6 415.9L112.5 426.9L117.3 432.4L119.0 439.0L121.5 442.6L124.6 444.4L130.7 446.1L133.5 452.2L137.2 457.5L136.9 460.0L131.9 469.4L137.0 478.4L140.8 481.8L145.3 489.6L147.7 489.9L152.1 485.1L155.7 485.8L158.4 484.4L158.2 480.3L160.8 474.6L162.3 467.0Z"},{c:"22",n:"Västernorrland",cx:169.4,cy:330.1,d:"M212.6 309.7L209.7 302.1L203.2 292.3L192.0 287.8L187.9 280.5L171.5 285.7L150.0 281.8L146.0 278.6L143.0 287.8L142.0 294.2L139.3 295.8L133.5 296.7L130.9 296.1L125.1 298.2L127.2 309.4L151.8 335.4L143.7 339.4L138.1 346.9L134.8 350.4L123.7 351.2L116.6 354.3L105.3 357.1L100.6 356.7L96.3 358.1L97.4 363.8L96.9 367.0L102.5 374.1L105.8 375.4L110.1 374.9L114.5 371.2L117.0 370.9L132.1 376.1L139.3 376.7L152.9 380.6L158.0 380.7L165.5 382.4L166.7 376.8L162.8 372.4L161.6 368.2L161.4 362.9L163.9 360.8L167.5 366.2L170.5 363.0L174.9 362.8L176.1 360.1L179.6 357.7L177.8 354.1L178.6 351.2L174.5 339.5L176.4 339.8L176.6 345.0L179.9 343.3L182.3 345.0L185.4 341.6L188.8 343.9L191.8 340.4L192.1 335.5L190.6 333.8L194.3 325.2L198.1 326.3L202.1 323.3L205.2 325.0L208.4 317.4L211.4 316.1L212.6 309.7Z"},{c:"23",n:"Jämtland",cx:78.8,cy:314.4,d:"M87.4 413.3L90.5 401.0L92.6 397.9L96.6 399.5L104.0 398.9L104.0 390.6L111.6 384.1L112.6 381.7L110.1 374.9L105.8 375.4L102.5 374.1L96.9 367.0L97.4 363.8L96.3 358.1L100.6 356.7L105.3 357.1L116.6 354.3L123.7 351.2L134.8 350.4L138.1 346.9L143.7 339.4L151.8 335.4L127.2 309.4L125.1 298.2L130.9 296.1L133.5 296.7L139.3 295.8L142.0 294.2L143.0 287.8L146.0 278.6L133.5 265.4L128.9 265.0L126.3 259.9L121.2 255.9L120.1 251.4L117.3 253.3L114.5 249.6L108.3 243.8L107.8 239.5L103.7 237.6L101.4 232.7L97.8 230.8L93.2 224.0L83.5 217.7L65.6 247.2L77.9 255.1L79.1 268.2L78.7 270.2L74.4 278.5L73.3 279.0L55.1 274.5L48.5 276.3L40.8 282.0L30.7 298.6L27.5 301.9L28.4 309.8L22.9 319.0L28.9 335.0L25.8 339.3L27.1 349.9L25.5 358.1L30.5 372.0L31.3 375.5L43.7 379.1L50.3 386.1L53.8 388.2L56.4 388.0L58.9 390.4L57.5 395.8L64.7 409.6L87.4 413.3Z"},{c:"24",n:"Västerbotten",cx:179.3,cy:228.6,d:"M271.2 220.3L263.1 214.9L233.3 206.8L222.6 210.2L220.7 212.5L214.8 215.1L210.9 212.2L210.4 209.5L199.7 203.3L196.6 199.6L193.0 199.4L187.8 196.6L182.7 191.7L172.8 187.6L164.8 182.1L149.5 168.2L139.6 164.4L123.2 153.2L113.1 148.8L113.3 153.3L102.2 160.0L88.9 161.6L91.6 177.3L91.4 180.7L89.4 185.1L88.1 198.3L88.2 206.4L84.4 212.1L83.7 217.2L93.2 224.0L97.8 230.8L101.4 232.7L103.7 237.6L107.8 239.5L108.3 243.8L114.5 249.6L117.3 253.3L120.1 251.4L121.2 255.9L126.3 259.9L128.9 265.0L133.5 265.4L146.0 278.6L150.0 281.8L171.5 285.7L187.9 280.5L192.0 287.8L203.2 292.3L209.7 302.1L212.6 309.7L216.2 306.8L219.4 306.2L222.2 311.1L224.4 309.3L223.9 306.0L227.2 301.8L232.2 298.1L238.3 298.8L238.5 294.0L241.1 292.9L243.3 289.5L248.1 290.7L253.5 280.5L255.3 271.3L259.2 267.3L262.5 262.5L268.0 258.9L271.9 254.5L268.9 252.5L268.2 249.1L265.9 245.8L262.5 245.0L264.3 240.8L262.1 238.1L260.9 233.2L262.8 226.5L266.0 226.3L268.3 221.0L271.2 220.3Z"},{c:"25",n:"Norrbotten",cx:231.5,cy:110.2,d:"M271.2 220.3L272.2 215.8L270.1 211.2L274.3 208.2L268.8 202.2L280.6 201.2L282.9 198.1L279.5 196.2L286.5 193.4L292.0 189.2L288.7 187.1L291.4 181.8L290.5 177.6L294.2 177.3L296.8 179.9L303.8 179.2L309.2 181.8L310.2 183.7L317.7 178.4L332.8 180.3L337.5 179.4L338.1 177.4L335.3 171.4L334.4 165.8L331.0 159.6L326.7 157.1L325.2 151.6L324.6 144.3L325.5 142.2L330.8 137.3L331.1 126.9L333.9 123.5L332.1 119.2L325.7 110.3L323.0 104.5L324.1 98.1L327.0 97.0L327.8 89.7L319.1 86.1L322.3 80.5L320.5 72.1L320.9 64.1L325.1 61.3L317.9 54.7L316.5 50.4L311.9 50.3L312.0 45.5L309.3 41.0L297.8 33.9L289.9 31.1L283.9 31.0L280.0 26.0L268.2 19.4L258.0 9.3L253.7 7.9L254.5 3.9L246.4 0.0L232.9 0.8L239.1 7.0L239.5 12.9L236.4 20.9L234.2 23.8L229.3 27.5L236.6 31.0L230.5 37.3L228.5 38.1L205.4 29.5L195.2 29.7L189.8 25.7L182.9 27.8L182.0 35.6L183.4 46.5L182.8 48.7L177.2 58.0L175.8 59.2L160.9 51.7L158.3 55.3L147.6 62.5L146.4 64.3L142.5 77.1L139.2 82.1L136.2 84.1L131.9 84.8L130.0 89.6L138.0 101.9L137.4 110.1L127.7 119.3L118.1 135.3L111.8 141.3L113.1 148.8L123.2 153.2L139.6 164.4L149.5 168.2L164.8 182.1L172.8 187.6L182.7 191.7L187.8 196.6L193.0 199.4L196.6 199.6L199.7 203.3L210.4 209.5L210.9 212.2L214.8 215.1L220.7 212.5L222.6 210.2L233.3 206.8L263.1 214.9L271.2 220.3Z"}]};/* src/app.js */
 
 const INDEX_URL=buildProxyFeedUrl('index.md5');
 const POLL_MS=60000;
@@ -627,26 +1076,36 @@ const state={valu:{},tv4:{},official:null,officialSource:null,lastChecksum:null,
 const $=s=>document.querySelector(s);
 const fmt=n=>Number(n||0).toLocaleString('it-IT');
 const pct=v=>v==null||v===''?'—':`${Number(v).toFixed(1).replace('.',',')}%`;
+const THRESHOLD=4;
 
 function loadState(){try{Object.assign(state,JSON.parse(localStorage.getItem(STORAGE)||'{}'));}catch{}}
-function saveState(){localStorage.setItem(STORAGE,JSON.stringify(state));}
+function saveState(){try{localStorage.setItem(STORAGE,JSON.stringify(state));}catch{}}
 function partyOrder(){return ['V','S','MP','C','L','KD','M','SD','OVR'];}
 function resultShares(){return state.official?.votes?computeShares(state.official.votes):{};}
 function exitHas(obj){return Object.values(obj||{}).some(v=>Number(v)>0);}
 function syntheticVotes(shares){return Object.fromEntries(Object.entries(shares).map(([p,v])=>[p,Math.round(Number(v)*10000)]));}
 function sum(obj){return Object.values(obj||{}).reduce((a,b)=>a+(Number(b)||0),0);}
+function hasOfficial(){return sum(state.official?.votes)>0;}
+
+/* Fonte migliore disponibile per barre e card: ufficiale > VALU > TV4 > 2022 */
+function bestSource(){
+  if(hasOfficial()) return {shares:resultShares(),label:'Risultato ufficiale',short:'ufficiale',kind:'official'};
+  if(exitHas(state.valu)) return {shares:{...state.valu},label:'Exit poll SVT VALU',short:'VALU',kind:'valu'};
+  if(exitHas(state.tv4)) return {shares:{...state.tv4},label:'Exit poll TV4',short:'TV4',kind:'tv4'};
+  return {shares:{...BASELINE_2022.shares},label:'Riksdagsvalet 2022',short:'2022',kind:'none'};
+}
 
 function currentSeats(){
   if(state.official){
     if(sum(state.official.seats)===349){
       const manual=state.officialSource==='manual';
-      return {seats:state.official.seats,label:manual?'Seggi manuali':'Ufficiale 2026',method:manual?'Seggi inseriti manualmente.':'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
+      return {seats:state.official.seats,label:manual?'Seggi manuali':'Ufficiale 2026',short:manual?'inseriti a mano':'mandati dal dataset ufficiale',method:manual?'Seggi inseriti manualmente.':'Mandati presenti nel dataset ufficiale Valmyndigheten.'};
     }
-    if(sum(state.official.votes)>0) return {seats:allocateNationalSeats(state.official.votes),label:'Voto ufficiale',method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4%. Non applica la procedura legale completa 310+39 per circoscrizione; sarà sostituita dai mandati ufficiali appena disponibili.'};
+    if(sum(state.official.votes)>0) return {seats:allocateNationalSeats(state.official.votes),label:'Voto ufficiale',short:'ripartizione indicativa sui voti reali',method:'Distribuzione nazionale indicativa su 349 seggi con soglia 4%. Non applica la procedura legale completa 310+39 per circoscrizione; sarà sostituita dai mandati ufficiali appena disponibili.'};
   }
-  if(exitHas(state.valu)) return {seats:allocateNationalSeats(syntheticVotes(state.valu)),label:'SVT VALU',method:'Traduzione nazionale indicativa di VALU su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
-  if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:'TV4',method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
-  return {seats:BASELINE_2022.seats,label:'Riksdag 2022',method:'In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.'};
+  if(exitHas(state.valu)) return {seats:allocateNationalSeats(syntheticVotes(state.valu)),label:'SVT VALU',short:'traduzione indicativa dell\u2019exit poll',method:'Traduzione nazionale indicativa di VALU su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
+  if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:'TV4',short:'traduzione indicativa dell\u2019exit poll',method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non è la distribuzione legale completa 310+39 e non è un risultato ufficiale.'};
+  return {seats:BASELINE_2022.seats,label:'Riksdag 2022',short:'baseline fino ai primi dati 2026',method:'In attesa dei dati 2026. L’emiciclo mostra la composizione del 2022.'};
 }
 
 function seatPoints(){
@@ -658,21 +1117,340 @@ function renderHemicycle(seatInfo){
   const svg=$('#hemicycle'); svg.innerHTML='';
   const points=seatPoints(), colors=[];
   for(const id of partyOrder()) for(let i=0;i<(seatInfo.seats[id]||0);i++) colors.push(PARTY_MAP[id]?.color||'#76889a');
-  while(colors.length<349) colors.push('#344b5d');
-  points.forEach((p,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5.2');c.setAttribute('fill',colors[i]||'#344b5d');c.setAttribute('stroke','#07111b');c.setAttribute('stroke-width','1');svg.appendChild(c);});
-  const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1','280');line.setAttribute('y1','268');line.setAttribute('x2','280');line.setAttribute('y2','50');line.setAttribute('stroke','#fecb00');line.setAttribute('stroke-dasharray','4 5');line.setAttribute('opacity','.5');svg.appendChild(line);
+  while(colors.length<349) colors.push('#2b3f52');
+  points.forEach((p,i)=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5.2');c.setAttribute('fill',colors[i]||'#2b3f52');c.setAttribute('stroke','#070f19');c.setAttribute('stroke-width','1');svg.appendChild(c);});
+  /* archi di blocco: il confine cade dove finiscono i seggi dell'opposizione */
+  const NS='http://www.w3.org/2000/svg';
+  const opp=BLOCCHI.opp.ids.reduce((n,i)=>n+(seatInfo.seats[i]||0),0);
+  const rOut=78+9*17+16, ang=t=>Math.PI-(t/349)*Math.PI;
+  const pt=(t,r)=>[280+r*Math.cos(ang(t)),270-r*Math.sin(ang(t))];
+  const arco=(t0,t1,col)=>{
+    const [x0,y0]=pt(t0,rOut), [x1,y1]=pt(t1,rOut);
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',`M${x0} ${y0} A${rOut} ${rOut} 0 0 1 ${x1} ${y1}`);
+    p.setAttribute('fill','none');p.setAttribute('stroke',col);
+    p.setAttribute('stroke-width','3.4');p.setAttribute('stroke-linecap','round');
+    svg.appendChild(p);
+  };
+  arco(0,opp,BLOCCHI.opp.col); arco(opp,349,BLOCCHI.tido.col);
+  const [mx0,my0]=pt(175,60), [mx1,my1]=pt(175,rOut+10);
+  const line=document.createElementNS(NS,'line');
+  line.setAttribute('x1',mx0);line.setAttribute('y1',my0);line.setAttribute('x2',mx1);line.setAttribute('y2',my1);
+  line.setAttribute('stroke','#fecb00');line.setAttribute('stroke-dasharray','4 5');
+  line.setAttribute('stroke-width','1.6');line.setAttribute('opacity','.8');svg.appendChild(line);
   $('#seatLegend').innerHTML=PARTIES.filter(p=>(seatInfo.seats[p.id]||0)>0).map(p=>`<span class="seat-chip"><i style="background:${p.color}"></i>${p.id} <strong>${seatInfo.seats[p.id]||0}</strong></span>`).join('');
   $('#seatMethod').textContent=seatInfo.method;
+  renderBlocchi(seatInfo.seats);
+}
+
+function renderBlocchi(seats){
+  const conta=b=>b.ids.reduce((n,i)=>n+(seats[i]||0),0);
+  const opp={...BLOCCHI.opp,tot:conta(BLOCCHI.opp)}, tido={...BLOCCHI.tido,tot:conta(BLOCCHI.tido)};
+  const vince=opp.tot>=175?opp:(tido.tot>=175?tido:null);
+  const primo=opp.tot>=tido.tot?opp:tido;
+  const riga=b=>{
+    const d=b.tot-b.s22;
+    return `<div class="bloc${b.tot>=175?' win':''}">
+      <div><div class="bn">${b.nome}</div><div class="bp">${b.ids.join(' · ')}</div></div>
+      <div><div class="bv" style="color:${b.tot>=175?'var(--yellow)':b.col}">${b.tot}</div>
+        <div class="bd">${d>0?'+':d<0?'−':'±'}${Math.abs(d)} sul 2022</div></div>
+    </div>`;
+  };
+  const gap=vince?vince.tot-175:175-primo.tot;
+  $('#blocchi').innerHTML=riga(opp)+riga(tido)+
+    `<div class="blocgap"><b class="${vince?'':'no'}">${vince?'+':'−'}${gap}</b><span>${
+      vince ? `i seggi con cui ${vince===opp?'l’opposizione':'il blocco di Tidö'} supera la soglia dei 175`
+            : `i seggi che mancano a ${primo===opp?'l’opposizione':'il blocco di Tidö'} per la maggioranza: nessun blocco arriva a 175`
+    }</span></div>`;
 }
 
 function renderInputs(){
-  $('#exitInputs').innerHTML=PARTIES.filter(p=>p.id!=='OVR').map(p=>`<div class="exit-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><input data-exit="valu" data-party="${p.id}" inputmode="decimal" value="${state.valu[p.id]??''}" placeholder="—"><input data-exit="tv4" data-party="${p.id}" inputmode="decimal" value="${state.tv4[p.id]??''}" placeholder="—"></div>`).join('');
-  $('#manualInputs').innerHTML=PARTIES.map(p=>`<div class="manual-row"><span class="manual-name"><i class="partydot" style="display:inline-block;background:${p.color};margin-right:6px"></i>${p.id}</span><div><label>Voti</label><input data-manual-votes="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.votes?.[p.id]??''):''}"></div><div><label>Seggi</label><input data-manual-seats="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.seats?.[p.id]??''):''}"></div></div>`).join('');
+  $('#exitInputs').innerHTML=PARTIES.filter(p=>p.id!=='OVR').map(p=>`<div class="exit-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><input data-exit="valu" data-party="${p.id}" inputmode="decimal" value="${state.valu[p.id]??''}" placeholder="—" aria-label="VALU ${p.id}"><input data-exit="tv4" data-party="${p.id}" inputmode="decimal" value="${state.tv4[p.id]??''}" placeholder="—" aria-label="TV4 ${p.id}"></div>`).join('');
+  $('#manualInputs').innerHTML=PARTIES.map(p=>`<div class="manual-row"><span class="partylabel"><i class="partydot" style="background:${p.color}"></i>${p.id}</span><div><label>Voti</label><input data-manual-votes="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.votes?.[p.id]??''):''}"></div><div><label>Seggi</label><input data-manual-seats="${p.id}" inputmode="numeric" value="${state.officialSource==='manual'?(state.official?.seats?.[p.id]??''):''}"></div></div>`).join('');
 }
+
 function renderTable(){
   const shares=resultShares(); const seats=currentSeats().seats;
-  $('#resultsBody').innerHTML=PARTIES.map(p=>{const d=(seats[p.id]??0)-p.seats2022;return `<tr><td><span class="partylabel"><i class="partydot" style="background:${p.color}"></i><strong>${p.id}</strong>&nbsp; ${p.name}</span></td><td>${pct(p.share2022)}</td><td>${pct(state.valu[p.id])}</td><td>${pct(state.tv4[p.id])}</td><td>${pct(shares[p.id])}</td><td><strong>${seats[p.id]??'—'}</strong></td><td class="delta ${d>0?'plus':d<0?'minus':''}">${d>0?'+':''}${d||'0'}</td></tr>`}).join('');
+  $('#resultsBody').innerHTML=PARTIES.map(p=>{
+    const d=(seats[p.id]??0)-p.seats2022, info=PARTY_IT[p.id]||{};
+    const ruolo=info.ruolo?`<span class="role ${info.ruolo}">${RUOLI[info.ruolo].t}</span>`:'';
+    return `<tr><td><span class="partylabel"><i class="partydot" style="background:${p.color}"></i><strong>${p.id}</strong><span class="pname">${info.it||p.name}</span>${ruolo}</span></td><td><strong>${pct(shares[p.id])}</strong></td><td>${pct(state.valu[p.id])}</td><td>${pct(state.tv4[p.id])}</td><td>${pct(p.share2022)}</td><td><strong>${seats[p.id]??'—'}</strong></td><td class="delta ${d>0?'plus':d<0?'minus':''}">${d>0?'+':''}${d||'0'}</td></tr>`;
+  }).join('');
 }
+
+function renderBars(){
+  const src=bestSource();
+  const rows=PARTIES.map(p=>({p,v:Number(src.shares[p.id]||0)})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
+  $('#barsKicker').textContent=src.label;
+  if(!rows.length){$('#bars').innerHTML='<p class="mapempty">In attesa del primo dato.</p>';return;}
+  const max=Math.max(...rows.map(r=>r.v),THRESHOLD+1);
+  $('#bars').innerHTML=rows.map(({p,v})=>{
+    const d=+(v-p.share2022).toFixed(1), under=p.id!=='OVR'&&v<THRESHOLD;
+    return `<div class="bar-row ${under?'under':''}">
+      <span class="nm"><i style="background:${p.color}"></i>${p.id}</span>
+      <span class="track"><b style="width:${Math.max(2,v/max*100)}%;background:${p.color}"></b><i class="thr" style="left:${THRESHOLD/max*100}%"></i></span>
+      <span class="vv">${v.toFixed(1).replace('.',',')}%</span>
+      <span class="dd ${d>0.049?'plus':d<-0.049?'minus':''}">${d>0.049?'+':d<-0.049?'−':'±'}${Math.abs(d).toFixed(1).replace('.',',')}</span>
+    </div>`;
+  }).join('');
+  $('#barsNote').textContent=src.kind==='none'
+    ? 'Nessun dato 2026: le barre mostrano il risultato del 2022. La linea verticale è la soglia del 4%.'
+    : `Fonte della barra: ${src.label}. Lo scarto a destra è in punti sul 2022. La linea verticale è la soglia del 4%.`;
+}
+
+/* ---------------- mappa dei län ---------------- */
+function lanResults(){
+  const by=state.official?.byLan||{};
+  return LAN_GEO.f.map(g=>{
+    const b=by[g.c];
+    const votes=b?.votes||{};
+    const tot=sum(votes);
+    if(!tot) return {...g,tot:0,lead:null,share:0,shares:{},reported:b?.reported||0,total:b?.total||0};
+    const shares=computeShares(votes);
+    const lead=Object.entries(shares).filter(([p])=>p!=='OVR').sort((a,b2)=>b2[1]-a[1])[0];
+    return {...g,tot,lead:lead?lead[0]:null,share:lead?lead[1]:0,shares,
+      reported:b?.reported||0,total:b?.total||0};
+  });
+}
+function mix(hex,amount){ /* schiarisce/scurisce verso il fondo notturno */
+  const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
+  const bg=[18,28,44];
+  const f=Math.max(0,Math.min(1,amount));
+  return `rgb(${Math.round(bg[0]+(r-bg[0])*f)},${Math.round(bg[1]+(g-bg[1])*f)},${Math.round(bg[2]+(b-bg[2])*f)})`;
+}
+/* --- vista della mappa: zoom, pan, selezione ---------------------------------
+   Lo zoom agisce su una trasformazione CSS del gruppo <g>, non sull'attributo
+   viewBox: animando il viewBox Chromium non invalida tutta l'area di disegno e
+   lascia sullo schermo brandelli del fotogramma precedente. Il transform e'
+   compositato, e con vector-effect i tratti restano di spessore costante. */
+const MAPV={base:null,cur:null,sel:null,box:{},built:false};
+const MAP_MAX=18;
+const EASE='transform .38s cubic-bezier(.33,0,.2,1)';
+function vbParse(s){const p=s.split(/\s+/).map(Number);return {x:p[0],y:p[1],w:p[2],h:p[3]};}
+function reducedMotion(){return window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;}
+function clampView(v){
+  const b=MAPV.base, minW=b.w/MAP_MAX;
+  const w=Math.min(b.w,Math.max(minW,v.w)), h=w*b.h/b.w;
+  return {x:Math.min(b.x+b.w-w,Math.max(b.x,v.x)),
+          y:Math.min(b.y+b.h-h,Math.max(b.y,v.y)),w,h};
+}
+function applyView(v,animate){
+  MAPV.cur=v;
+  const b=MAPV.base, k=b.w/v.w, layer=$('#lanLayer');
+  if(layer){
+    layer.style.transition=(animate&&!reducedMotion())?EASE:'none';
+    layer.style.transform=`translate(${(b.x-v.x*k).toFixed(3)}px,${(b.y-v.y*k).toFixed(3)}px) scale(${k.toFixed(5)})`;
+  }
+  const zoomed=v.w<b.w-0.5;
+  $('#zIn').disabled=v.w<=b.w/MAP_MAX+0.01;
+  $('#zOut').disabled=!zoomed;
+  $('#zReset').disabled=!zoomed&&!MAPV.sel;
+  const attivo=zoomed||!!MAPV.sel;
+  $('#mapBar').classList.toggle('on',attivo);
+  document.querySelector('.mapstage').classList.toggle('zoomed',zoomed);
+  /* a mappa ingrandita il nome del län sta gia' nel pannello di dettaglio:
+     qui resta solo il pulsante di ritorno */
+  $('#mapHint').textContent='Tocca un län per ingrandirlo';
+}
+/* scala px -> unita' di disegno, tenendo conto delle bande di preserveAspectRatio */
+function mapScale(){
+  const r=$('#lanMap').getBoundingClientRect(), b=MAPV.base;
+  return {r,s:Math.min(r.width/b.w,r.height/b.h)};
+}
+function toSvgPoint(cx,cy){
+  const {r,s}=mapScale(), b=MAPV.base, v=MAPV.cur, k=b.w/v.w;
+  const bx=b.x+(cx-r.left-(r.width-b.w*s)/2)/s;
+  const by=b.y+(cy-r.top-(r.height-b.h*s)/2)/s;
+  return {x:(bx-(b.x-v.x*k))/k, y:(by-(b.y-v.y*k))/k};
+}
+function zoomAt(factor,cx,cy,animate){
+  const v=MAPV.cur, w=v.w/factor, k=w/v.w;
+  applyView(clampView({x:cx-(cx-v.x)*k,y:cy-(cy-v.y)*k,w,h:w*MAPV.base.h/MAPV.base.w}),animate!==false);
+}
+function zoomButton(factor){ const v=MAPV.cur; zoomAt(factor,v.x+v.w/2,v.y+v.h/2,true); }
+function lanBox(code){
+  if(MAPV.box[code]) return MAPV.box[code];
+  const p=$('#lanMap').querySelector(`path[data-lan="${code}"]`);
+  if(!p) return null;
+  const b=p.getBBox();
+  if(!b.width||!b.height) return null;
+  return (MAPV.box[code]={x:b.x,y:b.y,w:b.width,h:b.height});
+}
+function zoomToLan(code){
+  const b=lanBox(code); if(!b) return;
+  const ar=MAPV.base.w/MAPV.base.h;
+  const w=Math.max(b.w,b.h*ar)*1.4, h=w/ar;
+  applyView(clampView({x:b.x+b.w/2-w/2,y:b.y+b.h/2-h/2,w,h}),true);
+}
+function resetMap(){
+  MAPV.sel=null;
+  $('#lanMap').classList.remove('hassel');
+  document.querySelectorAll('#lanMap path.sel,.lanrow.sel').forEach(el=>el.classList.remove('sel'));
+  $('#lanDetail').innerHTML=DETAIL_PROMPT;
+  applyView({...MAPV.base},true);
+}
+
+function renderMap(){
+  const res=lanResults(), any=res.some(r=>r.tot>0);
+  const svg=$('#lanMap');
+  if(!MAPV.built){
+    /* 3,5% di respiro su ogni lato: senza, la punta della Scania tocca il bordo */
+    const b0=vbParse(LAN_GEO.vb), pw=b0.w*0.018, ph=b0.h*0.018;
+    MAPV.base={x:b0.x-pw,y:b0.y-ph,w:b0.w+pw*2,h:b0.h+ph*2};
+    MAPV.cur={...MAPV.base};
+  }
+  const inner=res.map(r=>{
+    const col=r.lead?mix(PARTY_MAP[r.lead].color,.35+Math.min(.65,(r.share-20)/30)):'#22314e';
+    return `<path d="${r.d}" fill="${col}" data-lan="${r.c}" tabindex="0" role="button" aria-label="${r.n}"><title>${r.n}</title></path>`;
+  }).join('');
+  svg.setAttribute('viewBox',`${MAPV.base.x} ${MAPV.base.y} ${MAPV.base.w} ${MAPV.base.h}`);
+  svg.innerHTML=`<g id="lanLayer">${inner}</g>`;
+  if(!MAPV.built){ MAPV.built=true; bindMap(); }
+  applyView(MAPV.cur,false);
+  if(MAPV.sel){
+    const p=svg.querySelector(`path[data-lan="${MAPV.sel}"]`);
+    if(p) p.classList.add('sel');
+    svg.classList.add('hassel');
+  }
+  $('#mapEmpty').classList.toggle('hidden',any);
+  $('#mapPill').textContent=any?`${res.filter(r=>r.tot>0).length} / 21 län`:'in attesa';
+
+  const list=res.slice().sort((a,b)=>{
+    if(!a.tot&&!b.tot) return a.n.localeCompare(b.n);
+    if(!a.tot) return 1; if(!b.tot) return -1; return b.tot-a.tot; });
+  $('#lanList').innerHTML=list.map(r=>{
+    if(!r.tot) return `<div class="lanrow mute${MAPV.sel===r.c?' sel':''}" data-lan="${r.c}">
+      <span class="ln"><i style="background:#2b3f52"></i>${r.n}</span>
+      <span class="lp" style="color:var(--t3)">—</span><span class="lc">0%</span></div>`;
+    const p=PARTY_MAP[r.lead];
+    return `<div class="lanrow${MAPV.sel===r.c?' sel':''}" data-lan="${r.c}">
+      <span class="ln"><i style="background:${p.color}"></i>${r.n}</span>
+      <span class="lp" style="color:${p.color}">${r.lead} ${r.share.toFixed(1).replace('.',',')}%</span>
+      <span class="lc">${r.total?Math.round(r.reported/r.total*100):0}%</span>
+    </div>`;
+  }).join('');
+  $('#mapNote').textContent=any
+    ? 'L’intensità del colore cresce con la quota del partito in testa; la percentuale nell’elenco è la quota di distretti già scrutinati. Rotella o pizzico per lo zoom, trascina per spostarti.'
+    : 'Intensità del colore proporzionale alla quota del partito in testa.';
+  renderMapLegend(res);
+  if(MAPV.sel) renderLanDetail(MAPV.sel); else $('#lanDetail').innerHTML=DETAIL_PROMPT;
+}
+
+function renderMapLegend(res){
+  const conta={};
+  res.filter(r=>r.tot>0).forEach(r=>{conta[r.lead]=(conta[r.lead]||0)+1;});
+  const righe=Object.entries(conta).sort((a,b)=>b[1]-a[1]);
+  const attesa=res.filter(r=>!r.tot).length;
+  $('#mapLegend').innerHTML='<h4>Partito in testa</h4>'+(righe.length
+    ? `<div class="lg">${righe.map(([id,n])=>`<div><i style="background:${PARTY_MAP[id].color}"></i>`+
+        `<span>${(PARTY_IT[id]||{}).it||PARTY_MAP[id].name}</span><b>${n}</b></div>`).join('')}`+
+      (attesa?`<div><i style="background:#2b3f52"></i><span class="muted">In attesa</span><b>${attesa}</b></div>`:'')+
+      '</div><p>Il numero è la quantità di län in cui quel partito è primo. Il colore si accende con la sua quota.</p>'
+    : `<div class="lg">${PARTIES.filter(p=>p.id!=='OVR').map(p=>
+          `<div><i style="background:${p.color}"></i><span>${(PARTY_IT[p.id]||{}).it||p.name}</span><b class="muted">—</b></div>`).join('')}</div>`+
+      '<p>Nessun län scrutinato: i numeri compaiono con i primi valdistrikt.</p>');
+}
+
+const DETAIL_PROMPT='<div class="dh"><h3>Dettaglio del län</h3></div>'+
+  '<p class="muted" style="margin:9px 0 0;font-size:13px">Tocca un län sulla mappa, o una riga dell\u2019elenco, '+
+  'per vedere i primi partiti e lo stato dello scrutinio.</p>';
+function renderLanDetail(code){
+  const r=lanResults().find(x=>x.c===code);
+  const box=$('#lanDetail');
+  if(!r){ box.innerHTML=DETAIL_PROMPT; return; }
+  if(!r.tot){
+    box.innerHTML=`<div class="dh"><h3>${r.n}</h3><span class="dm">0 di ${fmt(r.total)} distretti</span></div>
+      <p class="muted" style="margin:9px 0 0;font-size:13px">Nessun distretto ancora scrutinato in questo län.</p>`;
+    return;
+  }
+  const top=Object.entries(r.shares).sort((a,b)=>b[1]-a[1]).filter(([p])=>p!=='OVR').slice(0,5);
+  const max=top.length?top[0][1]:1;
+  box.innerHTML=`<div class="dh"><h3>${r.n}</h3>
+      <span class="dm">${fmt(r.reported)} / ${fmt(r.total)} distretti · ${fmt(r.tot)} voti validi</span></div>
+    <div class="dl">${top.map(([id,v])=>`<div class="dr">
+      <span class="nm"><i style="background:${PARTY_MAP[id].color}"></i>${id}</span>
+      <span class="track"><b style="width:${Math.max(3,v/max*100)}%;background:${PARTY_MAP[id].color}"></b></span>
+      <span class="vv">${v.toFixed(1).replace('.',',')}%</span></div>`).join('')}</div>`;
+}
+
+function selectLan(code){
+  MAPV.sel=code;
+  $('#lanMap').classList.add('hassel');
+  document.querySelectorAll('#lanMap path,.lanrow').forEach(el=>el.classList.toggle('sel',el.dataset.lan===code));
+  renderLanDetail(code);
+  zoomToLan(code);
+}
+
+/* rete di sicurezza: se il pointerdown e' partito da un punto scoperto, si
+   ricava comunque il län sotto il puntatore al momento del rilascio */
+function lanUnder(cx,cy){
+  const el=document.elementFromPoint(cx,cy);
+  return el&&el.dataset?el.dataset.lan||null:null;
+}
+function bindMap(){
+  const svg=$('#lanMap');
+  const pts=new Map();
+  let moved=0, last=null, pinch=0, downLan=null;
+
+  svg.addEventListener('pointerdown',e=>{
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    /* il pointer capture serve per il trascinamento, ma sposta il target degli
+       eventi successivi sull'SVG: il län va memorizzato adesso, non al rilascio */
+    if(pts.size===1) downLan=(e.target&&e.target.dataset)?e.target.dataset.lan||null:null;
+    svg.setPointerCapture(e.pointerId);
+    if(pts.size===1){ moved=0; last={x:e.clientX,y:e.clientY}; svg.classList.add('drag'); }
+    if(pts.size===2){ const [a,b]=[...pts.values()]; pinch=Math.hypot(a.x-b.x,a.y-b.y); }
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===2){
+      const [a,b]=[...pts.values()], d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(pinch>0&&Math.abs(d-pinch)>1){
+        const m=toSvgPoint((a.x+b.x)/2,(a.y+b.y)/2);
+        zoomAt(d/pinch,m.x,m.y,false);
+      }
+      pinch=d; moved=99; return;
+    }
+    if(!last) return;
+    const dx=e.clientX-last.x, dy=e.clientY-last.y;
+    moved+=Math.abs(dx)+Math.abs(dy);
+    last={x:e.clientX,y:e.clientY};
+    if(MAPV.cur.w>=MAPV.base.w-0.5) return;          /* niente pan a vista intera */
+    const v=MAPV.cur, k=MAPV.base.w/v.w, u=mapScale().s*k;
+    applyView(clampView({x:v.x-dx/u,y:v.y-dy/u,w:v.w,h:v.h}),false);
+  });
+  const up=e=>{
+    pts.delete(e.pointerId);
+    if(pts.size<2) pinch=0;
+    if(pts.size===0){
+      svg.classList.remove('drag');
+      /* sotto i 7 px di spostamento e' un tocco, non un trascinamento */
+      const hit=downLan||lanUnder(e.clientX,e.clientY);
+      if(moved<7&&hit) selectLan(hit);
+      downLan=null; last=null;
+    }
+  };
+  svg.addEventListener('pointerup',up);
+  svg.addEventListener('pointercancel',up);
+  svg.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const m=toSvgPoint(e.clientX,e.clientY);
+    zoomAt(e.deltaY<0?1.28:1/1.28,m.x,m.y,true);
+  },{passive:false});
+  svg.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key===' ')&&e.target.dataset.lan){ e.preventDefault(); selectLan(e.target.dataset.lan); }
+  });
+  $('#zIn').addEventListener('click',()=>zoomButton(1.6));
+  $('#zOut').addEventListener('click',()=>zoomButton(1/1.6));
+  $('#zReset').addEventListener('click',resetMap);
+  $('#mapBack').addEventListener('click',resetMap);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!$('#tab-live').classList.contains('hidden')&&
+       (MAPV.sel||MAPV.cur.w<MAPV.base.w-0.5)) resetMap();
+  });
+}
+
 function renderStatus(){
   const d=state.official?.districts||{};
   const reported=Number.isFinite(Number(d.reported))?Number(d.reported):0;
@@ -690,7 +1468,7 @@ function renderStatus(){
   $('#progressNote').innerHTML=collectionTotal
     ? `<strong>Importante:</strong> il completamento dei ${fmt(total)} distretti ordinari non equivale al risultato definitivo. Il feed elenca separatamente ${fmt(collectionTotal)} <em>uppsamlingsdistrikt</em>; ricevuti finora: ${fmt(collectionReported)}.`
     : '<strong>Importante:</strong> la conta della notte e gli <em>uppsamlingsdistrikt</em> della fase successiva vengono mostrati separatamente appena il feed ufficiale li espone.';
-  const si=currentSeats(); $('#seatSourceKpi').textContent=si.label; $('#seatSourceMeta').textContent=si.method; renderHemicycle(si);
+  const si=currentSeats(); $('#seatSourceKpi').textContent=si.label; $('#seatSourceMeta').textContent=si.short||si.method; renderHemicycle(si);
   const diag=buildFeedDiagnostics(state.official);
   $('#testFileBadge').classList.toggle('hidden',!diag.isTest);
   const stage=diag.countStage?` · Fase: ${diag.countStage}`:'';
@@ -707,7 +1485,7 @@ function renderStatus(){
 function renderValidation(){
   const valu=sum(state.valu),tv4=sum(state.tv4); $('#exitValidation').textContent=`Totali — VALU: ${valu?valu.toFixed(1).replace('.',',')+'%':'—'} · TV4: ${tv4?tv4.toFixed(1).replace('.',',')+'%':'—'}`;
 }
-function render(){renderTable();renderStatus();renderValidation();}
+function render(){renderTable();renderStatus();renderValidation();renderBars();renderMap();if(typeof CARDGEN!=='undefined') CARDGEN.render(false);}
 function alertMsg(msg){const a=$('#alert');a.textContent=msg;a.classList.remove('hidden');setTimeout(()=>a.classList.add('hidden'),8000);}
 function setFeed(status,kind='loading'){ $('#feedStatus').textContent=status; $('#feedDot').className=`dot ${kind}`; }
 
@@ -731,7 +1509,7 @@ async function processFile(file){
 }
 
 function manualApply(){
-  try{const rows=PARTIES.map(p=>({party:p.id,votes:document.querySelector(`[data-manual-votes="${p.id}"]`).value,seats:document.querySelector(`[data-manual-seats="${p.id}"]`).value}));const m=normalizeManualResult(rows);if(sum(m.votes)<=0) throw new Error('Inserisci almeno un voto');state.official={votes:m.votes,seats:m.seats,districts:{reported:0,total:0,collectionReported:0,collectionTotal:0,allReported:0,allTotal:0},updatedAt:new Date().toISOString()};state.officialSource='manual';saveState();render();setFeed('Risultato manuale attivo','ok');}
+  try{const rows=PARTIES.map(p=>({party:p.id,votes:document.querySelector(`[data-manual-votes="${p.id}"]`).value,seats:document.querySelector(`[data-manual-seats="${p.id}"]`).value}));const m=normalizeManualResult(rows);if(sum(m.votes)<=0) throw new Error('Inserisci almeno un voto');state.official={votes:m.votes,seats:m.seats,byLan:{},districts:{reported:0,total:0,collectionReported:0,collectionTotal:0,allReported:0,allTotal:0},updatedAt:new Date().toISOString()};state.officialSource='manual';saveState();render();setFeed('Risultato manuale attivo','ok');}
   catch(e){alertMsg(e.message);}
 }
 
@@ -758,14 +1536,673 @@ async function pollFeed(force=false){
   }
 }
 
-function bind(){
-  $('#saveExit').addEventListener('click',saveExit); $('#clearExit').addEventListener('click',()=>{state.valu={};state.tv4={};saveState();renderInputs();render();});
-  $('#manualToggle').addEventListener('click',()=>$('#manualPanel').classList.toggle('hidden')); $('#applyManual').addEventListener('click',manualApply);
-  $('#clearManual').addEventListener('click',()=>{if(state.officialSource==='manual'){state.official=null;state.officialSource=null;saveState();render();}renderInputs();});
-  $('#fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f) processFile(f);e.target.value='';}); $('#refreshBtn').addEventListener('click',()=>pollFeed(true));
+function showTab(which){
+  const live=which==='live';
+  $('#tab-live').classList.toggle('hidden',!live);
+  $('#tab-card').classList.toggle('hidden',live);
+  $('#tabbtn-live').setAttribute('aria-selected',String(live));
+  $('#tabbtn-card').setAttribute('aria-selected',String(!live));
+  if(!live && typeof CARDGEN!=='undefined') CARDGEN.show();
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
-loadState(); renderInputs(); bind(); render(); pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
+function bind(){
+  $('#saveExit').addEventListener('click',saveExit);
+  $('#clearExit').addEventListener('click',()=>{state.valu={};state.tv4={};saveState();renderInputs();render();});
+  $('#manualToggle').addEventListener('click',()=>$('#manualPanel').classList.toggle('hidden'));
+  $('#applyManual').addEventListener('click',manualApply);
+  $('#clearManual').addEventListener('click',()=>{if(state.officialSource==='manual'){state.official=null;state.officialSource=null;saveState();render();}renderInputs();});
+  $('#fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f) processFile(f);e.target.value='';});
+  $('#refreshBtn').addEventListener('click',()=>pollFeed(true));
+  $('#tabbtn-live').addEventListener('click',()=>showTab('live'));
+  $('#tabbtn-card').addEventListener('click',()=>showTab('card'));
+  /* la mappa lega i propri eventi in bindMap(), al primo disegno */
+  $('#lanList').addEventListener('click',e=>{const row=e.target.closest('.lanrow');if(row) selectLan(row.dataset.lan);});
+}
+/* src/cards.js — generatore card «edizione notturna», tema Svezia */
+const CARDGEN=(function(){
+"use strict";
+
+const SANS='Inter,"Helvetica Neue",Helvetica,Arial,sans-serif';
+const SERIF='Lora,Georgia,"Times New Roman",serif';
+const C={blue:'#5B9BD5',accent:'#E3B04B',red:'#FF5C6E',steel:'#7C8AA3',
+  t1:'#F3F6FB',t2:'#8C9BB5',t3:'#6B7A94',line:'rgba(255,255,255,.11)',
+  panel:'rgba(255,255,255,.045)',track:'rgba(255,255,255,.045)'};
+
+const DESTRA=BLOCCHI.tido.ids, SINISTRA=BLOCCHI.opp.ids;
+const MAGG=MAGGIORANZA;
+
+const g=id=>document.getElementById(id);
+const nf=(n,d)=>n===null||n===undefined||isNaN(n)?'–':Number(n).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pc1=v=>nf(v,1)+'%';
+const seg=d=>d>0.049?'+':(d<-0.049?'\u2212':'\u00B1');
+const dCol=d=>d>0.049?C.accent:(d<-0.049?C.red:C.steel);
+const dTxt=(d,dec)=>d===null||d===undefined?'n.d.':seg(d)+nf(Math.abs(d),dec===undefined?1:dec);
+const dSeat=d=>d===null?'n.d.':(d>0?'+':d<0?'\u2212':'\u00B1')+Math.abs(d);
+/* Alcuni colori di partito (KD #000077, L #006ab3) sono quasi neri: il testo sopra
+   e le etichette su fondo notturno vanno scelti sulla luminanza, non a colpo d'occhio. */
+function lum(hex){ const n=parseInt(hex.slice(1),16);
+  return (0.2126*(n>>16)+0.7152*((n>>8)&255)+0.0722*(n&255))/255; }
+function ink(hex){ return lum(hex)>0.55?'#0A1020':'#F8FAFF'; }
+function lite(hex){
+  if(lum(hex)>=0.42) return hex;
+  const n=parseInt(hex.slice(1),16), r=n>>16, g2=(n>>8)&255, b=n&255;
+  const f=0.42/Math.max(lum(hex),0.02), c=v=>Math.min(255,Math.round(v*f+72));
+  return 'rgb('+c(r)+','+c(g2)+','+c(b)+')'; }
+const LEN=s=>Array.from(String(s).trim()).length;
+
+/* ---------- primitive di disegno ---------- */
+function F(w,s,fam){ return w+' '+s+'px '+(fam==='serif'?SERIF:SANS); }
+function T(x,str,px,py,o){
+  o=o||{}; x.save();
+  x.font=o.font||F(400,21); x.fillStyle=o.color||C.t1;
+  x.textAlign=o.align||'left'; x.textBaseline='alphabetic';
+  if(o.ls) try{ x.letterSpacing=o.ls+'px'; }catch(e){}
+  x.fillText(str,px,py); x.restore();
+}
+function W(x,str,font,ls){ x.save(); x.font=font;
+  if(ls) try{ x.letterSpacing=ls+'px'; }catch(e){}
+  const w=x.measureText(str).width; x.restore(); return w; }
+function rr(x,px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py);
+  x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r);
+  x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); }
+function fillRR(x,px,py,w,h,r,col){ rr(x,px,py,w,h,r); x.fillStyle=col; x.fill(); }
+function line(x,a,b,c,d,col,w){ x.save(); x.strokeStyle=col; x.lineWidth=w||1;
+  x.beginPath(); x.moveTo(a,b); x.lineTo(c,d); x.stroke(); x.restore(); }
+function panel(x,px,py,w,h,o){
+  o=o||{}; fillRR(x,px,py,w,h,14,C.panel);
+  x.save(); rr(x,px+.5,py+.5,w-1,h-1,14); x.strokeStyle=C.line; x.lineWidth=1; x.stroke(); x.restore();
+  if(o.top){ x.save(); rr(x,px,py,w,h,14); x.clip(); x.fillStyle=o.top; x.fillRect(px,py,w,4); x.restore(); }
+}
+function pillRuolo(x,id,px,py){
+  const r=RUOLI[(PARTY_IT[id]||{}).ruolo]; if(!r) return;
+  const f=F(700,15), w=W(x,r.t,f,1.4)+30;
+  rr(x,px,py-21,w,30,15); x.strokeStyle=r.c; x.lineWidth=1.4; x.stroke();
+  T(x,r.t,px+15,py,{font:f,ls:1.4,color:r.c});
+}
+function fit(x,str,maxW,start,min,weight,fam){
+  let s=start, f=F(weight,s,fam);
+  while(W(x,str,f)>maxW && s>min){ s-=1; f=F(weight,s,fam); }
+  return f;
+}
+function frame(x,o){
+  const gr=x.createLinearGradient(0,0,880,900);
+  gr.addColorStop(0,'#0E1728'); gr.addColorStop(.62,'#0A1020'); gr.addColorStop(1,'#0A1020');
+  x.fillStyle=gr; x.fillRect(0,0,1600,900);
+  const r=x.createRadialGradient(1248,-108,0,1248,-108,1200);
+  r.addColorStop(0,'rgba(22,35,63,1)'); r.addColorStop(.62,'rgba(22,35,63,0)');
+  x.fillStyle=r; x.fillRect(0,0,1600,900);
+  /* filo di testata: neutro a sinistra, poi i colori dei partiti in ordine d'aula */
+  x.fillStyle='#8C9BB5'; x.fillRect(0,0,736,6);
+  const ord=['S','V','MP','C','M','KD','L','SD'], seg=(1600-736)/ord.length;
+  ord.forEach((id,i)=>{ x.fillStyle=PARTY_MAP[id].color; x.fillRect(736+i*seg,0,seg+.6,6); });
+
+  const bf=F(700,17), bw=W(x,o.badge,bf,2.4)+40;
+  fillRR(x,62,50,bw,40,8,C.blue);
+  T(x,o.badge,82,76,{font:bf,ls:2.4,color:'#08121F'});
+  T(x,o.kicker,62+bw+24,76,{font:F(700,17),color:C.t2});
+
+  T(x,o.title,62,175,{font:fit(x,o.title,1476,58,32,700,'serif'),color:C.t1});
+  if(o.sub) T(x,o.sub,62,214,{font:fit(x,o.sub,1476,26,17,400),color:C.t2});
+
+  /* con una riga di sintesi resta spazio per una sola riga di nota: il piede della
+     card e' fisso (filetto a 828, firma a 864) e non si puo' comprimere */
+  if(o.sintesi) T(x,o.sintesi,800,766,{font:F(700,23),color:C.t2,align:'center'});
+  if(o.nota){
+    const f=F(400,19), maxL=o.sintesi?1:2, y0=o.sintesi?800:786;
+    let ln='',lines=[];
+    o.nota.split(' ').forEach(w=>{ const t=ln?ln+' '+w:w;
+      if(W(x,t,f)>1476){ lines.push(ln); ln=w; } else ln=t; });
+    if(ln) lines.push(ln);
+    lines.slice(0,maxL).forEach((l,i)=>T(x,l,62,y0+i*26,{font:f,color:C.t3}));
+  }
+  line(x,62,828,1538,828,C.line,1);
+  const ff=F(400,20), pre='Fonte: '+o.fonte+'  \u00B7  Elaborazione: ';
+  T(x,pre,62,864,{font:ff,color:C.t3});
+  T(x,S_FIRMA,62+W(x,pre,ff),864,{font:F(700,20),color:C.accent});
+  const pill=o.n+' / '+o.tot, pw=W(x,pill,F(700,19))+38;
+  rr(x,1538-pw,838,pw,36,18); x.strokeStyle=C.line; x.lineWidth=1; x.stroke();
+  T(x,pill,1538-pw/2,863,{font:F(700,19),color:C.t2,align:'center'});
+}
+function attesa(x,msg,sub){
+  panel(x,62,330,1476,270,{top:C.blue});
+  T(x,msg,800,470,{font:F(700,40,'serif'),color:C.t2,align:'center'});
+  T(x,sub||'I dati arrivano dalla dashboard.',800,512,{font:F(400,22),color:C.t3,align:'center'});
+}
+
+let S_FIRMA='@putino';
+
+/* ---------- lettura dello stato della dashboard ---------- */
+function snapshot(){
+  const src=bestSource();
+  const seatInfo=currentSeats();
+  const d=state.official?.districts||{};
+  const scrut=(d.total>0)?d.reported/d.total:0;
+  const lan=(typeof lanResults==='function')?lanResults():[];
+  return {
+    ambito:g('ambito').value.trim()||'Svezia · 13 settembre 2026',
+    dataFonte:g('dataFonte').value.trim()||'13 settembre 2026',
+    hasOff:hasOfficial(),
+    shares:src.shares, srcLabel:src.label, srcKind:src.kind, srcShort:src.short,
+    off:hasOfficial()?resultShares():null,
+    valu:exitHas(state.valu)?{...state.valu}:null,
+    tv4:exitHas(state.tv4)?{...state.tv4}:null,
+    seats:seatInfo.seats, seatLabel:seatInfo.label,
+    districts:d, scrut, lan,
+    lanFatti:lan.filter(l=>l.tot>0).length,
+    voti:sum(state.official?.votes)
+  };
+}
+function fonte(S){
+  if(S.hasOff) return 'Valmyndigheten ('+S.dataFonte+')';
+  const f=[]; if(S.valu) f.push('SVT VALU'); if(S.tv4) f.push('TV4');
+  return f.length?f.join(' e ')+' ('+S.dataFonte+')':'Valmyndigheten ('+S.dataFonte+')';
+}
+function ordina(sh){
+  return PARTIES.filter(p=>p.id!=='OVR'&&Number(sh[p.id])>0)
+    .map(p=>({id:p.id,nome:(PARTY_IT[p.id]||{}).it||p.name,sv:p.name,
+              col:p.color,v:Number(sh[p.id]),v22:p.share2022}))
+    .sort((a,b)=>b.v-a.v);
+}
+function blocco(S,ids){ return ids.reduce((n,i)=>n+(S.seats[i]||0),0); }
+function blocco22(ids){ return ids.reduce((n,i)=>n+(BASELINE_2022.seats[i]||0),0); }
+
+/* ---------- CARD 1 — il risultato ---------- */
+function card1(x,S,N){
+  const off=S.hasOff;
+  frame(x,{badge:off?'RISULTATO UFFICIALE':'STIMA',kicker:S.ambito,title:g(N.tid).value,
+    sub:off?'Voto reale scrutinato, a confronto con il Riksdagsvalet 2022':'In attesa del voto reale: la card usa '+S.srcLabel,
+    nota:(off?('Scrutinio: '+nf(S.scrut*100,1)+' per cento dei distretti ordinari, '+nf(S.voti,0)+' voti validi. ')
+             :'Nessun dato ufficiale ricevuto: i valori vengono dagli exit poll, con un margine d\u2019errore di alcuni punti. ')+
+      'Il governo Kristersson \u00E8 una coalizione di Moderati, Cristiano-democratici e Liberali che si regge sul sostegno esterno dei Democratici svedesi.',
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  const R=ordina(S.shares);
+  if(!R.length) return attesa(x,'In attesa dei dati');
+
+  const bx=646, bw=644, max=Math.max.apply(null,R.map(r=>r.v).concat([5]));
+  T(x,'DAL 2022',1538,268,{font:F(700,15),color:C.t3,ls:2,align:'right'});
+  T(x,'SOGLIA 4%',bx+4/max*bw,268,{font:F(700,15),color:C.t3,ls:1.4,align:'center'});
+  const sx=bx+4/max*bw;
+
+  const n=Math.min(R.length,8), h=Math.min(58,406/Math.max(n-1,1));
+  R.slice(0,8).forEach((r,i)=>{
+    const y=322+i*h, sotto=r.v<4;
+    T(x,r.id,62,y+9,{font:F(700,30),color:lite(r.col)});
+    T(x,r.nome,150,y+8,{font:fit(x,r.nome,214,25,17,400),color:sotto?C.t2:C.t1});
+    pillRuolo(x,r.id,390,y+9);
+    fillRR(x,bx,y-15,bw,30,8,C.track);
+    x.save(); if(sotto) x.globalAlpha=.55;
+    fillRR(x,bx,y-15,Math.max(8,r.v/max*bw),30,8,r.col); x.restore();
+    T(x,nf(r.v,1),1396,y+11,{font:F(700,36,'serif'),color:C.t1,align:'right'});
+    const d=Math.round((r.v-r.v22)*10)/10;
+    T(x,dTxt(d)+' pt',1538,y+9,{font:F(700,24),color:dCol(d),align:'right'});
+  });
+  x.save(); x.setLineDash([4,6]); line(x,sx,286,sx,y2(R,h),'rgba(255,255,255,.20)',1); x.restore();
+}
+function y2(R,h){ return 322+(Math.min(R.length,8)-1)*h+26; }
+
+/* ---------- CARD 2 — i due exit poll ---------- */
+function card2(x,S,N){
+  frame(x,{badge:'EXIT POLL',kicker:S.ambito,title:g(N.tid).value,
+    sub:'SVT VALU e TV4 a confronto con il voto del 2022',
+    nota:'VALU e TV4 sono sondaggi all\u2019uscita dai seggi, non conteggi: lo scarto tra i due misura l\u2019incertezza della stima, '+
+      'non un cambiamento nel voto. Il risultato ufficiale resta quello della Valmyndigheten.',
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  if(!S.valu&&!S.tv4) return attesa(x,'Nessun exit poll inserito','Compila il pannello VALU / TV4 nella dashboard.');
+
+  panel(x,62,258,1476,58,{top:C.blue});
+  const cx=[640,940,1240,1500];
+  T(x,'PARTITO',96,295,{font:F(700,16),color:C.t2,ls:2});
+  T(x,'SVT VALU',cx[0],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'TV4',cx[1],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'SCARTO',cx[2],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'VS 2022',cx[3],295,{font:F(700,16),color:C.t2,ls:1.4,align:'right'});
+
+  const base=S.valu||S.tv4;
+  const R=ordina(base).slice(0,8);
+  const h=Math.min(58,440/Math.max(R.length,1));
+  R.forEach((r,i)=>{
+    const y=372+i*h;
+    const a=S.valu?Number(S.valu[r.id]||0):null, b=S.tv4?Number(S.tv4[r.id]||0):null;
+    x.save(); x.fillStyle=r.col; x.beginPath(); x.arc(74,y-8,9,0,6.2832); x.fill(); x.restore();
+    T(x,r.id,96,y,{font:F(700,26),color:C.t1});
+    T(x,r.nome,146,y-1,{font:F(400,18),color:C.t3});
+    T(x,a===null||!a?'\u2013':pc1(a),cx[0],y+2,{font:F(700,29,'serif'),color:C.t1,align:'center'});
+    T(x,b===null||!b?'\u2013':pc1(b),cx[1],y+2,{font:F(700,29,'serif'),color:C.t1,align:'center'});
+    const sc=(a&&b)?Math.round((a-b)*10)/10:null;
+    T(x,sc===null?'\u2013':dTxt(sc),cx[2],y,{font:F(700,23),color:sc===null?C.t3:C.steel,align:'center'});
+    const med=(a&&b)?(a+b)/2:(a||b), d=med?Math.round((med-r.v22)*10)/10:null;
+    T(x,d===null?'\u2013':dTxt(d),cx[3],y,{font:F(700,23),color:d===null?C.t3:dCol(d),align:'right'});
+  });
+}
+
+/* ---------- CARD 3 — seggi e blocchi ---------- */
+function bloccoDati(S,k){
+  const b=BLOCCHI[k];
+  return {...b, tot:b.ids.reduce((n,i)=>n+(S.seats[i]||0),0)};
+}
+function card3(x,S,N){
+  const opp=bloccoDati(S,'opp'), tido=bloccoDati(S,'tido');
+  const vince=opp.tot>=MAGG?opp:(tido.tot>=MAGG?tido:null);
+  const primo=opp.tot>=tido.tot?opp:tido;
+  frame(x,{badge:'RIKSDAG \u00B7 349 SEGGI',kicker:S.ambito,title:g(N.tid).value,
+    sub:'Seggi secondo '+S.seatLabel.toLowerCase()+', con i due blocchi a confronto',
+    nota:'Ripartizione nazionale con metodo Sainte-Lagu\u00EB modificato, primo divisore 1,2 e soglia del 4 per cento. '+
+      'Non tiene conto della distribuzione per collegio: 310 mandati fissi pi\u00F9 39 di compensazione.',
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  if(S.srcKind==='none') return attesa(x,'In attesa dei dati');
+
+  /* ---- emiciclo ---- */
+  const cx=486, cy=660, r0=120, dr=25, counts=[20,23,26,29,32,35,38,41,48,57], pts=[];
+  counts.forEach((cn,ri)=>{ const rad=r0+ri*dr;
+    for(let i=0;i<cn;i++){ const th=Math.PI-(i/(cn-1))*Math.PI;
+      pts.push({x:cx+rad*Math.cos(th),y:cy-rad*Math.sin(th),th,r:rad}); }});
+  pts.sort((a,b)=>b.th-a.th||a.r-b.r);
+  const ordine=['S','V','MP','C','L','KD','M','SD','OVR'], cols=[];
+  ordine.forEach(id=>{ for(let i=0;i<(S.seats[id]||0);i++) cols.push(PARTY_MAP[id]?PARTY_MAP[id].color:'#76889a'); });
+  while(cols.length<349) cols.push('#2B3F52');
+  pts.forEach((p,i)=>{ x.save(); x.fillStyle=cols[i]||'#2B3F52';
+    x.beginPath(); x.arc(p.x,p.y,8.2,0,6.2832); x.fill();
+    x.strokeStyle='#0A1020'; x.lineWidth=1.5; x.stroke(); x.restore(); });
+
+  /* archi di blocco sopra l'emiciclo */
+  const rOut=r0+9*dr+22, thBloc=Math.PI-(opp.tot/349)*Math.PI;
+  const arc=(a,b,col)=>{ x.save(); x.strokeStyle=col; x.lineWidth=5; x.lineCap='round';
+    x.beginPath(); x.arc(cx,cy,rOut,Math.PI+ (Math.PI-a), Math.PI+(Math.PI-b)); x.stroke(); x.restore(); };
+  arc(Math.PI,thBloc,opp.col); arc(thBloc,0,tido.col);
+
+  /* soglia della maggioranza */
+  const th175=Math.PI-(MAGG/349)*Math.PI;
+  x.save(); x.setLineDash([6,7]);
+  line(x,cx+(r0-34)*Math.cos(th175),cy-(r0-34)*Math.sin(th175),
+         cx+(rOut+16)*Math.cos(th175),cy-(rOut+16)*Math.sin(th175),'rgba(254,203,0,.8)',2.5);
+  x.restore();
+  const lx=cx+(rOut+30)*Math.cos(th175), ly=cy-(rOut+30)*Math.sin(th175);
+  T(x,'175',lx,ly,{font:F(700,28,'serif'),color:C.accent,align:'center'});
+  T(x,'MAGGIORANZA',lx,ly+22,{font:F(700,14),color:C.accent,ls:2,align:'center'});
+
+  T(x,opp.breve.toUpperCase(),cx-rOut+4,cy+42,{font:F(700,16),color:C.t3,ls:1.8});
+  T(x,opp.tot+' seggi',cx-rOut+4,cy+76,{font:F(700,30,'serif'),color:opp.col});
+  T(x,tido.breve.toUpperCase(),cx+rOut-4,cy+42,{font:F(700,16),color:C.t3,ls:1.8,align:'right'});
+  T(x,tido.tot+' seggi',cx+rOut-4,cy+76,{font:F(700,30,'serif'),color:tido.col,align:'right'});
+
+  /* ---- colonna destra ---- */
+  const px=952, pw=586;
+  const pannello=(b,py)=>{
+    const ok=b.tot>=MAGG;
+    panel(x,px,py,pw,124,{});
+    if(ok){ x.save(); rr(x,px,py,pw,124,14); x.clip();
+      x.fillStyle=C.accent; x.fillRect(px,py,5,124); x.restore(); }
+    T(x,b.nome.toUpperCase(),px+30,py+38,{font:F(700,17),color:C.t2,ls:2.2});
+    const nw=W(x,b.nome.toUpperCase(),F(700,17),2.2);
+    T(x,b.ids.join('  \u00B7  '),px+30+nw+26,py+38,{font:F(700,17),color:C.t3,ls:1.4});
+    T(x,String(b.tot),px+30,py+104,{font:F(700,62,'serif'),color:ok?C.accent:b.col});
+    const vw=W(x,String(b.tot),F(700,62,'serif'));
+    T(x,'seggi ('+b.s22+' nel 2022)',px+30+vw+18,py+104,{font:F(400,23),color:C.t2});
+  };
+  pannello(opp,262); pannello(tido,398);
+
+  panel(x,px,534,pw,104,{});
+  const gap=vince?(vince.tot-MAGG):(MAGG-primo.tot);
+  const big=(vince?'+':'\u2212')+gap;
+  T(x,big,px+30,534+66,{font:F(700,52,'serif'),color:vince?C.accent:C.red});
+  const gw=W(x,big,F(700,52,'serif'));
+  const txt=vince
+    ? ['i seggi con cui '+(vince===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'supererebbe la soglia dei '+MAGG+', cio\u00E8 la maggioranza']
+    : ['i seggi che mancano a '+(primo===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'per arrivare a '+MAGG+': nessun blocco ha la maggioranza'];
+  T(x,txt[0],px+30+gw+22,534+52,{font:F(400,22),color:C.t1});
+  T(x,txt[1],px+30+gw+22,534+82,{font:F(400,22),color:C.t2});
+
+  /* griglia dei seggi per partito */
+  const R=PARTIES.filter(p=>(S.seats[p.id]||0)>0);
+  const cw=pw/4;
+  R.slice(0,8).forEach((p,i)=>{
+    const gx=px+(i%4)*cw, gy=690+Math.floor(i/4)*52;
+    x.save(); x.fillStyle=p.color; fillRR(x,gx,gy-13,13,13,3,p.color); x.restore();
+    T(x,p.id,gx+22,gy,{font:F(700,21),color:lite(p.color)});
+    T(x,String(S.seats[p.id]||0),gx+cw-32,gy,{font:F(700,26,'serif'),color:C.t1,align:'right'});
+  });
+}
+
+/* ---------- CARD 5 — la soglia del 4% ---------- */
+function card5(x,S,N){
+  frame(x,{badge:'SOGLIA DEL 4%',kicker:S.ambito,title:g(N.tid).value,
+    sub:'Chi entra e chi resta fuori dal Riksdag, secondo '+S.srcLabel.toLowerCase(),
+    nota:'Si entra nel Riksdag con almeno il 4 per cento nazionale, oppure con il 12 per cento in una sola circoscrizione: eccezione mai usata. Sotto soglia i seggi vanno a zero.',
+    sintesi:sintesiSoglia(S),
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  const R=ordina(S.shares);
+  if(!R.length) return attesa(x,'In attesa dei dati');
+
+  const dentro=R.filter(r=>r.v>=4), fuori=R.filter(r=>r.v<4);
+  /* se nessuno e' sotto soglia il pannello destro resterebbe vuoto:
+     mostra invece chi ci sta piu' vicino, che e' la notizia vera */
+  const destra=fuori.length?fuori:dentro.slice(-4).reverse();
+  const titDestra=fuori.length?'SOTTO LA SOGLIA':'I PI\u00D9 VICINI ALLA SOGLIA';
+  const col=(tit,arr,px,colr)=>{
+    panel(x,px,262,718,470,{top:colr});
+    T(x,tit,px+34,302,{font:F(700,19),color:C.t2,ls:2.2});
+    if(!arr.length){ T(x,'Nessun partito',px+34,362,{font:F(400,26),color:C.t3}); return; }
+    const h=Math.min(72,376/arr.length);
+    arr.forEach((r,i)=>{
+      const y=362+i*h, dist=Math.round((r.v-4)*100)/100;
+      x.save(); x.fillStyle=r.col; x.beginPath(); x.arc(px+44,y-9,10,0,6.2832); x.fill(); x.restore();
+      T(x,r.id,px+70,y,{font:F(700,26),color:C.t1});
+      T(x,r.nome,px+124,y-1,{font:F(400,18),color:C.t3});
+      T(x,pc1(r.v),px+540,y+2,{font:F(700,32,'serif'),color:C.t1,align:'right'});
+      T(x,(dist>=0?'+':'\u2212')+nf(Math.abs(dist),Math.abs(dist)<1?2:1)+' pt',px+684,y,
+        {font:F(700,21),color:dist>=0?C.accent:C.red,align:'right'});
+    });
+  };
+  col('SOPRA LA SOGLIA',dentro,62,C.accent);
+  col(titDestra,destra,820,fuori.length?C.red:C.steel);
+
+}
+function sintesiSoglia(S){
+  const critici=ordina(S.shares).filter(r=>Math.abs(r.v-4)<=1);
+  return critici.length?('In bilico entro un punto dalla soglia: '+critici.map(r=>r.id+' '+pc1(r.v)).join(' \u00B7 '))
+    :'Nessun partito entro un punto dalla soglia';
+}
+
+/* ---------- CARD 6 — la mappa ---------- */
+function mixCol(hex,amount){
+  const n=parseInt(hex.slice(1),16), r=n>>16, gg=(n>>8)&255, b=n&255, bg=[18,28,44];
+  const f=Math.max(0,Math.min(1,amount));
+  return 'rgb('+Math.round(bg[0]+(r-bg[0])*f)+','+Math.round(bg[1]+(gg-bg[1])*f)+','+Math.round(bg[2]+(b-bg[2])*f)+')';
+}
+function card6(x,S,N){
+  frame(x,{badge:'TERRITORIO',kicker:S.ambito,title:g(N.tid).value,
+    sub:'Il partito in testa nei 21 l\u00E4n, con i distretti gi\u00E0 scrutinati',
+    nota:'I l\u00E4n non coincidono con le 29 circoscrizioni del Riksdag: Stoccolma, Scania e V\u00E4stra G\u00F6taland sono divise in pi\u00F9 valkretsar. '+
+      'Il dato \u00E8 ricostruito dalle prime due cifre del codice valdistrikt del feed ufficiale.',
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  const L=S.lan.filter(l=>l.tot>0);
+  if(!L.length) return attesa(x,'Nessun distretto scrutinato','La mappa si colora appena arrivano i primi valdistrikt.');
+
+  /* mappa */
+  const vb=LAN_GEO.vb.split(' ').map(Number), sc=534/vb[3], ox=300-vb[2]*(534/vb[3])/2, oy=242;
+  x.save(); x.translate(ox,oy); x.scale(sc,sc);
+  S.lan.forEach(l=>{
+    const p=new Path2D(l.d);
+    x.fillStyle=l.lead?mixCol(PARTY_MAP[l.lead].color,.35+Math.min(.65,(l.share-20)/30)):'#16223A';
+    x.fill(p);
+    x.strokeStyle='rgba(10,16,32,.9)'; x.lineWidth=1/sc; x.stroke(p);
+  });
+  x.restore();
+
+  /* elenco a due colonne */
+  const ordinati=S.lan.slice().sort((a,b)=>{
+    if(!a.tot&&!b.tot) return a.n.localeCompare(b.n);
+    if(!a.tot) return 1; if(!b.tot) return -1; return b.tot-a.tot; });
+  const colW=468, h=Math.min(46,450/Math.ceil(ordinati.length/2));
+  [0,1].forEach(ci=>{
+    const px=560+ci*(colW+40), arr=ordinati.slice(ci*11,ci*11+11);
+    T(x,'L\u00C4N',px,258,{font:F(700,14),color:C.t3,ls:1.8});
+    T(x,'IN TESTA',px+colW-94,258,{font:F(700,14),color:C.t3,ls:1.8,align:'right'});
+    T(x,'SCRUT.',px+colW,258,{font:F(700,14),color:C.t3,ls:1.8,align:'right'});
+    line(x,px,272,px+colW,272,C.line,1);
+    arr.forEach((l,i)=>{
+      const y=304+i*h;
+      if(!l.tot){
+        T(x,l.n,px,y,{font:F(400,20),color:C.t3});
+        T(x,'in attesa',px+colW,y,{font:F(400,19),color:C.t3,align:'right'});
+      }else{
+        x.save(); x.fillStyle=PARTY_MAP[l.lead].color; fillRR(x,px,y-13,10,13,3,PARTY_MAP[l.lead].color); x.restore();
+        T(x,l.n,px+22,y,{font:fit(x,l.n,colW-196,21,15,700),color:C.t1});
+        T(x,l.lead+' '+pc1(l.share),px+colW-94,y,{font:F(700,21),color:lite(PARTY_MAP[l.lead].color),align:'right'});
+        T(x,(l.total?Math.round(l.reported/l.total*100):0)+'%',px+colW,y,{font:F(400,19),color:C.t3,align:'right'});
+      }
+    });
+  });
+  line(x,1048,258,1048,772,C.line,1);
+}
+
+/* ---------- CARD 7 — ufficiale contro exit poll ---------- */
+function card7(x,S,N){
+  frame(x,{badge:'VERIFICA',kicker:S.ambito,title:g(N.tid).value,
+    sub:'Quanto si sono avvicinati VALU e TV4 al voto reale',
+    nota:'Lo scarto \u00E8 in punti fra exit poll e conteggio ufficiale al momento della card: con lo scrutinio parziale una parte dipende dai distretti mancanti, non dal sondaggio.',
+    sintesi:sintesiVerifica(S),
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  if(!S.off||(!S.valu&&!S.tv4)) return attesa(x,'Servono risultato ufficiale ed exit poll');
+
+  panel(x,62,258,1476,58,{top:C.blue});
+  const cx=[620,900,1180,1460];
+  T(x,'PARTITO',96,295,{font:F(700,16),color:C.t2,ls:2});
+  T(x,'UFFICIALE',cx[0],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'VALU',cx[1],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'TV4',cx[2],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
+  T(x,'ERRORE MAX',cx[3],295,{font:F(700,16),color:C.t2,ls:1.4,align:'right'});
+
+  const R=ordina(S.off).slice(0,8);
+  const h=Math.min(48,336/Math.max(R.length-1,1));
+  let peggio=0,peggioId='';
+  R.forEach((r,i)=>{
+    const y=372+i*h, o=r.v;
+    const a=S.valu?Number(S.valu[r.id]||0):null, b=S.tv4?Number(S.tv4[r.id]||0):null;
+    x.save(); x.fillStyle=r.col; x.beginPath(); x.arc(74,y-8,9,0,6.2832); x.fill(); x.restore();
+    T(x,r.id,96,y,{font:F(700,26),color:C.t1});
+    T(x,r.nome,146,y-1,{font:F(400,18),color:C.t3});
+    T(x,pc1(o),cx[0],y+2,{font:F(700,29,'serif'),color:C.t1,align:'center'});
+    const da=a?Math.round((a-o)*10)/10:null, db=b?Math.round((b-o)*10)/10:null;
+    T(x,da===null?'\u2013':dTxt(da),cx[1],y,{font:F(700,23),color:da===null?C.t3:dCol(da),align:'center'});
+    T(x,db===null?'\u2013':dTxt(db),cx[2],y,{font:F(700,23),color:db===null?C.t3:dCol(db),align:'center'});
+    const mx=Math.max(Math.abs(da||0),Math.abs(db||0));
+    if(mx>peggio){ peggio=mx; peggioId=r.id; }
+    T(x,nf(mx,1)+' pt',cx[3],y,{font:F(700,23),color:mx>=2?C.red:C.steel,align:'right'});
+  });
+}
+
+function sintesiVerifica(S){
+  if(!S.off||(!S.valu&&!S.tv4)) return '';
+  let peggio=0,pid='';
+  ordina(S.off).forEach(r=>{
+    const a=S.valu?Math.abs((S.valu[r.id]||0)-r.v):0, b=S.tv4?Math.abs((S.tv4[r.id]||0)-r.v):0;
+    const m=Math.max(a,b); if(m>peggio){peggio=m;pid=r.id;} });
+  return pid?('Scarto massimo: '+pid+', '+nf(peggio,1)+' punti \u00B7 scrutinio al '+nf(S.scrut*100,1)+'%'):'';
+}
+
+/* ---------- registro ---------- */
+const CARDS=[
+  {id:'c1',nome:'Card 1 — Il risultato',file:'svezia_1_risultato.png',fn:card1,tid:'t1',ok:S=>ordina(S.shares).length>0&&S.srcKind!=='none'},
+  {id:'c2',nome:'Card 2 — I due exit poll',file:'svezia_2_exitpoll.png',fn:card2,tid:'t2',ok:S=>!!(S.valu||S.tv4)},
+  {id:'c3',nome:'Card 3 — Seggi e blocchi',file:'svezia_3_seggi_blocchi.png',fn:card3,tid:'t3',ok:S=>S.srcKind!=='none'},
+  {id:'c5',nome:'Card 4 — La soglia del 4%',file:'svezia_4_soglia.png',fn:card5,tid:'t5',ok:S=>S.srcKind!=='none'},
+  {id:'c6',nome:'Card 5 — La mappa dei län',file:'svezia_5_mappa.png',fn:card6,tid:'t6',ok:S=>S.lanFatti>0},
+  {id:'c7',nome:'Card 6 — Exit poll contro voto reale',file:'svezia_6_verifica.png',fn:card7,tid:'t7',ok:S=>!!(S.off&&(S.valu||S.tv4))}
+];
+
+/* ---------- titoli automatici ---------- */
+function autoTitoli(S){
+  const R=ordina(S.shares), primo=R[0], secondo=R[1];
+  const t={};
+  t.t1 = primo ? (primo.nome+' al '+nf(primo.v,1)+' per cento') : 'Il voto in Svezia';
+  if(S.valu&&S.tv4){
+    const a=ordina(S.valu)[0], b=ordina(S.tv4)[0];
+    t.t2 = (a&&b&&a.id!==b.id) ? 'I due exit poll danno vincitori diversi' : 'VALU e TV4, due stime a confronto';
+  } else t.t2 = S.valu||S.tv4 ? 'Il primo exit poll della serata' : 'Gli exit poll delle 20';
+  const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
+  t.t3 = S.srcKind==='none' ? 'Il nuovo Riksdag'
+       : sx>=MAGG ? ((sx-MAGG)===0?'L\u2019opposizione tocca esattamente i 175 seggi'
+                    :(sx-MAGG)+' seggi oltre la soglia della maggioranza')
+       : dx>=MAGG ? ((dx-MAGG)===0?'Il blocco Tid\u00F6 tocca esattamente i 175 seggi'
+                    :'Il blocco Tid\u00F6 tiene la maggioranza per '+(dx-MAGG)+' seggi')
+       : dx===sx ? 'I due blocchi sono in parit\u00E0'
+       : 'Nessun blocco arriva a 175 seggi';
+  const inBilico=R.filter(r=>Math.abs(r.v-4)<=1);
+  const lettere=['zero','un','due','tre','quattro','cinque','sei','sette','otto'];
+  t.t5 = inBilico.length===1 ? ('Il destino del Riksdag passa da '+inBilico[0].id)
+       : inBilico.length>1 ? ((lettere[inBilico.length]||inBilico.length)+' partiti giocano sulla soglia del 4 per cento')
+       : 'Chi entra e chi resta fuori dal Riksdag';
+  const conta={};
+  S.lan.filter(l=>l.tot>0).forEach(l=>{conta[l.lead]=(conta[l.lead]||0)+1;});
+  const top=Object.entries(conta).sort((a,b)=>b[1]-a[1])[0];
+  t.t6 = top ? (top[0]+' in testa in '+top[1]+(top[1]===1?' l\u00E4n':' l\u00E4n')) : 'La Svezia l\u00E4n per l\u00E4n';
+  t.t7 = 'Gli exit poll alla prova del voto reale';
+  if(primo&&secondo&&Math.abs(primo.v-secondo.v)<1.5&&S.hasOff)
+    t.t1 = primo.nome+' e '+secondo.nome+' divisi da '+nf(Math.abs(primo.v-secondo.v),1)+' punti';
+  Object.keys(t).forEach(k=>{ if(t[k]) t[k]=t[k].charAt(0).toUpperCase()+t[k].slice(1); });
+  return t;
+}
+
+/* ---------- testi di accompagnamento ---------- */
+function taglia(s){ s=String(s).replace(/\s+/g,' ').trim(); return LEN(s)<=240?s:s.slice(0,239).replace(/\s\S*$/,'')+'\u2026'; }
+function autoPost(S){
+  const R=ordina(S.shares), primo=R[0], secondo=R[1];
+  const q=S.hasOff?('con il '+nf(S.scrut*100,0)+' per cento dei distretti scrutinati'):('secondo '+S.srcLabel.toLowerCase());
+  const P={};
+  P.c1 = primo ? taglia('Svezia, '+q+': '+primo.nome+' al '+nf(primo.v,1)+' per cento'+
+    (secondo?', '+secondo.nome+' al '+nf(secondo.v,1):'')+'. Rispetto al 2022 '+primo.id+' '+
+    (primo.v>=primo.v22?'guadagna ':'perde ')+nf(Math.abs(primo.v-primo.v22),1)+' punti.') : '';
+  if(S.valu||S.tv4){
+    const a=S.valu?ordina(S.valu)[0]:null, b=S.tv4?ordina(S.tv4)[0]:null;
+    P.c2 = taglia('Gli exit poll svedesi delle 20'+
+      (a?': VALU d\u00E0 '+a.nome+' al '+nf(a.v,1)+' per cento':'')+
+      (b?(a?', TV4 lo d\u00E0 ':': TV4 d\u00E0 ')+(a&&b.id===a.id?'al ':b.nome+' al ')+nf(b.v,1):'')+
+      '. Sono sondaggi all\u2019uscita dai seggi, non conteggi.');
+  }
+  const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
+  P.c3 = S.srcKind==='none'?'':taglia('Il Riksdag '+q+': opposizione (S, V, C, MP) a '+sx+' seggi, '+
+    'partiti di Tid\u00F6 (M, KD, L, SD) a '+dx+'. '+
+    (sx>=MAGG?'La maggioranza passa all\u2019opposizione, che supera i 175 di '+(sx-MAGG)+'.':
+     dx>=MAGG?'Il blocco Kristersson tiene, con '+(dx-MAGG)+' seggi oltre i 175.':
+     dx===sx?'Parit\u00E0 esatta: nessuno arriva a 175.':'Nessun blocco raggiunge quota 175.'));
+  const fuori=R.filter(r=>r.v<4), bilico=R.filter(r=>Math.abs(r.v-4)<=1);
+  P.c5 = R.length?taglia('La soglia del 4 per cento decide il Riksdag. '+
+    (fuori.length?'Sotto la soglia '+fuori.map(r=>r.id+' ('+nf(r.v,1)+')').join(', ')+'. ':'Tutti i partiti sono sopra la soglia. ')+
+    (bilico.length?'In bilico entro un punto: '+bilico.map(r=>r.id).join(', ')+'.':'')):'';
+  const conta={}; S.lan.filter(l=>l.tot>0).forEach(l=>{conta[l.lead]=(conta[l.lead]||0)+1;});
+  const top=Object.entries(conta).sort((a,b)=>b[1]-a[1]);
+  P.c6 = top.length?taglia('La Svezia l\u00E4n per l\u00E4n: '+top.map(([p,n])=>p+' in testa in '+n).join(', ')+
+    '. I l\u00E4n non coincidono con le 29 circoscrizioni del Riksdag.'):'';
+  if(S.off&&(S.valu||S.tv4)){
+    let peggio=0,pid='';
+    R.forEach(r=>{ const a=S.valu?Math.abs((S.valu[r.id]||0)-r.v):0, b=S.tv4?Math.abs((S.tv4[r.id]||0)-r.v):0;
+      const m=Math.max(a,b); if(m>peggio){peggio=m;pid=r.id;} });
+    P.c7 = taglia('Exit poll alla prova del voto reale in Svezia: con lo scrutinio al '+nf(S.scrut*100,0)+
+      ' per cento lo scarto massimo \u00E8 su '+pid+', '+nf(peggio,1)+' punti. Parte della differenza dipende dai distretti ancora da contare.');
+  }
+  return P;
+}
+
+/* ---------- montaggio ---------- */
+function build(){
+  const tf=document.getElementById('titleFields');
+  tf.innerHTML=CARDS.map(c=>'<div class="fld"><label>'+c.nome.replace(/^Card \d+ — /,'')+'</label>'+
+    '<input id="'+c.tid+'"></div>').join('');
+  /* il titolo si riscrive da solo finche' non lo tocchi: altrimenti resterebbe
+     appeso ai dati del primo disegno, quando ancora non era arrivato nulla */
+  tf.addEventListener('input',e=>{ if(e.target.tagName==='INPUT'){ e.target.dataset.dirty='1'; render(false); }});
+  const cc=document.getElementById('genCards');
+  cc.innerHTML=CARDS.map(c=>
+    '<div class="gencard" id="wrap_'+c.id+'">'+
+      '<canvas id="'+c.id+'" width="3200" height="1800"></canvas>'+
+      '<div class="bar2"><b>'+c.nome+'</b><span><em id="st_'+c.id+'"></em> '+
+        '<button data-dl="'+c.id+'" class="sm">Scarica PNG</button></span></div>'+
+      '<div class="post"><textarea id="tx_'+c.id+'" aria-label="Testo '+c.nome+'"></textarea>'+
+        '<div class="foot"><span class="cnt" id="cn_'+c.id+'">0 / 240</span>'+
+        '<span><button data-rig="'+c.id+'" class="sm" style="margin-right:6px">Ripristina</button>'+
+        '<button data-copy="'+c.id+'" class="sm">Copia</button></span></div></div>'+
+    '</div>').join('');
+  cc.addEventListener('click',e=>{
+    const dl=e.target.getAttribute('data-dl'); if(dl) return download(dl);
+    const rg=e.target.getAttribute('data-rig');
+    if(rg){ const t=document.getElementById('tx_'+rg); delete t.dataset.dirty; render(false); return; }
+    const cp=e.target.getAttribute('data-copy');
+    if(cp){ copia(document.getElementById('tx_'+cp).value);
+      e.target.textContent='Copiato'; setTimeout(()=>e.target.textContent='Copia',1200); }
+  });
+  cc.addEventListener('input',e=>{ if(e.target.id&&e.target.id.indexOf('tx_')===0){
+    e.target.dataset.dirty='1'; conta(e.target.id.slice(3)); }});
+  document.getElementById('redraw').addEventListener('click',()=>render(false));
+  document.getElementById('reauto').addEventListener('click',()=>render(true));
+  document.getElementById('dlAll').addEventListener('click',dlAll);
+  document.getElementById('copyAll').addEventListener('click',copyAll);
+  ['ambito','dataFonte','firma'].forEach(k=>document.getElementById(k).addEventListener('input',()=>render(false)));
+}
+function conta(id){
+  const t=document.getElementById('tx_'+id), n=LEN(t.value), el=document.getElementById('cn_'+id);
+  el.textContent=n+' / 240'; el.classList.toggle('over',n>240);
+}
+function copia(t){
+  const ta=document.createElement('textarea'); ta.value=t;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta); return ok;
+}
+function copyAll(){
+  const S=snapshot(), pronte=CARDS.filter(c=>c.ok(S));
+  const testi=pronte.map(c=>document.getElementById('tx_'+c.id).value.trim()).filter(Boolean);
+  const ok=testi.length&&copia(testi.join('\n\n'));
+  document.getElementById('genStatus').textContent=ok?testi.length+' testi copiati.':'Nessun testo da copiare.';
+  setTimeout(()=>render(false),2500);
+}
+function download(id){
+  const c=CARDS.filter(k=>k.id===id)[0];
+  document.getElementById(id).toBlob(b=>{
+    const u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u; a.download=c.file; a.click(); setTimeout(()=>URL.revokeObjectURL(u),2000);
+  },'image/png');
+}
+function dlAll(){
+  const S=snapshot(), pronte=CARDS.filter(c=>c.ok(S));
+  if(!pronte.length){ document.getElementById('genStatus').textContent='Nessuna card pronta.'; return; }
+  pronte.forEach((c,i)=>setTimeout(()=>download(c.id),i*420));
+  document.getElementById('genStatus').textContent='Scarico '+pronte.length+' card…';
+}
+
+let built=false, dirty=true;
+function cardTabHidden(){ return document.getElementById('tab-card').classList.contains('hidden'); }
+/* Ridisegnare sette canvas 3200x1800 e' costoso: quando la scheda e' nascosta si segna
+   soltanto che il disegno e' scaduto, e si rifa' quando l'utente la apre. */
+function render(force){
+  if(!built) return;
+  if(cardTabHidden() && !force){ dirty=true; return; }
+  draw(force); dirty=false;
+}
+function show(){ if(built && dirty){ draw(false); dirty=false; } }
+function draw(force){
+  const S=snapshot();
+  S_FIRMA=document.getElementById('firma').value.trim()||'@putino';
+  const t=autoTitoli(S);
+  CARDS.forEach(c=>{ const el=document.getElementById(c.tid);
+    if(force){ delete el.dataset.dirty; el.value=t[c.tid]||''; }
+    else if(!el.dataset.dirty) el.value=t[c.tid]||''; });
+
+  const pronte=CARDS.filter(c=>c.ok(S));
+  CARDS.forEach(c=>{
+    const x=document.getElementById(c.id).getContext('2d');
+    x.setTransform(1,0,0,1,0,0); x.clearRect(0,0,3200,1800); x.scale(2,2);
+    try{ x.letterSpacing='0px'; }catch(e){}
+    const i=pronte.indexOf(c);
+    try{ c.fn(x,S,{n:i>=0?i+1:pronte.length+1,tot:Math.max(pronte.length,1),tid:c.tid}); }
+    catch(e){ attesa(x,'Errore di disegno',String(e.message||e)); }
+    document.getElementById('wrap_'+c.id).classList.toggle('off',i<0);
+    document.getElementById('st_'+c.id).textContent=i<0?'in attesa':'';
+  });
+  const P=autoPost(S);
+  CARDS.forEach(c=>{ const tx=document.getElementById('tx_'+c.id);
+    if(force||!tx.dataset.dirty){ tx.value=P[c.id]||'— in attesa dei dati —';
+      if(force) delete tx.dataset.dirty; }
+    conta(c.id); });
+  document.getElementById('genStatus').textContent=pronte.length+' card pronte · '+
+    new Date().toLocaleTimeString('it-IT');
+}
+
+function init(){
+  build(); built=true;
+  draw(true); dirty=false;
+  /* Lora arriva da Google Fonts: prima che sia pronta il canvas userebbe un ripiego serif */
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ if(!cardTabHidden()) draw(false); else dirty=true; });
+}
+return {init,render,show};
+})();
+
+/* src/boot.js */
+loadState(); renderInputs(); bind(); render();
+CARDGEN.init();
+pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
 
 </script>
 </body>
