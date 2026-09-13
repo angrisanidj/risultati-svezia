@@ -1843,6 +1843,17 @@ function lanResults(){
       reported:b?.reported||0,total:b?.total||0};
   });
 }
+/* Scala dell'intensità relativa ai dati veri: il più tenue è il län dove il
+   partito in testa va peggio, il più acceso quello dove va meglio. Una scala
+   fissa 20-50% lascerebbe inutilizzata più di metà della gamma, perché i län
+   reali stanno in una forbice di dieci punti. Lo span minimo evita di gonfiare
+   differenze irrilevanti quando sono tutti allineati. */
+function scalaIntensita(quote){
+  const v=quote.filter(x=>Number.isFinite(x)&&x>0);
+  let lo=v.length?Math.min(...v):20, hi=v.length?Math.max(...v):40;
+  if(hi-lo<7){ const c=(hi+lo)/2; lo=c-3.5; hi=c+3.5; }
+  return {lo,hi,f:x=>0.28+0.72*Math.max(0,Math.min(1,(x-lo)/(hi-lo)))};
+}
 function mix(hex,amount){ /* schiarisce/scurisce verso il fondo notturno */
   const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
   const bg=[18,28,44];
@@ -1923,6 +1934,7 @@ function resetMap(){
 
 function renderMap(){
   const res=lanResults(), any=res.some(r=>r.tot>0);
+  const scala=scalaIntensita(res.filter(r=>r.tot>0).map(r=>r.share));
   const svg=$('#lanMap');
   if(!MAPV.built){
     /* 3,5% di respiro su ogni lato: senza, la punta della Scania tocca il bordo */
@@ -1931,7 +1943,7 @@ function renderMap(){
     MAPV.cur={...MAPV.base};
   }
   const inner=res.map(r=>{
-    const col=r.lead?mix(PARTY_MAP[r.lead].color,.35+Math.min(.65,(r.share-20)/30)):'#22314e';
+    const col=r.lead?mix(PARTY_MAP[r.lead].color,scala.f(r.share)):'#22314e';
     return `<path d="${r.d}" fill="${col}" data-lan="${r.c}" tabindex="0" role="button" aria-label="${r.n}"><title>${r.n}</title></path>`;
   }).join('');
   svg.setAttribute('viewBox',`${MAPV.base.x} ${MAPV.base.y} ${MAPV.base.w} ${MAPV.base.h}`);
@@ -1963,7 +1975,7 @@ function renderMap(){
   $('#mapNote').textContent=mapFonteProg()
     ? 'Mappa colorata sulla proiezione di Vera Policy per SVT, non sui voti finora conteggiati: con lo spoglio parziale i primi distretti a chiudere sono i più piccoli e danno un quadro distorto. La percentuale nell’elenco resta la quota di distretti già scrutinati.'
     : any
-    ? 'L’intensità del colore cresce con la quota del partito in testa; la percentuale nell’elenco è la quota di distretti già scrutinati. Rotella o pizzico per lo zoom, trascina per spostarti.'
+    ? `L’intensità è relativa: il tono più tenue è il län dove il partito in testa va peggio (${scala.lo.toFixed(1).replace('.',',')}%), il più acceso quello dove va meglio (${scala.hi.toFixed(1).replace('.',',')}%). La percentuale nell’elenco è la quota di distretti già scrutinati. Rotella o pizzico per lo zoom, trascina per spostarti.`
     : 'Intensità del colore proporzionale alla quota del partito in testa.';
   renderMapLegend(res);
   if(MAPV.sel) renderLanDetail(MAPV.sel); else $('#lanDetail').innerHTML=DETAIL_PROMPT;
@@ -2717,13 +2729,14 @@ function card6(x,S,N){
     fonte:fonte(S),n:N.n,tot:N.tot});
   const L=S.lan.filter(l=>l.tot>0);
   if(!L.length) return attesa(x,'Nessun distretto scrutinato','La mappa si colora appena arrivano i primi valdistrikt.');
+  const scala=scalaIntensita(L.map(l=>l.share));
 
   /* mappa */
   const vb=LAN_GEO.vb.split(' ').map(Number), sc=534/vb[3], ox=300-vb[2]*(534/vb[3])/2, oy=242;
   x.save(); x.translate(ox,oy); x.scale(sc,sc);
   S.lan.forEach(l=>{
     const p=new Path2D(l.d);
-    x.fillStyle=l.lead?mixCol(PARTY_MAP[l.lead].color,.35+Math.min(.65,(l.share-20)/30)):'#16223A';
+    x.fillStyle=l.lead?mixCol(PARTY_MAP[l.lead].color,scala.f(l.share)):'#16223A';
     x.fill(p);
     x.strokeStyle='rgba(10,16,32,.9)'; x.lineWidth=1/sc; x.stroke(p);
   });
