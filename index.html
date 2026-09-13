@@ -1882,7 +1882,11 @@ function hexHsl(hex){
 function tinta(hex,t){
   const c=hexHsl(hex);
   const k=Math.max(0,Math.min(1,t));
-  return `hsl(${c.h.toFixed(0)} ${Math.max(48,Math.min(92,c.s)).toFixed(0)}% ${(24+40*k).toFixed(1)}%)`;
+  /* Il vertice della scala e' il colore pieno del partito, mai oltre: schiarire
+     ancora lo slava in rosa, e un tono slavato si legge come "debole" anche se
+     sta in cima. Il fondo e' una sua ombra scura. */
+  const lMax=Math.max(46,Math.min(58,c.l)), lMin=19;
+  return `hsl(${c.h.toFixed(0)} ${Math.max(52,Math.min(92,c.s)).toFixed(0)}% ${(lMin+(lMax-lMin)*k).toFixed(1)}%)`;
 }
 function mix(hex,amount){ /* schiarisce/scurisce verso il fondo notturno */
   const n=parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
