@@ -1523,7 +1523,7 @@ function testoAttesa(){
   return m<90?m+'s':Math.round(m/60)+' min';
 }
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,feedVersione:0,mapGrana:'lan',fase:'preliminare',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,feedVersione:0,mapGrana:'lan',fase:'preliminare',firmeStime:{},official:null,officialSource:null,lastChecksum:null,officialFinal:null,lastChecksumFinal:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 /* L'italiano nel CLDR non raggruppa i numeri di quattro cifre: toLocaleString
    restituisce 6312, non 6.312. Sul cruscotto vogliamo il punto sempre, altrimenti
@@ -1565,7 +1565,25 @@ const SCRUT_SORPASSO=0.90;
 /* Un'unica funzione decide la fonte per barre, tabella, verdetto ed emiciclo:
    currentSeats() segue lo stesso ordine, altrimenti la pagina dichiara una fonte
    e ne mostra un'altra. Le etichette sono le stesse nei due posti. */
-function definitivo(){ return state.fase==='definitivo'&&hasOfficial(); }
+/* Un file e' completo quando l'intestazione dice che tutti i distretti sono
+   stati contati; in mancanza dell'intestazione si guarda il conteggio proprio. */
+function completo(o){
+  if(!o) return false;
+  const m=o.meta||{}, d=o.districts||{};
+  if(Number(m.totalFromHeader)>0) return Number(m.reportedFromHeader)>=Number(m.totalFromHeader);
+  return Number(d.allTotal)>0&&Number(d.allReported)>=Number(d.allTotal);
+}
+/* Il conteggio delle prefetture e' il risultato legale solo quando e' finito:
+   a meta' strada e' un campione di circoscrizioni, peggio del preliminare completo. */
+function definitivo(){ return state.fase==='definitivo'&&hasOfficial()&&completo(state.official); }
+/* Avanzamento della conta definitiva, per le righe informative. */
+function progressoDefinitivo(){
+  const f=state.officialFinal; if(!f) return null;
+  const m=f.meta||{}, d=f.districts||{};
+  const tot=Number(m.totalFromHeader)>0?Number(m.totalFromHeader):Number(d.allTotal)||0;
+  const fatti=Number(m.totalFromHeader)>0?Number(m.reportedFromHeader):Number(d.allReported)||0;
+  return {fatti,tot,completo:completo(f)};
+}
 function etichettaUfficiale(){
   if(state.officialSource==='manual') return 'Risultato manuale';
   if(definitivo()) return 'Risultato definitivo';
@@ -1628,7 +1646,10 @@ function currentSeats(){
     label:prognosLabel(),short:'traduzione indicativa della proiezione',
     method:'Traduzione su 349 seggi della proiezione di Vera Policy per SVT, che stima il risultato finale sui distretti gia\u0300 conteggiati. Non e\u0300 un risultato ufficiale e non applica la procedura legale 310+39.'};
 
-  if(off){
+  /* Sotto la soglia di sorpasso i voti parziali non fanno seggi: i primi
+     distretti sono piccoli e rurali e una ripartizione su di essi e' rumore.
+     Si scende a exit poll o baseline, con l'etichetta che lo dice. */
+  if(off&&scrutFrac()>=SCRUT_SORPASSO){
     if(offSeats) return {seats:state.official.seats,label:etichettaDi('official'),
       short:'mandati sullo spoglio parziale',
       method:'Mandati presenti nel dataset ufficiale, calcolati su uno scrutinio ancora parziale: con i distretti piccoli che chiudono per primi il quadro e\u0300 distorto.'};
@@ -1643,6 +1664,8 @@ function currentSeats(){
   if(exitHas(state.tv4)) return {seats:allocateNationalSeats(syntheticVotes(state.tv4)),label:etichettaDi('tv4'),
     short:'traduzione indicativa dell\u2019exit poll',
     method:'Traduzione nazionale indicativa di TV4 su 349 seggi. Non e\u0300 la distribuzione legale completa 310+39 e non e\u0300 un risultato ufficiale.'};
+  if(off) return {seats:BASELINE_2022.seats,label:etichettaDi('none'),short:'scrutinio insufficiente per una ripartizione',
+    method:'Scrutinio sotto il '+Math.round(SCRUT_SORPASSO*100)+'%: nessuna ripartizione sui voti parziali. L\u2019emiciclo mostra la composizione del 2022.'};
   return {seats:BASELINE_2022.seats,label:etichettaDi('none'),short:'baseline fino ai primi dati 2026',
     method:'In attesa dei dati 2026. L\u2019emiciclo mostra la composizione del 2022.'};
 }
@@ -1741,6 +1764,13 @@ function renderVerdetto(){
     box.innerHTML='<div class="vw">Chi ha la maggioranza</div><h2>In attesa del primo dato</h2>'+
       '<div class="vd">Alle 20:00 arrivano VALU e TV4, verso le 21:10 la proiezione. '+
       'Nel frattempo l\u2019emiciclo mostra il Riksdag uscito dal 2022.</div>';
+    return;
+  }
+  if(src.kind==='official'&&state.officialSource!=='manual'&&!definitivo()&&scrutFrac()<SCRUT_SORPASSO){
+    box.className='verdetto';
+    box.innerHTML='<div class="vw">Chi ha la maggioranza</div><h2>Scrutinio insufficiente</h2>'+
+      '<div class="vd">Voti ufficiali contati nel '+(scrutFrac()*100).toFixed(1).replace('.',',')+'% dei distretti: '+
+      'sotto il '+Math.round(SCRUT_SORPASSO*100)+'% nessun verdetto viene calcolato sui voti parziali.</div>';
     return;
   }
   const e=esitoBlocchi(currentSeats().seats);
@@ -2254,9 +2284,13 @@ function renderStatus(){
   $('#progressText').textContent=total?`${fmt(reported)} dei ${fmt(total)} distretti ordinari`:'In attesa della struttura distretti dal feed';
   $('#progressPct').textContent=total?`${(fraction*100).toFixed(1).replace('.',',')}%`:'—';
   const spiega='In Svezia si può votare in anticipo in qualsiasi comune del paese e nelle ambasciate, ma la scheda deve poi arrivare al distretto di residenza. Quelle che non ce la fanno vengono contate <strong>mercoledì 16</strong>, nei cosiddetti <em>uppsamlingsdistrikt</em>, i distretti di raccolta. Poi da lunedì le prefetture rifanno la conta da zero: è quella, la <em>slutlig rösträkning</em>, a fissare il risultato legale e la distribuzione dei seggi.';
-  $('#progressNote').innerHTML=collectionTotal
+  const pd=progressoDefinitivo();
+  const rigaDef=pd&&!definitivo()
+    ? ` <strong>Conta definitiva delle prefetture in corso: ${fmt(pd.fatti)} di ${fmt(pd.tot)} distretti.</strong> Finché non è completa, barre, seggi e verdetto restano sul preliminare.`
+    : (definitivo()?' <strong>La conta definitiva delle prefetture è completa: è quella mostrata in pagina.</strong>':'');
+  $('#progressNote').innerHTML=(collectionTotal
     ? `<strong>Arrivare a ${fmt(total)} su ${fmt(total)} non vuol dire che il conteggio è finito.</strong> ${spiega} I distretti di raccolta sono ${fmt(collectionTotal)}; ne sono arrivati ${fmt(collectionReported)}.`
-    : `<strong>Il completamento dei distretti della notte non è il risultato definitivo.</strong> ${spiega}`;
+    : `<strong>Il completamento dei distretti della notte non è il risultato definitivo.</strong> ${spiega}`)+rigaDef;
   const si=currentSeats(); $('#seatSourceKpi').textContent=si.label; $('#seatSourceMeta').textContent=si.short||si.method; renderHemicycle(si);
   const diag=buildFeedDiagnostics(state.official);
   $('#testFileBadge').classList.toggle('hidden',!diag.isTest);
@@ -2320,46 +2354,64 @@ function manualApply(){
 }
 
 async function fetchWithNoStore(url){const join=url.includes('?')?'&':'?';return fetch(`${url}${join}t=${Date.now()}`,{cache:'no-store',mode:'cors'});}
+/* Scarica e interpreta uno zip dell'indice. Restituisce il risultato, oppure
+   null se il file e' troppo grande (l'avviso e' gia' in pagina). Gli errori di
+   rete e di formato salgono al chiamante. */
+async function scaricaRisultato(f){
+  const zr=await fetchWithNoStore(buildProxyFeedUrl(f.path));
+  if(zr.status===429) throw new Error('ZIP limitato da Valmyndigheten (429)');
+  if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
+  const peso=Number(zr.headers.get('content-length')||0);
+  if(peso>MAX_ZIP){
+    setFeed(`File ${f.fase} da ${(peso/1048576).toFixed(0)} MB, oltre il limite di ${(MAX_ZIP/1048576).toFixed(0)} MB: non scaricato · importalo a mano con ZIP/JSON`,'error');
+    return null;
+  }
+  const files=await extractElectionJsonFromZip(await zr.arrayBuffer(),true);
+  return normalizeOfficialZipFiles(files);
+}
+function testoDefinitivo(){
+  const pd=progressoDefinitivo(); if(!pd) return '';
+  return pd.completo?' · conta definitiva completa':` · conta definitiva in corso: ${fmt(pd.fatti)}/${fmt(pd.tot)} distretti`;
+}
 async function pollFeed(force=false){
   try{
     if(force) setFeed('Test CORS Valmyndigheten…','loading');
     const r=await fetchWithNoStore(INDEX_URL); if(r.status===429){setFeed('Valmyndigheten limita le richieste (429)','error');return;} if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const entries=parseIndexMd5(await r.text()); state.feedCors=true;
-    /* Il file definitivo puo' comparire nell'indice prima di contenere dati:
-       si usa solo se produce davvero dei voti, altrimenti si resta sul preliminare. */
+    /* Preliminare e definitivo viaggiano su due file con due checksum e due
+       stati separati: il definitivo non sovrascrive mai il preliminare finche'
+       non e' completo, perche' a meta' strada e' un campione di circoscrizioni. */
     const pre=findPreliminaryRiksdagFile(entries), fin=findFinalRiksdagFile(entries);
-    let rd=fin||pre;
-    if(!rd){setFeed(`CORS OK · feed in attesa dei primi risultati (${entries.length} file indicizzati)`,'ok');return;}
-    /* l'etichetta va calcolata dopo l'eventuale ripiego, non prima */
-    const etichetta=f=>(f.esatto?'':' · percorso diverso dall’atteso: '+f.path)+
-      (f.fase==='definitivo'?' · conteggio definitivo delle prefetture':'');
-    if(!force && state.lastChecksum===rd.checksum){
+    if(!pre&&!fin){setFeed(`CORS OK · feed in attesa dei primi risultati (${entries.length} file indicizzati)`,'ok');return;}
+    const novita=[];
+    if(pre&&(force||state.lastChecksum!==pre.checksum)){
+      setFeed('Nuovo file preliminare: download…','loading');
+      const res=await scaricaRisultato(pre);
+      if(res){
+        state.official=res;state.officialSource='Valmyndigheten live';state.fase='preliminare';state.lastChecksum=pre.checksum;
+        novita.push('preliminare aggiornato'+(pre.esatto?'':' (percorso: '+pre.path+')'));
+      }
+    }
+    if(fin&&(force||state.lastChecksumFinal!==fin.checksum)){
+      setFeed('Nuovo file definitivo: download…','loading');
+      const res=await scaricaRisultato(fin);
+      if(res){
+        state.officialFinal=res;state.lastChecksumFinal=fin.checksum;
+        novita.push('definitivo aggiornato');
+      }
+    }
+    /* Promozione: solo un definitivo completo diventa la fonte della pagina. */
+    if(state.officialFinal&&sum(state.officialFinal.votes)>0&&completo(state.officialFinal)&&state.officialSource!=='manual'){
+      if(state.fase!=='definitivo'){ novita.push('conta definitiva completa: ora è la fonte'); }
+      state.official=state.officialFinal;state.fase='definitivo';state.officialSource='Valmyndigheten live';
+    }
+    if(novita.length){
+      saveState();render();pollAttesa=POLL_MS;
+      setFeed('Feed live Valmyndigheten · '+novita.join(' · ')+testoDefinitivo(),'ok');
+    }else{
       pollAllarga();
-      setFeed(`Feed live collegato · nessun nuovo file${etichetta(rd)} · prossimo controllo fra ${testoAttesa()}`,'ok');
-      return;
+      setFeed(`Feed live collegato · nessun nuovo file${testoDefinitivo()} · prossimo controllo fra ${testoAttesa()}`,'ok');
     }
-    setFeed('Nuovo file Riksdag: download…','loading');
-    const zr=await fetchWithNoStore(buildProxyFeedUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
-    /* Gli zip definitivi possono essere enormi: meglio rifiutarsi e dirlo che
-       piantare la pagina provando a scompattarli in memoria. */
-    const peso=Number(zr.headers.get('content-length')||0);
-    if(peso>MAX_ZIP){
-      setFeed(`File da ${(peso/1048576).toFixed(0)} MB, oltre il limite di ${(MAX_ZIP/1048576).toFixed(0)} MB: non scaricato · importalo a mano con ZIP/JSON`,'error');
-      return;
-    }
-    let files=await extractElectionJsonFromZip(await zr.arrayBuffer(),true);
-    let result=normalizeOfficialZipFiles(files);
-    if(rd.fase==='definitivo'&&sum(result.votes)===0&&pre){
-      rd=pre;                                     /* definitivo ancora vuoto */
-      const zr2=await fetchWithNoStore(buildProxyFeedUrl(pre.path));
-      if(!zr2.ok) throw new Error(`ZIP HTTP ${zr2.status}`);
-      files=await extractElectionJsonFromZip(await zr2.arrayBuffer(),true);
-      result=normalizeOfficialZipFiles(files);
-    }
-    state.fase=rd.fase;
-    state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();
-    pollAttesa=POLL_MS;                 /* dato nuovo: si torna stretti */
-    setFeed('Feed live Valmyndigheten'+etichetta(rd),rd.esatto?'ok':'loading');
   }catch(e){
     state.feedCors=false;
     const message=String(e?.message||e);
@@ -3229,6 +3281,12 @@ state.progAuto=null;
 /* v1 aveva acceso il feed per tutti; a scrutinio concluso si spegne una volta
    sola, poi torna a comandare la scelta dell'utente. */
 if(state.feedVersione!==2){ state.feedProg=false; state.feedVersione=2; saveState(); }
+/* Chi ha aperto la pagina lunedi' si e' portato a casa il definitivo parziale
+   come fonte: si torna al preliminare e si riscarica tutto al primo giro. */
+if(state.fase==='definitivo'&&!completo(state.official)){
+  state.official=null; state.officialSource=null; state.fase='preliminare';
+  state.lastChecksum=null; state.lastChecksumFinal=null; state.officialFinal=null; saveState();
+}
 renderInputs(); bind(); render();
 if(state.feedProg) avviaFeed(true);
 CARDGEN.init();
