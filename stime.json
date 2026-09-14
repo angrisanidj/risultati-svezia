@@ -1,5 +1,5 @@
 {
-  "aggiornato": "13 settembre 2026, 20:00",
+  "aggiornato": "13 settembre 2026 · exit poll delle 20:00, proiezione delle 05:08",
   "valu": {
     "ora": "20:00",
     "S": 28.4, "M": 18.1, "SD": 17.2, "V": 8.0,
@@ -10,5 +10,9 @@
     "S": 28.4, "SD": 18.5, "M": 17.5, "C": 9.0,
     "MP": 7.0, "V": 6.9, "KD": 6.0, "L": 5.0
   },
-  "proiezione": { "ora": "", "S": "", "SD": "", "M": "", "V": "", "C": "", "KD": "", "MP": "", "L": "" }
+  "proiezione": {
+    "ora": "05:08",
+    "S": 27.9, "M": 19.9, "SD": 17.5, "V": 8.3,
+    "C": 7.1, "KD": 6.2, "MP": 6.1, "L": 5.4
+  }
 }

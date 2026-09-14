@@ -586,7 +586,10 @@ const PARTIES = [
   {id:'S',name:'Socialdemokraterna',color:'#e8112d',seats2022:107,share2022:30.33},
   {id:'SD',name:'Sverigedemokraterna',color:'#dddd00',seats2022:73,share2022:20.54},
   {id:'M',name:'Moderaterna',color:'#52bdec',seats2022:68,share2022:19.10},
-  {id:'V',name:'Vänsterpartiet',color:'#da291c',seats2022:24,share2022:6.75},
+  /* Il rosso originale di V (#da291c) dista appena 10,5 di ΔE da quello di S:
+     nei pallini dell'emiciclo i due partiti erano indistinguibili. Questo cremisi
+     scuro porta la distanza a 35,7, restando a 68,8 dallo sfondo notturno. */
+  {id:'V',name:'Vänsterpartiet',color:'#a3123a',seats2022:24,share2022:6.75},
   {id:'C',name:'Centerpartiet',color:'#009933',seats2022:24,share2022:6.71},
   {id:'KD',name:'Kristdemokraterna',color:'#000077',seats2022:19,share2022:5.34},
   {id:'MP',name:'Miljöpartiet',color:'#83cf39',seats2022:18,share2022:5.08},
@@ -3194,7 +3197,15 @@ return {init,render,show};
 })();
 
 /* src/boot.js */
-loadState(); state.progAuto=null;
+loadState();
+/* progAuto e' il valore "vivo" del feed e non deve sopravvivere alla sessione,
+   ma buttarlo via significherebbe perdere l'ultima proiezione ricevuta. Prima di
+   azzerarlo lo si fissa nella colonna manuale, se quella e' ancora vuota. */
+if(state.progAuto&&Object.keys(state.progAuto.quote||{}).length&&!exitHas(state.prognos)){
+  state.prognos={...state.progAuto.quote};
+  state.prognosOra=state.progAuto.ora||state.prognosOra||'';
+}
+state.progAuto=null;
 /* loadState sovrascrive i valori predefiniti con quelli salvati: chi aveva gia'
    usato la pagina si porterebbe dietro feedProg:false. La migrazione accende il
    feed una volta sola, poi la scelta dell'utente torna a comandare. */
