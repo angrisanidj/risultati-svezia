@@ -1924,8 +1924,14 @@ function lanResults(){
         reported:a.scrutinati,total:a.totali};
     });
   }
-  const by=(grana()==='kom'?state.official?.byKom:state.official?.byLan)||{};
-  return GEO().f.map(g=>{
+  return risultatiArea(grana());
+}
+/* Risultati per una grana qualsiasi, sui voti realmente conteggiati: serve sia
+   alla mappa della dashboard sia alla card, che le disegna tutte e due. */
+function risultatiArea(quale){
+  const geo=quale==='kom'?KOM_GEO:LAN_GEO;
+  const by=(quale==='kom'?state.official?.byKom:state.official?.byLan)||{};
+  return geo.f.map(g=>{
     const b=by[g.c];
     const votes=b?.votes||{};
     const tot=sum(votes);
@@ -2675,7 +2681,8 @@ function snapshot(){
   const seatInfo=currentSeats();
   const d=state.official?.districts||{};
   const scrut=(d.total>0)?d.reported/d.total:0;
-  const lan=(typeof lanResults==='function')?lanResults():[];
+  const lan=(typeof risultatiArea==='function')?risultatiArea('lan'):[];
+  const kom=(typeof risultatiArea==='function')?risultatiArea('kom'):[];
   return {
     ambito:g('ambito').value.trim()||'Svezia · 13 settembre 2026',
     dataFonte:g('dataFonte').value.trim()||'13 settembre 2026',
@@ -2688,6 +2695,7 @@ function snapshot(){
     progOra:state.prognosOra||'',
     seats:seatInfo.seats, seatLabel:seatInfo.label,
     districts:d, scrut, lan,
+    kom, komFatti:kom.filter(k=>k.tot>0).length,
     lanFatti:lan.filter(l=>l.tot>0).length,
     voti:sum(state.official?.votes)
   };
@@ -2747,41 +2755,6 @@ function card1(x,S,N){
   x.save(); x.setLineDash([4,6]); line(x,sx,286,sx,y2(R,h),'rgba(255,255,255,.20)',1); x.restore();
 }
 function y2(R,h){ return 322+(Math.min(R.length,8)-1)*h+26; }
-
-/* ---------- CARD 2 — i due exit poll ---------- */
-function card2(x,S,N){
-  frame(x,{badge:'EXIT POLL',kicker:S.ambito,title:g(N.tid).value,
-    sub:'SVT VALU e TV4 a confronto con il voto del 2022',
-    nota:'VALU e TV4 sono sondaggi all\u2019uscita dai seggi, non conteggi: lo scarto tra i due misura l\u2019incertezza della stima, '+
-      'non un cambiamento nel voto. Il risultato ufficiale resta quello della Valmyndigheten.',
-    fonte:fonteMulti(S,['valu','tv4']),n:N.n,tot:N.tot});
-  if(!S.valu&&!S.tv4) return attesa(x,'Nessun exit poll inserito','Compila il pannello VALU / TV4 nella dashboard.');
-
-  panel(x,62,258,1476,58,{top:C.blue});
-  const cx=[640,940,1240,1500];
-  T(x,'PARTITO',96,295,{font:F(700,16),color:C.t2,ls:2});
-  T(x,'SVT VALU',cx[0],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
-  T(x,'TV4',cx[1],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
-  T(x,'SCARTO',cx[2],295,{font:F(700,16),color:C.t2,ls:1.4,align:'center'});
-  T(x,'VS 2022',cx[3],295,{font:F(700,16),color:C.t2,ls:1.4,align:'right'});
-
-  const base=S.valu||S.tv4;
-  const R=ordina(base).slice(0,8);
-  const h=Math.min(58,440/Math.max(R.length,1));
-  R.forEach((r,i)=>{
-    const y=372+i*h;
-    const a=S.valu?Number(S.valu[r.id]||0):null, b=S.tv4?Number(S.tv4[r.id]||0):null;
-    x.save(); x.fillStyle=r.col; x.beginPath(); x.arc(74,y-8,9,0,6.2832); x.fill(); x.restore();
-    T(x,r.id,96,y,{font:F(700,26),color:C.t1});
-    T(x,r.nome,146,y-1,{font:F(400,18),color:C.t3});
-    T(x,a===null||!a?'\u2013':pc1(a),cx[0],y+2,{font:F(700,29,'serif'),color:C.t1,align:'center'});
-    T(x,b===null||!b?'\u2013':pc1(b),cx[1],y+2,{font:F(700,29,'serif'),color:C.t1,align:'center'});
-    const sc=(a&&b)?Math.round((a-b)*10)/10:null;
-    T(x,sc===null?'\u2013':dTxt(sc),cx[2],y,{font:F(700,23),color:sc===null?C.t3:C.steel,align:'center'});
-    const med=(a&&b)?(a+b)/2:(a||b), d=med?Math.round((med-r.v22)*10)/10:null;
-    T(x,d===null?'\u2013':dTxt(d),cx[3],y,{font:F(700,23),color:d===null?C.t3:dCol(d),align:'right'});
-  });
-}
 
 /* ---------- CARD 3 — seggi e blocchi ---------- */
 function bloccoDati(S,k){
@@ -2913,58 +2886,81 @@ function sintesiSoglia(S){
     :'Nessun partito entro un punto dalla soglia';
 }
 
-/* ---------- CARD 6 — la mappa ---------- */
+/* ---------- CARD 6 — le due mappe ---------- */
 function mixCol(hex,amount){
   const n=parseInt(hex.slice(1),16), r=n>>16, gg=(n>>8)&255, b=n&255, bg=[18,28,44];
   const f=Math.max(0,Math.min(1,amount));
   return 'rgb('+Math.round(bg[0]+(r-bg[0])*f)+','+Math.round(bg[1]+(gg-bg[1])*f)+','+Math.round(bg[2]+(b-bg[2])*f)+')';
 }
-function card6(x,S,N){
-  frame(x,{badge:'TERRITORIO',kicker:S.ambito,title:g(N.tid).value,
-    sub:'Il partito in testa nei 21 l\u00E4n, con i distretti gi\u00E0 scrutinati',
-    nota:'I l\u00E4n non coincidono con le 29 circoscrizioni del Riksdag: Stoccolma, Scania e V\u00E4stra G\u00F6taland sono divise in pi\u00F9 valkretsar. '+
-      (S.srcKind==='prognos'?'Quote dalla proiezione di Vera Policy per SVT.':'Dato ricostruito dalle prime due cifre del codice valdistrikt del feed ufficiale.'),
-    fonte:fonte(S),n:N.n,tot:N.tot});
-  const L=S.lan.filter(l=>l.tot>0);
-  if(!L.length) return attesa(x,'Nessun distretto scrutinato','La mappa si colora appena arrivano i primi valdistrikt.');
-  const scala=scalaIntensita(L.map(l=>l.share));
-
-  /* mappa */
-  const vb=LAN_GEO.vb.split(' ').map(Number), sc=534/vb[3], ox=300-vb[2]*(534/vb[3])/2, oy=242;
+function disegnaMappa(x,aree,geo,ox,oy,H,etichetta){
+  const vb=geo.vb.split(' ').map(Number), sc=H/vb[3];
+  const scala=scalaIntensita(aree.filter(a=>a.tot>0).map(a=>a.share));
   x.save(); x.translate(ox,oy); x.scale(sc,sc);
-  S.lan.forEach(l=>{
-    const p=new Path2D(l.d);
-    x.fillStyle=l.lead?tinta(PARTY_MAP[l.lead].color,scala.f(l.share)):'#16223A';
+  aree.forEach(a=>{
+    const p=new Path2D(a.d);
+    x.fillStyle=a.lead?tinta(PARTY_MAP[a.lead].color,scala.f(a.share)):'#1A2540';
     x.fill(p);
-    x.strokeStyle='rgba(10,16,32,.9)'; x.lineWidth=1/sc; x.stroke(p);
+    x.strokeStyle='rgba(10,16,32,.85)'; x.lineWidth=Math.max(0.5,0.9/sc); x.stroke(p);
   });
   x.restore();
+  const w=vb[2]*sc;
+  T(x,etichetta,ox+w/2,oy+H+30,{font:F(700,17),color:C.t2,ls:2,align:'center'});
+  return w;
+}
+function card6(x,S,N){
+  frame(x,{badge:'TERRITORIO',kicker:S.ambito,title:g(N.tid).value,
+    sub:'Il partito in testa, per l\u00E4n e per kommun',
+    nota:'Le aree sono ricostruite dai codici del feed Valmyndigheten. N\u00E9 i l\u00E4n n\u00E9 i kommuner coincidono con le 29 circoscrizioni del Riksdag: '+
+      'Stoccolma, Scania e V\u00E4stra G\u00F6taland sono divise in pi\u00F9 valkretsar. L\u2019intensit\u00E0 del colore cresce con la quota del partito in testa.',
+    fonte:fonte(S),n:N.n,tot:N.tot});
+  const L=S.lan.filter(a=>a.tot>0), K=S.kom.filter(a=>a.tot>0);
+  if(!L.length&&!K.length) return attesa(x,'Nessun distretto scrutinato');
 
-  /* elenco a due colonne */
-  const ordinati=S.lan.slice().sort((a,b)=>{
-    if(!a.tot&&!b.tot) return a.n.localeCompare(b.n);
-    if(!a.tot) return 1; if(!b.tot) return -1; return b.tot-a.tot; });
-  const colW=468, h=Math.min(46,450/Math.ceil(ordinati.length/2));
-  [0,1].forEach(ci=>{
-    const px=560+ci*(colW+40), arr=ordinati.slice(ci*11,ci*11+11);
-    T(x,'L\u00C4N',px,258,{font:F(700,14),color:C.t3,ls:1.8});
-    T(x,'IN TESTA',px+colW-94,258,{font:F(700,14),color:C.t3,ls:1.8,align:'right'});
-    T(x,'SCRUT.',px+colW,258,{font:F(700,14),color:C.t3,ls:1.8,align:'right'});
-    line(x,px,272,px+colW,272,C.line,1);
-    arr.forEach((l,i)=>{
-      const y=304+i*h;
-      if(!l.tot){
-        T(x,l.n,px,y,{font:F(400,20),color:C.t3});
-        T(x,'in attesa',px+colW,y,{font:F(400,19),color:C.t3,align:'right'});
-      }else{
-        x.save(); x.fillStyle=PARTY_MAP[l.lead].color; fillRR(x,px,y-13,10,13,3,PARTY_MAP[l.lead].color); x.restore();
-        T(x,l.n,px+22,y,{font:fit(x,l.n,colW-196,21,15,700),color:C.t1});
-        T(x,l.lead+' '+pc1(l.share),px+colW-94,y,{font:F(700,21),color:lite(PARTY_MAP[l.lead].color),align:'right'});
-        T(x,(l.total?Math.round(l.reported/l.total*100):0)+'%',px+colW,y,{font:F(400,19),color:C.t3,align:'right'});
-      }
-    });
+  const H=458, oy=262;
+  const w1=disegnaMappa(x,S.lan,LAN_GEO,62,oy,H,'21 L\u00C4N');
+  disegnaMappa(x,S.kom,KOM_GEO,62+w1+52,oy,H,K.length?'290 KOMMUNER':'KOMMUNER IN ATTESA');
+
+  /* ---- solo i dati principali, a destra ---- */
+  const px=600, pw=938;
+  const conta=(arr)=>{ const c={}; arr.forEach(a=>{ if(a.lead) c[a.lead]=(c[a.lead]||0)+1; }); return c; };
+  const cl=conta(L), ck=conta(K);
+  const partiti=[...new Set([...Object.keys(cl),...Object.keys(ck)])]
+    .sort((a,b)=>((cl[b]||0)+(ck[b]||0))-((cl[a]||0)+(ck[a]||0)));
+
+  /* il pannello si adatta al numero di partiti: con uno o due in testa un
+     riquadro alto trecento pixel resterebbe mezzo vuoto */
+  const righe=Math.min(partiti.length,5), hr=righe>3?52:58;
+  const hp=Math.max(150,96+righe*hr);
+  panel(x,px,oy,pw,hp,{top:C.accent});
+  T(x,'PARTITO IN TESTA',px+32,oy+40,{font:F(700,17),color:C.t2,ls:2.2});
+  T(x,'L\u00C4N',px+pw-260,oy+40,{font:F(700,15),color:C.t3,ls:1.8,align:'right'});
+  T(x,'KOMMUNER',px+pw-36,oy+40,{font:F(700,15),color:C.t3,ls:1.8,align:'right'});
+  line(x,px+32,oy+56,px+pw-32,oy+56,C.line,1);
+  partiti.slice(0,5).forEach((id,i)=>{
+    const y=oy+96+i*hr;
+    x.save(); x.fillStyle=PARTY_MAP[id].color; fillRR(x,px+32,y-15,14,15,4,PARTY_MAP[id].color); x.restore();
+    T(x,id,px+58,y,{font:F(700,25),color:lite(PARTY_MAP[id].color)});
+    T(x,(PARTY_IT[id]||{}).it||PARTY_MAP[id].name,px+110,y-1,{font:F(400,21),color:C.t1});
+    T(x,String(cl[id]||0),px+pw-260,y+2,{font:F(700,30,'serif'),color:C.t1,align:'right'});
+    T(x,String(ck[id]||0),px+pw-36,y+2,{font:F(700,30,'serif'),color:C.t1,align:'right'});
   });
-  line(x,1048,258,1048,772,C.line,1);
+
+  /* ---- dove il primo partito va meglio e peggio ---- */
+  const primo=partiti[0];
+  const suoi=K.length?K.filter(a=>a.lead===primo):L.filter(a=>a.lead===primo);
+  const ord=suoi.slice().sort((a,b)=>b.share-a.share);
+  const by=oy+hp+22, hb=Math.min(168,900-140-by);
+  const box=(tit,area,bx,colore)=>{
+    panel(x,bx,by,(pw-28)/2,hb,{top:colore});
+    T(x,tit,bx+30,by+38,{font:F(700,15),color:C.t3,ls:2});
+    if(!area){ T(x,'\u2013',bx+30,by+92,{font:F(700,34,'serif'),color:C.t3}); return; }
+    T(x,area.n,bx+30,by+92,{font:fit(x,area.n,(pw-28)/2-150,34,20,700,'serif'),color:C.t1});
+    T(x,pc1(area.share),bx+(pw-28)/2-30,by+92,{font:F(700,34,'serif'),color:C.accent,align:'right'});
+    T(x,fmt(area.tot)+' voti validi',bx+30,by+126,{font:F(400,19),color:C.t3});
+  };
+  const etich=K.length?'kommun':'l\u00E4n';
+  box(primo+' \u00B7 '+etich.toUpperCase()+' MIGLIORE',ord[0],px,C.accent);
+  box(primo+' \u00B7 '+etich.toUpperCase()+' PEGGIORE',ord[ord.length-1],px+(pw-28)/2+28,C.steel);
 }
 
 /* ---------- CARD 7 — ufficiale contro exit poll ---------- */
@@ -3020,11 +3016,10 @@ function sintesiVerifica(S){
 /* ---------- registro ---------- */
 const CARDS=[
   {id:'c1',nome:'Card 1 — Il risultato',file:'svezia_1_risultato.png',fn:card1,tid:'t1',ok:S=>ordina(S.shares).length>0&&S.srcKind!=='none'},
-  {id:'c2',nome:'Card 2 — I due exit poll',file:'svezia_2_exitpoll.png',fn:card2,tid:'t2',ok:S=>!!(S.valu||S.tv4)},
-  {id:'c3',nome:'Card 3 — Seggi e blocchi',file:'svezia_3_seggi_blocchi.png',fn:card3,tid:'t3',ok:S=>S.srcKind!=='none'},
-  {id:'c5',nome:'Card 4 — La soglia del 4%',file:'svezia_4_soglia.png',fn:card5,tid:'t5',ok:S=>S.srcKind!=='none'},
-  {id:'c6',nome:'Card 5 — La mappa dei län',file:'svezia_5_mappa.png',fn:card6,tid:'t6',ok:S=>S.lanFatti>0},
-  {id:'c7',nome:'Card 6 — Stime contro voto reale',file:'svezia_6_verifica.png',fn:card7,tid:'t7',ok:S=>!!(S.off&&(S.valu||S.tv4||S.prog))}
+  {id:'c3',nome:'Card 2 — Seggi e blocchi',file:'svezia_2_seggi_blocchi.png',fn:card3,tid:'t3',ok:S=>S.srcKind!=='none'},
+  {id:'c5',nome:'Card 3 — La soglia del 4%',file:'svezia_3_soglia.png',fn:card5,tid:'t5',ok:S=>S.srcKind!=='none'},
+  {id:'c6',nome:'Card 4 — Le due mappe',file:'svezia_4_mappe.png',fn:card6,tid:'t6',ok:S=>S.lanFatti>0||S.komFatti>0},
+  {id:'c7',nome:'Card 5 — Stime contro voto reale',file:'svezia_5_verifica.png',fn:card7,tid:'t7',ok:S=>!!(S.off&&(S.valu||S.tv4||S.prog))}
 ];
 
 /* ---------- titoli automatici ---------- */
@@ -3032,10 +3027,6 @@ function autoTitoli(S){
   const R=ordina(S.shares), primo=R[0], secondo=R[1];
   const t={};
   t.t1 = primo ? (primo.nome+' al '+nf(primo.v,1)+' per cento') : 'Il voto in Svezia';
-  if(S.valu&&S.tv4){
-    const a=ordina(S.valu)[0], b=ordina(S.tv4)[0];
-    t.t2 = (a&&b&&a.id!==b.id) ? 'I due exit poll danno vincitori diversi' : 'VALU e TV4, due stime a confronto';
-  } else t.t2 = S.valu||S.tv4 ? 'Il primo exit poll della serata' : 'Gli exit poll delle 20';
   const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
   t.t3 = S.srcKind==='none' ? 'Il nuovo Riksdag'
        : sx>=MAGG ? ((sx-MAGG)===0?'L\u2019opposizione tocca esattamente i 175 seggi'
@@ -3049,10 +3040,15 @@ function autoTitoli(S){
   t.t5 = inBilico.length===1 ? ('Il destino del Riksdag passa da '+inBilico[0].id)
        : inBilico.length>1 ? ((lettere[inBilico.length]||inBilico.length)+' partiti giocano sulla soglia del 4 per cento')
        : 'Chi entra e chi resta fuori dal Riksdag';
-  const conta={};
-  S.lan.filter(l=>l.tot>0).forEach(l=>{conta[l.lead]=(conta[l.lead]||0)+1;});
-  const top=Object.entries(conta).sort((a,b)=>b[1]-a[1])[0];
-  t.t6 = top ? (top[0]+' in testa in '+top[1]+(top[1]===1?' l\u00E4n':' l\u00E4n')) : 'La Svezia l\u00E4n per l\u00E4n';
+  const contaL={}, contaK={};
+  S.lan.filter(l=>l.tot>0).forEach(l=>{contaL[l.lead]=(contaL[l.lead]||0)+1;});
+  (S.kom||[]).filter(k=>k.tot>0).forEach(k=>{contaK[k.lead]=(contaK[k.lead]||0)+1;});
+  const topL=Object.entries(contaL).sort((a,b)=>b[1]-a[1])[0];
+  t.t6 = topL
+    ? (contaK[topL[0]]
+        ? topL[0]+' in testa in '+topL[1]+' l\u00E4n e '+contaK[topL[0]]+' kommuner'
+        : topL[0]+' in testa in '+topL[1]+' l\u00E4n')
+    : 'La Svezia l\u00E4n per l\u00E4n';
   t.t7 = 'Gli exit poll alla prova del voto reale';
   if(primo&&secondo&&Math.abs(primo.v-secondo.v)<1.5&&S.hasOff)
     t.t1 = primo.nome+' e '+secondo.nome+' divisi da '+nf(Math.abs(primo.v-secondo.v),1)+' punti';
@@ -3069,13 +3065,6 @@ function autoPost(S){
   P.c1 = primo ? taglia('Svezia, '+q+': '+primo.nome+' al '+nf(primo.v,1)+' per cento'+
     (secondo?', '+secondo.nome+' al '+nf(secondo.v,1):'')+'. Rispetto al 2022 '+primo.id+' '+
     (primo.v>=primo.v22?'guadagna ':'perde ')+nf(Math.abs(primo.v-primo.v22),1)+' punti.') : '';
-  if(S.valu||S.tv4){
-    const a=S.valu?ordina(S.valu)[0]:null, b=S.tv4?ordina(S.tv4)[0]:null;
-    P.c2 = taglia('Gli exit poll svedesi delle 20'+
-      (a?': VALU d\u00E0 '+a.nome+' al '+nf(a.v,1)+' per cento':'')+
-      (b?(a?', TV4 lo d\u00E0 ':': TV4 d\u00E0 ')+(a&&b.id===a.id?'al ':b.nome+' al ')+nf(b.v,1):'')+
-      '. Sono sondaggi all\u2019uscita dai seggi, non conteggi.');
-  }
   const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
   P.c3 = S.srcKind==='none'?'':taglia('Il Riksdag '+q+': opposizione (S, V, C, MP) a '+sx+' seggi, '+
     'partiti di Tid\u00F6 (M, KD, L, SD) a '+dx+'. '+
@@ -3088,10 +3077,13 @@ function autoPost(S){
   P.c5 = R.length?taglia('La soglia del 4 per cento decide il Riksdag. '+
     (fuori.length?'Sotto la soglia '+fuori.map(r=>r.id+' ('+nf(r.v,1)+')').join(', ')+'. ':'Tutti i partiti sono sopra la soglia. ')+
     (bilico.length?'In bilico entro un punto: '+bilico.map(r=>r.id).join(', ')+'.':'')):'';
-  const conta={}; S.lan.filter(l=>l.tot>0).forEach(l=>{conta[l.lead]=(conta[l.lead]||0)+1;});
-  const top=Object.entries(conta).sort((a,b)=>b[1]-a[1]);
-  P.c6 = top.length?taglia('La Svezia l\u00E4n per l\u00E4n: '+top.map(([p,n])=>p+' in testa in '+n).join(', ')+
-    '. I l\u00E4n non coincidono con le 29 circoscrizioni del Riksdag.'):'';
+  const cL={}, cK={};
+  S.lan.filter(l=>l.tot>0).forEach(l=>{cL[l.lead]=(cL[l.lead]||0)+1;});
+  (S.kom||[]).filter(k=>k.tot>0).forEach(k=>{cK[k.lead]=(cK[k.lead]||0)+1;});
+  const tl=Object.entries(cL).sort((a,b)=>b[1]-a[1]);
+  const nk=Object.values(cK).reduce((a,b)=>a+b,0);
+  P.c6 = tl.length?taglia('La Svezia area per area: '+tl.map(([p,n])=>p+' primo in '+n+' l\u00E4n'+
+    (cK[p]?' e '+cK[p]+' kommuner':'')).join(', ')+(nk?'. Kommuner scrutinati: '+nk+'.':'.')):'';
   if(S.off&&(S.valu||S.tv4||S.prog)){
     let peggio=0,pid='';
     R.forEach(r=>{ const a=S.valu?Math.abs((S.valu[r.id]||0)-r.v):0, b=S.tv4?Math.abs((S.tv4[r.id]||0)-r.v):0,
