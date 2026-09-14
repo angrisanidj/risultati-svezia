@@ -468,7 +468,7 @@ footer{display:flex;justify-content:space-between;gap:14px;color:var(--t3);font-
       <p class="subcopy">Exit poll alle 20:00; verso le 21:10 la proiezione elaborata da Vera Policy e presentata per prima da SVT. Sono stime, e restano sempre separate dai voti ufficiali.</p>
       <div class="feedprog" id="feedProg">
         <div><b>Feed Valprognos — proiezione di Vera Policy per SVT</b><span id="fpStato">non attivo · la proiezione si inserisce a mano</span></div>
-        <button id="fpToggle" class="sm">Attiva</button>
+        <span style="display:flex;gap:7px"><button id="fpCopia" class="sm hidden">Copia per stime.json</button><button id="fpToggle" class="sm">Attiva</button></span>
       </div>
       <div class="feedprog" id="boxStime">
         <div><b>File stime del repository</b><span id="statoStime">controllo in corso…</span></div>
@@ -1484,9 +1484,26 @@ return {avvia,ferma,giro,stato:()=>S,attivo:()=>S.abilitato,
 /* src/app.js */
 
 const INDEX_URL=buildProxyFeedUrl('index.md5');
+/* Intervallo adattivo: stretto mentre i dati si muovono, progressivamente piu'
+   largo quando non cambia nulla. Cosi' a scrutinio chiuso non si martella il
+   feed, ma mercoledi', quando l'uppsamlingsrakning riprende, il primo file
+   nuovo lo riporta subito a un minuto senza doverci pensare. */
 const POLL_MS=60000;
+const POLL_MAX=600000;
+let pollAttesa=POLL_MS, pollTimer=null;
+function pollIntervallo(){ return pollAttesa; }
+function programmaPoll(ms){
+  clearTimeout(pollTimer);
+  pollTimer=setTimeout(async()=>{ await pollFeed(false); programmaPoll(pollAttesa); }, ms);
+}
+function pollStretto(){ pollAttesa=POLL_MS; programmaPoll(pollAttesa); }
+function pollAllarga(){ pollAttesa=Math.min(POLL_MAX,Math.round(pollAttesa*1.6)); }
+function testoAttesa(){
+  const m=Math.round(pollAttesa/1000);
+  return m<90?m+'s':Math.round(m/60)+' min';
+}
 const STORAGE='sweden-election-live-2026-v2';
-const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:true,feedVersione:0,mapFonte:'voti',fase:'preliminare',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
+const state={valu:{},tv4:{},prognos:{},prognosOra:'',progAuto:null,feedProg:false,feedVersione:0,mapFonte:'voti',fase:'preliminare',firmeStime:{},official:null,officialSource:null,lastChecksum:null,feedCors:null,manual:false};
 const $=s=>document.querySelector(s);
 /* L'italiano nel CLDR non raggruppa i numeri di quattro cifre: toLocaleString
    restituisce 6312, non 6.312. Sul cruscotto vogliamo il punto sempre, altrimenti
@@ -2287,7 +2304,11 @@ async function pollFeed(force=false){
     /* l'etichetta va calcolata dopo l'eventuale ripiego, non prima */
     const etichetta=f=>(f.esatto?'':' · percorso diverso dall’atteso: '+f.path)+
       (f.fase==='definitivo'?' · conteggio definitivo delle prefetture':'');
-    if(!force && state.lastChecksum===rd.checksum){setFeed('Feed live collegato · nessun nuovo file'+etichetta(rd),'ok');return;}
+    if(!force && state.lastChecksum===rd.checksum){
+      pollAllarga();
+      setFeed(`Feed live collegato · nessun nuovo file${etichetta(rd)} · prossimo controllo fra ${testoAttesa()}`,'ok');
+      return;
+    }
     setFeed('Nuovo file Riksdag: download…','loading');
     const zr=await fetchWithNoStore(buildProxyFeedUrl(rd.path)); if(zr.status===429){setFeed('ZIP limitato da Valmyndigheten (429)','error');return;} if(!zr.ok) throw new Error(`ZIP HTTP ${zr.status}`);
     /* Gli zip definitivi possono essere enormi: meglio rifiutarsi e dirlo che
@@ -2308,6 +2329,7 @@ async function pollFeed(force=false){
     }
     state.fase=rd.fase;
     state.official=result;state.officialSource='Valmyndigheten live';state.lastChecksum=rd.checksum;saveState();render();
+    pollAttesa=POLL_MS;                 /* dato nuovo: si torna stretti */
     setFeed('Feed live Valmyndigheten'+etichetta(rd),rd.esatto?'ok':'loading');
   }catch(e){
     state.feedCors=false;
@@ -2404,9 +2426,14 @@ function statoStime(){
 function statoFeed(){
   const S=(typeof PROGFEED!=='undefined')?PROGFEED.stato():null;
   const box=$('#feedProg'), et=$('#fpStato'), bt=$('#fpToggle');
+  const cp=$('#fpCopia');
+  if(cp) cp.classList.toggle('hidden',!(progAutoOk()||exitHas(state.prognos)));
   if(!S||!S.abilitato){
     box.className='feedprog'; bt.textContent='Attiva';
-    et.textContent='non attivo · la proiezione si inserisce a mano'; return;
+    et.textContent=exitHas(state.prognos)
+      ? `fermo · proiezione fissata${state.prognosOra?' delle '+state.prognosOra:''}, modificabile a mano`
+      : 'non attivo · la proiezione si inserisce a mano';
+    return;
   }
   bt.textContent='Ferma';
   if(S.errore){ box.className='feedprog err'; et.textContent='errore: '+S.errore+' · l’inserimento a mano resta valido'; return; }
@@ -2448,21 +2475,48 @@ function suFeed(S){
     : null;
   saveState(); render(); statoFeed(); aggiornaColonnaProiezione();
 }
+/* Fermare il feed non deve far sparire la proiezione: l'ultimo valore ricevuto
+   viene fissato nella colonna manuale, con la sua ora. Da li' resta modificabile
+   e sopravvive alla ricarica. */
+function congelaProiezione(){
+  if(!progAutoOk()) return false;
+  state.prognos={...state.progAuto.quote};
+  state.prognosOra=state.progAuto.ora||'';
+  return true;
+}
 function avviaFeed(on){
   state.feedProg=on; saveState();
-  if(on) PROGFEED.avvia(suFeed); else { PROGFEED.ferma(); state.progAuto=null; saveState(); render(); }
+  if(on) PROGFEED.avvia(suFeed);
+  else { congelaProiezione(); PROGFEED.ferma(); state.progAuto=null; saveState(); renderInputs(); render(); }
   statoFeed(); aggiornaColonnaProiezione();
+}
+/* La proiezione fissata vive solo in questo browser: per portarla ai lettori
+   va messa in stime.json, quindi si offre il blocco gia' pronto da incollare. */
+function blocoStime(){
+  const q=progAutoOk()?state.progAuto.quote:state.prognos;
+  const ora=progAutoOk()?state.progAuto.ora:state.prognosOra;
+  const righe=PARTIES.filter(p=>p.id!=='OVR'&&Number(q[p.id])>0)
+    .map(p=>`"${p.id}": ${Number(q[p.id]).toFixed(1)}`);
+  return '"proiezione": { "ora": "'+(ora||'')+'", '+righe.join(', ')+' }';
 }
 
 function bind(){
   $('#fpToggle').addEventListener('click',()=>avviaFeed(!(typeof PROGFEED!=='undefined'&&PROGFEED.attivo())));
+  $('#fpCopia').addEventListener('click',e=>{
+    const ta=document.createElement('textarea'); ta.value=blocoStime();
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand('copy'); }catch{}
+    document.body.removeChild(ta);
+    e.target.textContent=ok?'Copiato':'Copia non riuscita';
+    setTimeout(()=>{e.target.textContent='Copia per stime.json';},1600);
+  });
   $('#saveExit').addEventListener('click',saveExit);
   $('#clearExit').addEventListener('click',()=>{state.valu={};state.tv4={};state.prognos={};state.prognosOra='';saveState();renderInputs();render();});
   $('#manualToggle').addEventListener('click',()=>$('#manualPanel').classList.toggle('hidden'));
   $('#applyManual').addEventListener('click',manualApply);
   $('#clearManual').addEventListener('click',()=>{if(state.officialSource==='manual'){state.official=null;state.officialSource=null;saveState();render();}renderInputs();});
   $('#fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f) processFile(f);e.target.value='';});
-  $('#refreshBtn').addEventListener('click',()=>pollFeed(true));
+  $('#refreshBtn').addEventListener('click',async()=>{ await pollFeed(true); pollStretto(); });
   $('#tabbtn-live').addEventListener('click',()=>showTab('live'));
   $('#tabbtn-card').addEventListener('click',()=>showTab('card'));
   /* la mappa lega i propri eventi in bindMap(), al primo disegno */
@@ -3144,11 +3198,13 @@ loadState(); state.progAuto=null;
 /* loadState sovrascrive i valori predefiniti con quelli salvati: chi aveva gia'
    usato la pagina si porterebbe dietro feedProg:false. La migrazione accende il
    feed una volta sola, poi la scelta dell'utente torna a comandare. */
-if(state.feedVersione!==1){ state.feedProg=true; state.feedVersione=1; saveState(); }
+/* v1 aveva acceso il feed per tutti; a scrutinio concluso si spegne una volta
+   sola, poi torna a comandare la scelta dell'utente. */
+if(state.feedVersione!==2){ state.feedProg=false; state.feedVersione=2; saveState(); }
 renderInputs(); bind(); render();
 if(state.feedProg) avviaFeed(true);
 CARDGEN.init();
-pollFeed(true); setInterval(()=>pollFeed(false),POLL_MS);
+pollFeed(true); programmaPoll(POLL_MS);
 leggiStime(); setInterval(leggiStime,STIME_MS);
 
 </script>
