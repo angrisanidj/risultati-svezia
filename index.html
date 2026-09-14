@@ -1755,7 +1755,7 @@ function renderVerdetto(){
     const m=suoi-MAGGIORANZA;
     dettaglio=`<b>${suoi}</b> seggi contro <b>${altri}</b>, `+
       (m===0?`esattamente la soglia dei ${MAGGIORANZA}: la maggioranza si regge su un seggio solo`
-            :`${m} oltre la soglia dei ${MAGGIORANZA}`);
+            :`${m===1?'un seggio':m+' seggi'} oltre la soglia dei ${MAGGIORANZA}`);
   }else{
     const guida=e.opp>=e.tido?'all\u2019opposizione':'al blocco di Tid\u00F6';
     dettaglio=`opposizione <b>${e.opp}</b>, blocco di Tid\u00F6 <b>${e.tido}</b>: ${guida} mancano ${MAGGIORANZA-Math.max(e.opp,e.tido)} seggi`;
@@ -1837,8 +1837,8 @@ function renderBlocchi(seats){
     `<div class="blocgap"><b class="${vince?'':'no'}">${vince?(gap===0?'175':'+'+gap):'−'+gap}</b><span>${
       vince ? (gap===0
           ? `${vince===opp?'l’opposizione arriva':'il blocco di Tidö arriva'} esattamente a 175: maggioranza di un seggio`
-          : `i seggi con cui ${vince===opp?'l’opposizione':'il blocco di Tidö'} supera la soglia dei 175`)
-            : `i seggi che mancano a ${primo===opp?'l’opposizione':'il blocco di Tidö'} per la maggioranza: nessun blocco arriva a 175`
+          : `${gap===1?'il seggio con cui':'i seggi con cui'} ${vince===opp?'l’opposizione':'il blocco di Tidö'} supera la soglia dei 175`)
+            : `${gap===1?'il seggio che manca':'i seggi che mancano'} a ${primo===opp?'l’opposizione':'il blocco di Tidö'} per la maggioranza: nessun blocco arriva a 175`
     }</span></div>`;
 }
 
@@ -2593,6 +2593,9 @@ function lite(hex){
   const f=0.42/Math.max(lum(hex),0.02), c=v=>Math.min(255,Math.round(v*f+72));
   return 'rgb('+c(r)+','+c(g2)+','+c(b)+')'; }
 const LEN=s=>Array.from(String(s).trim()).length;
+/* "1 seggi" e' l'errore che si vede subito in un titolo: l'accordo si fa qui,
+   una volta sola, e tutti i testi passano da questa. */
+const nSeggi=n=>Math.abs(n)===1?n+' seggio':n+' seggi';
 
 /* ---------- primitive di disegno ---------- */
 function F(w,s,fam){ return w+' '+s+'px '+(fam==='serif'?SERIF:SANS); }
@@ -2802,9 +2805,9 @@ function card3(x,S,N){
   T(x,'MAGGIORANZA',lx,ly+22,{font:F(700,14),color:C.accent,ls:2,align:'center'});
 
   T(x,opp.breve.toUpperCase(),cx-rOut+4,cy+42,{font:F(700,16),color:C.t3,ls:1.8});
-  T(x,opp.tot+' seggi',cx-rOut+4,cy+76,{font:F(700,30,'serif'),color:opp.col});
+  T(x,nSeggi(opp.tot),cx-rOut+4,cy+76,{font:F(700,30,'serif'),color:opp.col});
   T(x,tido.breve.toUpperCase(),cx+rOut-4,cy+42,{font:F(700,16),color:C.t3,ls:1.8,align:'right'});
-  T(x,tido.tot+' seggi',cx+rOut-4,cy+76,{font:F(700,30,'serif'),color:tido.col,align:'right'});
+  T(x,nSeggi(tido.tot),cx+rOut-4,cy+76,{font:F(700,30,'serif'),color:tido.col,align:'right'});
 
   /* ---- colonna destra ---- */
   const px=952, pw=586;
@@ -2818,7 +2821,7 @@ function card3(x,S,N){
     T(x,b.ids.join('  \u00B7  '),px+30+nw+26,py+38,{font:F(700,17),color:C.t3,ls:1.4});
     T(x,String(b.tot),px+30,py+104,{font:F(700,62,'serif'),color:ok?C.accent:b.col});
     const vw=W(x,String(b.tot),F(700,62,'serif'));
-    T(x,'seggi ('+b.s22+' nel 2022)',px+30+vw+18,py+104,{font:F(400,23),color:C.t2});
+    T(x,(b.tot===1?'seggio':'seggi')+' ('+b.s22+' nel 2022)',px+30+vw+18,py+104,{font:F(400,23),color:C.t2});
   };
   pannello(opp,262); pannello(tido,398);
 
@@ -2830,7 +2833,8 @@ function card3(x,S,N){
   const txt=vince
     ? (gap===0
         ? [(vince===opp?'l\u2019opposizione arriva':'il blocco di Tid\u00F6 arriva')+' esattamente a '+MAGG+':','la maggioranza si regge su un seggio solo']
-        : ['i seggi con cui '+(vince===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'supererebbe la soglia dei '+MAGG+', cio\u00E8 la maggioranza'])
+        : [(gap===1?'il seggio con cui ':'i seggi con cui ')+(vince===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),
+           'super'+(gap===1?'a':'erebbe')+' la soglia dei '+MAGG+', cio\u00E8 la maggioranza'])
     : ['i seggi che mancano a '+(primo===opp?'l\u2019opposizione':'il blocco di Tid\u00F6'),'per arrivare a '+MAGG+': nessun blocco ha la maggioranza'];
   T(x,txt[0],px+30+gw+22,534+52,{font:F(400,22),color:C.t1});
   T(x,txt[1],px+30+gw+22,534+82,{font:F(400,22),color:C.t2});
@@ -3030,9 +3034,9 @@ function autoTitoli(S){
   const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
   t.t3 = S.srcKind==='none' ? 'Il nuovo Riksdag'
        : sx>=MAGG ? ((sx-MAGG)===0?'L\u2019opposizione tocca esattamente i 175 seggi'
-                    :(sx-MAGG)+' seggi oltre la soglia della maggioranza')
+                    :'L\u2019opposizione supera la maggioranza di '+nSeggi(sx-MAGG))
        : dx>=MAGG ? ((dx-MAGG)===0?'Il blocco Tid\u00F6 tocca esattamente i 175 seggi'
-                    :'Il blocco Tid\u00F6 tiene la maggioranza per '+(dx-MAGG)+' seggi')
+                    :'Il blocco Tid\u00F6 tiene la maggioranza per '+nSeggi(dx-MAGG))
        : dx===sx ? 'I due blocchi sono in parit\u00E0'
        : 'Nessun blocco arriva a 175 seggi';
   const inBilico=R.filter(r=>Math.abs(r.v-4)<=1);
@@ -3066,12 +3070,12 @@ function autoPost(S){
     (secondo?', '+secondo.nome+' al '+nf(secondo.v,1):'')+'. Rispetto al 2022 '+primo.id+' '+
     (primo.v>=primo.v22?'guadagna ':'perde ')+nf(Math.abs(primo.v-primo.v22),1)+' punti.') : '';
   const dx=blocco(S,DESTRA), sx=blocco(S,SINISTRA);
-  P.c3 = S.srcKind==='none'?'':taglia('Il Riksdag '+q+': opposizione (S, V, C, MP) a '+sx+' seggi, '+
+  P.c3 = S.srcKind==='none'?'':taglia('Il Riksdag '+q+': opposizione (S, V, C, MP) a '+nSeggi(sx)+', '+
     'partiti di Tid\u00F6 (M, KD, L, SD) a '+dx+'. '+
     (sx>=MAGG?(sx-MAGG===0?'L\u2019opposizione arriva esattamente a 175: maggioranza di un seggio solo.'
-                           :'La maggioranza passa all\u2019opposizione, che supera i 175 di '+(sx-MAGG)+'.'):
+                           :'La maggioranza passa all\u2019opposizione, che supera i 175 di '+nSeggi(sx-MAGG)+'.'):
      dx>=MAGG?(dx-MAGG===0?'Il blocco Kristersson arriva esattamente a 175: maggioranza di un seggio solo.'
-                          :'Il blocco Kristersson tiene, con '+(dx-MAGG)+' seggi oltre i 175.'):
+                          :'Il blocco Kristersson tiene, con '+nSeggi(dx-MAGG)+' oltre i 175.'):
      dx===sx?'Parit\u00E0 esatta: nessuno arriva a 175.':'Nessun blocco raggiunge quota 175.'));
   const fuori=R.filter(r=>r.v<4), bilico=R.filter(r=>Math.abs(r.v-4)<=1);
   P.c5 = R.length?taglia('La soglia del 4 per cento decide il Riksdag. '+
